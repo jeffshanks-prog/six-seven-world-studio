@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Creator Project Manager. Keyboard: Tab moves through
+     the controls top to bottom; list rows say "Done" or "To do" in text. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="640"
+ width="560"
+ min_height="560"
+ min_width="480"
+ layout="topleft"
+ name="sw67_creator_projects"
+ save_rect="true"
+ title="6|7 CREATOR PROJECTS">
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="12"
+   name="folder_label"
+   width="90">Project folder:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="100"
+   name="folder_path"
+   tab_group="1"
+   top="8"
+   width="276" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Browse..."
+   layout="topleft"
+   left="384"
+   name="browse_btn"
+   tab_group="1"
+   top="8"
+   width="80" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Open"
+   layout="topleft"
+   left="470"
+   name="open_btn"
+   tab_group="1"
+   tool_tip="Opens the project in this folder, or starts one if it has none."
+   top="8"
+   width="80" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="42"
+   name="name_label"
+   width="90">Name:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="100"
+   max_length_bytes="120"
+   name="project_name"
+   tab_group="1"
+   top="38"
+   width="450" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="70"
+   name="assets_heading"
+   width="300">Files and links</text>
+  <scroll_list
+   draw_heading="true"
+   follows="left|top|right"
+   height="140"
+   layout="topleft"
+   left="10"
+   name="asset_list"
+   tab_group="1"
+   top="88"
+   width="540">
+    <scroll_list.columns label="Kind" name="kind" width="100" />
+    <scroll_list.columns label="File or item" name="item" width="200" />
+    <scroll_list.columns label="What the project holds" name="holds" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Scan folder"
+   layout="topleft"
+   left="10"
+   name="scan_btn"
+   tab_group="1"
+   tool_tip="Adds the folder's files that the project does not list yet."
+   top="234"
+   width="110" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove from project"
+   layout="topleft"
+   left="128"
+   name="remove_asset_btn"
+   tab_group="1"
+   tool_tip="Takes the entry out of the project. The file itself is not deleted."
+   top="234"
+   width="150" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="266"
+   name="checklist_heading"
+   width="300">Release checklist</text>
+  <scroll_list
+   draw_heading="false"
+   follows="left|top|right"
+   height="110"
+   layout="topleft"
+   left="10"
+   name="checklist"
+   tab_group="1"
+   top="284"
+   width="440">
+    <scroll_list.columns name="done" width="60" />
+    <scroll_list.columns name="text" />
+  </scroll_list>
+  <button
+   follows="right|top"
+   height="23"
+   label="Done / not done"
+   layout="topleft"
+   left="456"
+   name="toggle_done_btn"
+   tab_group="1"
+   top="284"
+   width="94" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="404"
+   name="revision_label"
+   width="120">New revision:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="120"
+   max_length_bytes="2000"
+   name="revision_summary"
+   tab_group="1"
+   top="400"
+   width="340" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Add"
+   layout="topleft"
+   left="470"
+   name="add_revision_btn"
+   tab_group="1"
+   top="400"
+   width="80" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="432"
+   name="notes_label"
+   width="200">Testing notes:</text>
+  <text_editor
+   follows="left|top|right"
+   height="60"
+   layout="topleft"
+   left="10"
+   max_length="20000"
+   name="testing_notes"
+   tab_group="1"
+   top="450"
+   width="540"
+   word_wrap="true" />
+  <text_editor
+   enabled="false"
+   follows="all"
+   height="70"
+   layout="topleft"
+   left="10"
+   max_length="65536"
+   name="readiness_text"
+   tab_group="1"
+   top="516"
+   width="440"
+   word_wrap="true" />
+  <button
+   follows="right|bottom"
+   height="23"
+   label="Save"
+   layout="topleft"
+   left="456"
+   name="save_btn"
+   tab_group="1"
+   tool_tip="Writes project.sw67.json in the project folder."
+   top="516"
+   width="94" />
+  <text
+   follows="left|bottom|right"
+   height="44"
+   layout="topleft"
+   left="10"
+   top="592"
+   name="status_text"
+   width="540"
+   wrap="true" />
+</floater>

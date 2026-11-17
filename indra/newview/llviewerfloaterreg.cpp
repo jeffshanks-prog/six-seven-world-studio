@@ -214,6 +214,10 @@
 // [RLVa:KB] - Checked: 2010-03-11
 #include "rlvfloaters.h"
 #include "sw67floateraccessibility.h"
+#include "sw67floatercreatorprojects.h"
+#include "sw67floaterperformance.h"
+#include "sw67floaterproductphoto.h"
+#include "sw67floaterworkspaces.h"
 // [/RLVa:KB]
 // handle secondlife:///app/openfloater/{NAME} URLs
 const std::string FLOATER_PROFILE("profile");
@@ -537,6 +541,10 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("rlv_strings", "floater_rlv_strings.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<RlvFloaterStrings>);
 // [/RLVa:KB]
     LLFloaterReg::add("sw67_accessibility", "floater_sw67_accessibility.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterAccessibility>);
+    LLFloaterReg::add("sw67_workspaces", "floater_sw67_workspaces.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterWorkspaces>);
+    LLFloaterReg::add("sw67_performance", "floater_sw67_performance.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPerformance>);
+    LLFloaterReg::add("sw67_creator_projects", "floater_sw67_creator_projects.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterCreatorProjects>);
+    LLFloaterReg::add("sw67_product_photo", "floater_sw67_product_photo.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterProductPhoto>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

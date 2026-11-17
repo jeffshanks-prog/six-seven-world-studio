@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Product Photography Assistant (manual). Keyboard: Tab
+     moves through the controls; lists take several selections with Ctrl. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="600"
+ width="540"
+ min_height="520"
+ min_width="460"
+ layout="topleft"
+ name="sw67_product_photo"
+ save_rect="true"
+ title="6|7 PRODUCT PHOTOGRAPHY">
+  <text
+   follows="left|top|right"
+   height="30"
+   layout="topleft"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="520"
+   wrap="true">Select the object to photograph, choose angles and sizes, check the file list, then Start. The camera moves around the object and returns when the batch ends.</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="46"
+   name="project_label"
+   width="110">Product name:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="120"
+   max_length_bytes="80"
+   name="project_name"
+   tab_group="1"
+   top="42"
+   width="410" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="74"
+   name="pattern_label"
+   width="110">File names:</text>
+  <line_editor
+   default_text="{project}_{angle}_{index:3}"
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="120"
+   max_length_bytes="120"
+   name="name_pattern"
+   tab_group="1"
+   tool_tip="Tokens: {project} {angle} {index} {index:3} {date}. Unsafe characters are replaced."
+   top="70"
+   width="410" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="102"
+   name="output_label"
+   width="110">Output folder:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="120"
+   name="output_dir"
+   tab_group="1"
+   top="98"
+   width="322" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Browse..."
+   layout="topleft"
+   left="450"
+   name="browse_btn"
+   tab_group="1"
+   top="98"
+   width="80" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="130"
+   name="angles_heading"
+   width="260">Angles</text>
+  <scroll_list
+   draw_heading="false"
+   follows="left|top"
+   height="120"
+   layout="topleft"
+   left="10"
+   multi_select="true"
+   name="angle_list"
+   tab_group="1"
+   top="148"
+   width="300">
+    <scroll_list.columns name="name" width="130" />
+    <scroll_list.columns name="detail" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="320"
+   top="130"
+   name="sizes_heading"
+   width="210">Export sizes</text>
+  <scroll_list
+   draw_heading="false"
+   follows="left|top|right"
+   height="120"
+   layout="topleft"
+   left="320"
+   multi_select="true"
+   name="size_list"
+   tab_group="1"
+   top="148"
+   width="210">
+    <scroll_list.columns name="name" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="280"
+   name="capture_label"
+   width="110">Capture size:</text>
+  <combo_box
+   follows="left|top"
+   height="23"
+   layout="topleft"
+   left="120"
+   name="capture_size"
+   tab_group="1"
+   top="276"
+   width="120">
+    <combo_box.item label="1024 x 1024" name="c1024" value="1024" />
+    <combo_box.item label="2048 x 2048" name="c2048" value="2048" />
+  </combo_box>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="260"
+   top="280"
+   name="format_label"
+   width="90">Exports as:</text>
+  <combo_box
+   follows="left|top"
+   height="23"
+   layout="topleft"
+   left="350"
+   name="export_format"
+   tab_group="1"
+   top="276"
+   width="100">
+    <combo_box.item label="JPEG" name="jpg" value="jpg" />
+    <combo_box.item label="PNG" name="png" value="png" />
+  </combo_box>
+  <text
+   follows="left|top|right"
+   height="30"
+   layout="topleft"
+   left="10"
+   top="306"
+   name="planned_text"
+   width="520"
+   wrap="true">Planned, not in this build: watermarks, switching backdrops and lighting looks between passes, and AI edits. Shots use the current backdrop and lighting.</text>
+  <text_editor
+   enabled="false"
+   follows="all"
+   height="170"
+   layout="topleft"
+   left="10"
+   max_length="131072"
+   name="plan_text"
+   tab_group="1"
+   top="340"
+   width="520"
+   word_wrap="false" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Start batch"
+   layout="topleft"
+   left="10"
+   name="start_btn"
+   tab_group="1"
+   top="518"
+   width="120" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Stop"
+   layout="topleft"
+   left="138"
+   name="stop_btn"
+   tab_group="1"
+   tool_tip="Stops after the current shot. Files already written are kept."
+   top="518"
+   width="100" />
+  <text
+   follows="left|bottom|right"
+   height="44"
+   layout="topleft"
+   left="10"
+   top="548"
+   name="status_text"
+   width="520"
+   wrap="true" />
+</floater>

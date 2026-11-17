@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: workspace profiles. Keyboard: Tab moves through the
+     controls top to bottom; every button has a text label. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="480"
+ width="480"
+ min_height="380"
+ min_width="420"
+ layout="topleft"
+ name="sw67_workspaces"
+ save_rect="true"
+ title="6|7 WORKSPACE PROFILES">
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="12"
+   name="profile_label"
+   width="70">Profile:</text>
+  <combo_box
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="80"
+   top="8"
+   name="profile_combo"
+   tab_group="1"
+   tool_tip="Built-in layouts for Everyday, Creator, Photographer, DJ and Host, then your saved ones."
+   width="390" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="40"
+   name="preview_heading"
+   width="460">Preview: what applying it changes</text>
+  <text_editor
+   enabled="false"
+   follows="all"
+   height="220"
+   layout="topleft"
+   left="10"
+   max_length="65536"
+   name="preview_text"
+   tab_group="1"
+   top="60"
+   width="460"
+   word_wrap="true" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Apply"
+   layout="topleft"
+   left="10"
+   top="288"
+   name="apply_btn"
+   tab_group="1"
+   tool_tip="Makes the changes listed in the preview."
+   width="110" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Undo apply"
+   layout="topleft"
+   left="128"
+   top="288"
+   name="undo_btn"
+   tab_group="1"
+   tool_tip="Puts back the windows, toolbars, shortcuts and preferences the last apply changed."
+   width="110" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Export..."
+   layout="topleft"
+   left="246"
+   top="288"
+   name="export_btn"
+   tab_group="1"
+   tool_tip="Saves the chosen profile to a file you pick. Accessibility settings, passwords and keys are never included."
+   width="108" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Import..."
+   layout="topleft"
+   left="362"
+   top="288"
+   name="import_btn"
+   tab_group="1"
+   tool_tip="Reads a profile file. It is checked first and nothing changes until you apply it."
+   width="108" />
+  <text
+   follows="left|bottom"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="326"
+   name="save_label"
+   width="200">Save the current layout as:</text>
+  <line_editor
+   follows="left|bottom|right"
+   height="23"
+   layout="topleft"
+   left="10"
+   max_length_bytes="80"
+   name="save_name"
+   tab_group="1"
+   top="344"
+   width="272" />
+  <button
+   follows="right|bottom"
+   height="23"
+   label="Save"
+   layout="topleft"
+   left="290"
+   top="344"
+   name="save_btn"
+   tab_group="1"
+   width="80" />
+  <button
+   follows="right|bottom"
+   height="23"
+   label="Delete saved"
+   layout="topleft"
+   left="378"
+   top="344"
+   name="delete_btn"
+   tab_group="1"
+   tool_tip="Deletes the chosen saved profile's file. Built-in profiles can't be deleted."
+   width="92" />
+  <text
+   follows="left|bottom|right"
+   height="80"
+   layout="topleft"
+   left="10"
+   top="380"
+   name="status_text"
+   width="460"
+   wrap="true" />
+</floater>

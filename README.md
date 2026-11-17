@@ -12,6 +12,8 @@ and is licensed under the [GNU LGPL 2.1](LICENSE). See [NOTICE](NOTICE).
 
 - Foundation decision, licences and policy: [doc/sw67/FOUNDATION.md](doc/sw67/FOUNDATION.md)
 - Milestone 1 status, build and run instructions: [doc/sw67/MILESTONE-1.md](doc/sw67/MILESTONE-1.md)
+- Milestone 2 (first local tools: workspace profiles, performance assistant, creator projects, product photography): [doc/sw67/MILESTONE-2.md](doc/sw67/MILESTONE-2.md)
+- Roadmap, module map and plans: [doc/sw67/ROADMAP.md](doc/sw67/ROADMAP.md)
 - RLV: [doc/sw67/RLV.md](doc/sw67/RLV.md)
 - Upstream build reference: [doc/BUILD.md](doc/BUILD.md)
 

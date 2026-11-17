@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           git clone --depth 1 -b v3.7.1 https://github.com/catchorg/Catch2 "$RUNNER_TEMP/catch2"
-          cmake -S "$RUNNER_TEMP/catch2" -B "$RUNNER_TEMP/catch2-build" -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release \
+          cmake -S "$RUNNER_TEMP/catch2" -B "$RUNNER_TEMP/catch2-build" -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 \
             -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/catch2-install"
           cmake --build "$RUNNER_TEMP/catch2-build" --config Release --parallel
           cmake --install "$RUNNER_TEMP/catch2-build" --config Release

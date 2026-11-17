@@ -1,0 +1,60 @@
+{
+  "format": "sw67.plans",
+  "version": 1,
+  "sandbox": true,
+  "currency": "USD",
+  "trialDays": null,
+  "notes": "Proposed prices from the product spec. sandbox=true: no real charges are possible. AI credit numbers are placeholders until per-action costs are measured. trialDays is null because no trial length has been decided. Local data (projects, photos, profiles, backups) and accessibility are never gated.",
+  "plans": [
+    {
+      "id": "basic",
+      "name": "Basic",
+      "priceCentsPerMonth": 1999,
+      "aiCreditsPerMonth": 20,
+      "features": [
+        "workspace_profiles",
+        "performance_assistant",
+        "creator_projects",
+        "product_photo_manual",
+        "pose_photo_manual",
+        "outfit_planner",
+        "recording_privacy",
+        "settings_backup",
+        "ai_director"
+      ]
+    },
+    {
+      "id": "dj_hosting",
+      "name": "DJ & Hosting",
+      "priceCentsPerMonth": 2999,
+      "aiCreditsPerMonth": 20,
+      "includes": ["basic"],
+      "features": [
+        "event_rehearsal",
+        "stage_lighting",
+        "performance_sequencer",
+        "dj_workspace",
+        "hosting_workspace"
+      ]
+    },
+    {
+      "id": "ai_creator",
+      "name": "AI Creator add-on",
+      "addOn": true,
+      "priceCentsPerMonth": 1499,
+      "aiCreditsPerMonth": 300,
+      "features": [
+        "ai_director_expanded",
+        "ai_scene_planning",
+        "ai_product_photo",
+        "ai_listing_drafts",
+        "ai_mesh",
+        "ai_script",
+        "ai_texture"
+      ]
+    }
+  ],
+  "creditPacks": [
+    { "id": "credits_small", "credits": 100, "priceCents": 500 }
+  ]
+}

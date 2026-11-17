@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Performance Assistant. Keyboard: Tab moves through
+     the controls top to bottom. Findings are labelled [Measured] or
+     [Estimate] in text, not by colour. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="560"
+ width="520"
+ min_height="460"
+ min_width="440"
+ layout="topleft"
+ name="sw67_performance"
+ save_rect="true"
+ title="6|7 PERFORMANCE ASSISTANT">
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="10"
+   name="findings_heading"
+   width="380">What the viewer measures</text>
+  <button
+   follows="right|top"
+   height="22"
+   label="Refresh"
+   layout="topleft"
+   left="420"
+   top="6"
+   name="refresh_btn"
+   tab_group="1"
+   width="90" />
+  <text_editor
+   enabled="false"
+   follows="left|top|right"
+   height="200"
+   layout="topleft"
+   left="10"
+   max_length="65536"
+   name="findings_text"
+   tab_group="1"
+   top="32"
+   width="500"
+   word_wrap="true" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="242"
+   name="preset_heading"
+   width="500">Presets: your own graphics settings only</text>
+  <combo_box
+   follows="left|top|right"
+   height="23"
+   layout="topleft"
+   left="10"
+   top="262"
+   name="preset_combo"
+   tab_group="1"
+   width="500" />
+  <text_editor
+   enabled="false"
+   follows="all"
+   height="170"
+   layout="topleft"
+   left="10"
+   max_length="65536"
+   name="preview_text"
+   tab_group="1"
+   top="292"
+   width="500"
+   word_wrap="true" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Apply preset"
+   layout="topleft"
+   left="10"
+   top="470"
+   name="apply_btn"
+   tab_group="1"
+   tool_tip="Changes the settings listed above. Your previous values are saved first."
+   width="120" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Restore previous"
+   layout="topleft"
+   left="138"
+   top="470"
+   name="restore_btn"
+   tab_group="1"
+   tool_tip="Puts back the values from before the first preset you applied."
+   width="140" />
+  <button
+   follows="right|bottom"
+   height="23"
+   label="Viewer graphics..."
+   layout="topleft"
+   left="370"
+   top="470"
+   name="graphics_btn"
+   tab_group="1"
+   tool_tip="Opens the viewer's own performance window with every graphics control."
+   width="140" />
+  <text
+   follows="left|bottom|right"
+   height="48"
+   layout="topleft"
+   left="10"
+   top="502"
+   name="status_text"
+   width="500"
+   wrap="true" />
+</floater>

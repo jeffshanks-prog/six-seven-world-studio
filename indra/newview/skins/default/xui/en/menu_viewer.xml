@@ -171,13 +171,47 @@
              function="Floater.Toggle"
              parameter="preferences" />
         </menu_item_call>
-        <menu_item_call
-         label="Accessibility (6|7)..."
-         name="SW67 Accessibility">
-            <menu_item_call.on_click
-             function="Floater.Toggle"
-             parameter="sw67_accessibility" />
-        </menu_item_call>
+        <menu
+         create_jump_keys="true"
+         label="6|7 Studio"
+         name="SW67 Studio"
+         tear_off="true">
+            <menu_item_call
+             label="Accessibility..."
+             name="SW67 Accessibility">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_accessibility" />
+            </menu_item_call>
+            <menu_item_call
+             label="Workspace Profiles..."
+             name="SW67 Workspaces">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_workspaces" />
+            </menu_item_call>
+            <menu_item_call
+             label="Performance Assistant..."
+             name="SW67 Performance">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_performance" />
+            </menu_item_call>
+            <menu_item_call
+             label="Creator Projects..."
+             name="SW67 Creator Projects">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_creator_projects" />
+            </menu_item_call>
+            <menu_item_call
+             label="Product Photography..."
+             name="SW67 Product Photo">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_product_photo" />
+            </menu_item_call>
+        </menu>
         <menu_item_call
          label="Lightbox..."
          name="Lightbox Settings">

@@ -22,6 +22,13 @@ add_library(
   src/color.cpp
   src/profile.cpp
   src/gate.cpp
+  src/json.cpp
+  src/settings_policy.cpp
+  src/workspace_profile.cpp
+  src/perf_assistant.cpp
+  src/creator_project.cpp
+  src/photo_product.cpp
+  src/entitlements.cpp
 )
 add_library(sw67::core ALIAS sw67core)
 target_include_directories(sw67core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -45,11 +52,24 @@ if(SW67_BUILD_TESTS OR (DEFINED AL_BUILD_TESTS AND AL_BUILD_TESTS))
     tests/color_test.cpp
     tests/profile_test.cpp
     tests/gate_test.cpp
+    tests/json_test.cpp
+    tests/settings_policy_test.cpp
+    tests/workspace_test.cpp
+    tests/perf_test.cpp
+    tests/creator_test.cpp
+    tests/photo_test.cpp
+    tests/entitlements_test.cpp
   )
   target_link_libraries(sw67core_tests PRIVATE sw67core Catch2::Catch2WithMain)
   if(TARGET al::flags)
     target_link_libraries(sw67core_tests PRIVATE al::flags)
   endif()
+  # The shipped plan catalogue is tested as it ships.
+  target_compile_definitions(
+    sw67core_tests
+    PRIVATE
+      SW67_PLANS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../newview/app_settings/sw67_plans.json"
+  )
   set_target_properties(sw67core_tests PROPERTIES FOLDER "Tests/sw67core")
   if(SW67_STANDALONE)
     enable_testing()

@@ -261,7 +261,13 @@ if(AL_BUILD_VIEWER)
     alfloaterscriptstudio.cpp
     sw67accessibility.cpp
     sw67floateraccessibility.cpp
+    sw67floatercreatorprojects.cpp
+    sw67floaterperformance.cpp
+    sw67floaterproductphoto.cpp
+    sw67floaterworkspaces.cpp
     sw67rlvstate.cpp
+    sw67viewerfiles.cpp
+    sw67workspaces.cpp
     alfloaterwebprofile.cpp
     alfloaterxuilibrary.cpp
     alfloaterxuistudio.cpp
@@ -1146,7 +1152,13 @@ if(AL_BUILD_VIEWER)
     alfloaterscriptstudio.h
     sw67accessibility.h
     sw67floateraccessibility.h
+    sw67floatercreatorprojects.h
+    sw67floaterperformance.h
+    sw67floaterproductphoto.h
+    sw67floaterworkspaces.h
     sw67rlvstate.h
+    sw67viewerfiles.h
+    sw67workspaces.h
     alfloaterwebprofile.h
     alfloaterxuilibrary.h
     alfloaterxuistudio.h
@@ -2086,6 +2098,7 @@ if(AL_BUILD_VIEWER)
     app_settings/settings_per_account.xml
     app_settings/settings_per_account_alchemy.xml
     app_settings/settings_sw67.xml
+    app_settings/sw67_plans.json
     app_settings/std_bump.ini
     app_settings/toolbars.xml
     app_settings/trees.xml
