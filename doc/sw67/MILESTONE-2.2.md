@@ -207,14 +207,13 @@ The tests check the spec's rules directly:
   - Missing recipients, a zero prize, an over-budget total and over-long
     chat are all caught.
 
-**Not yet tested:** none of the five windows has run in a built viewer. The
-first CI build of this increment is their compile check. Then run the
-in-world checks in section 5.
+**Viewer build:** CI run 44172959621 (commit b74362e57f) built the viewer
+with all five windows on Windows x64 and Linux x64 at the first attempt, and
+produced installers. **Not yet tested:** none of the windows has run in-world;
+the checks in section 5 are next.
 
 ## 3. Limits and blockers
 
-- **Viewer build pending.** Expect a round of compile fixes in the five new
-  windows.
 - **Backups** cover boolean, number and text settings. Colours, vectors and
   rectangles (a few dozen, mostly debug) are not included yet. Some restored
   settings take effect after a restart.
