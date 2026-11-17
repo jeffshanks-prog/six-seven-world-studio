@@ -11,7 +11,6 @@ from urllib.parse import parse_qsl, urlencode, urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import os  # noqa: E402
-from http.server import BaseHTTPRequestHandler  # noqa: E402
 
 from kingjahmir.config import Config, ConfigError  # noqa: E402
 from kingjahmir.server import App, Handler  # noqa: E402
@@ -41,10 +40,9 @@ else:
     Handler.app = App(Config.from_env())  # once per instance, reused by its requests
 
 
-class _NotSetUp(BaseHTTPRequestHandler):
-    """Answers every request with what is missing, instead of Vercel's crash page."""
-
-    def _dispatch(self):
+class handler(Handler):  # noqa: N801 - the name Vercel's Python runtime looks for
+    def _not_set_up(self):
+        """Says what is missing, instead of Vercel's crash page."""
         body = (
             "King Jahmir is not set up yet.\n\n" + SETUP_PROBLEM + "\n\n"
             "Add them in Vercel (king-jahmir > Settings > Environment Variables), "
@@ -58,11 +56,9 @@ class _NotSetUp(BaseHTTPRequestHandler):
         if self.command != "HEAD":
             self.wfile.write(body)
 
-    do_GET = do_POST = do_PUT = do_DELETE = do_HEAD = _dispatch
-
-
-class _Gateway(Handler):
     def _dispatch(self):
+        if SETUP_PROBLEM:
+            return self._not_set_up()
         # vercel.json passes the original path as ?__kjpath=...; put it back.
         parts = urlsplit(self.path)
         query = parse_qsl(parts.query, keep_blank_values=True)
@@ -72,7 +68,4 @@ class _Gateway(Handler):
             self.path = "/" + original.lstrip("/") + (f"?{rest}" if rest else "")
         return super()._dispatch()
 
-    do_GET = do_POST = do_PUT = do_DELETE = _dispatch
-
-
-handler = _NotSetUp if SETUP_PROBLEM else _Gateway  # the name Vercel's Python runtime looks for
+    do_GET = do_POST = do_PUT = do_DELETE = do_HEAD = _dispatch
