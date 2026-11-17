@@ -38,8 +38,8 @@ namespace
 {
 constexpr const char* kStoreType = "sw67_king_jahmir";
 constexpr const char* kStoreId = "session";
-constexpr F32 kConnectTimeout = 10.f;
-constexpr F32 kTransferTimeout = 150.f; // a turn may take several model calls
+constexpr unsigned int kConnectTimeout = 10; // seconds
+constexpr unsigned int kTransferTimeout = 150; // seconds; a turn may take several model calls
 
 // Windows a reply may link to: doc/sw67/help/features.json "screens".
 constexpr std::array<std::string_view, 15> kScreens = {
