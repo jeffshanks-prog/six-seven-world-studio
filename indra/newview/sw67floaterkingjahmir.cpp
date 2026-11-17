@@ -227,7 +227,25 @@ void SW67FloaterKingJahmir::refresh()
     LLTextBox* status = getChild<LLTextBox>("status_text");
     if (st.text.empty())
     {
-        status->setText(conv.waiting() ? "King Jahmir is thinking..." : std::string());
+        // Say up front when he cannot answer, not only after a message.
+        std::string idle;
+        if (conv.waiting())
+        {
+            idle = "King Jahmir is thinking...";
+        }
+        else if (kj::gatewayUrl().empty())
+        {
+            idle = sw67viewer::statusText(sw67::a11y::StatusRole::Warning) +
+                   "  Not set up yet: his server isn't connected.";
+        }
+        else if (!kj::signedIn())
+        {
+            idle = sw67viewer::statusText(sw67::a11y::StatusRole::Warning) +
+                   "  Not signed in: see Settings & privacy.";
+        }
+        status->setText(idle);
+        status->setColor(LLUIColor(sw67viewer::statusColor(conv.waiting() ? sw67::a11y::StatusRole::Info
+                                                                          : sw67::a11y::StatusRole::Warning)));
     }
     else
     {
@@ -261,9 +279,9 @@ void SW67FloaterKingJahmir::refresh()
         ->setText(signedIn ? sw67viewer::statusText(sw67::a11y::StatusRole::Success) + "  Signed in to 6|7."
                            : sw67viewer::statusText(sw67::a11y::StatusRole::Neutral) + "  Not signed in.");
     getChild<LLUICtrl>("sign_out_btn")->setEnabled(signedIn);
-    std::string retention = "Conversations are stored on the King Jahmir server";
-    retention += boot.retentionDays > 0 ? " for " + std::to_string(boot.retentionDays) + " days, then deleted."
-                                        : " for a limited time, then deleted.";
+    // One line: the preferences heading sits right below it.
+    std::string retention = "The server deletes conversations after ";
+    retention += boot.retentionDays > 0 ? std::to_string(boot.retentionDays) + " days." : "a set time.";
     getChild<LLTextBox>("retention_text")->setText(retention);
 }
 
@@ -565,6 +583,10 @@ void SW67FloaterKingJahmirBubble::refresh()
     if (kj::conversation().waiting())
     {
         label += " He is answering.";
+    }
+    else if (kj::gatewayUrl().empty() || !kj::signedIn())
+    {
+        label += " Not set up yet, so he can't answer.";
     }
     btn->setToolTip(label);
 }
