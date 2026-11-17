@@ -29,6 +29,7 @@ add_library(
   src/creator_project.cpp
   src/photo_product.cpp
   src/entitlements.cpp
+  src/assistant_chat.cpp
 )
 add_library(sw67::core ALIAS sw67core)
 target_include_directories(sw67core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -59,6 +60,7 @@ if(SW67_BUILD_TESTS OR (DEFINED AL_BUILD_TESTS AND AL_BUILD_TESTS))
     tests/creator_test.cpp
     tests/photo_test.cpp
     tests/entitlements_test.cpp
+    tests/assistant_test.cpp
   )
   target_link_libraries(sw67core_tests PRIVATE sw67core Catch2::Catch2WithMain)
   if(TARGET al::flags)

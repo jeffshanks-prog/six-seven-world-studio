@@ -44,6 +44,7 @@ M2 increments, as the spec prioritises them:
 |---|---|---|---|---|---|
 | A | Accessibility framework | M1 | Alchemy CVD pass (`RenderCVDMode`), `UIScaleFactor` | Always included | **Implemented** (core); viewer window untested in-world |
 | B | RLV / RLVa | M1 | RLVa 2.5.0 (`indra/newview/rlv*`) | Always included | **Implemented, untested in-world** (gate tested) |
+| — | King Jahmir AI guide | M2 / M3 | Gateway `services/king-jahmir` (Claude API), help pages and registry `doc/sw67/help`, `sw67core/assistant`, `sw67floaterkingjahmir` | Basic (AI metering with M3) | **Implemented**: gateway and core, tested; viewer panel and bubble **untested in-world**; account tools wait for an Avatar Life records service ([KING-JAHMIR.md](KING-JAHMIR.md)) |
 | 14 | Workspace Profiles | M2.1 | `LLFloaterReg`, floater rects, `toolbars.xml` (`LLToolBarView`), `key_bindings.xml` (`LLViewerInput`) | Basic | **Implemented, untested in-world** |
 | 8 | Performance Assistant | M2.1 | `LLTrace` frame recording (`LLStatViewer::FPS`, `FRAMETIME`, `SIM_PING`, `PACKETS_LOST_PERCENT`), `LLTextureFetch`, avatar impostor state; graphics settings `LLPresetsManager` manages | Basic | **Implemented, untested in-world** |
 | 5 | Creator Project Manager | M2.1 | Script Studio (`alfloaterscriptstudio`, its external-file masters) for scripts later | Basic (files never gated) | **Implemented, untested in-world**; inventory linking from the window **Planned** (manifest and tests support it) |

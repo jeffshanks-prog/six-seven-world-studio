@@ -15,6 +15,7 @@ and is licensed under the [GNU LGPL 2.1](LICENSE). See [NOTICE](NOTICE).
 - Milestone 2 (first local tools: workspace profiles, performance assistant, creator projects, product photography): [doc/sw67/MILESTONE-2.md](doc/sw67/MILESTONE-2.md)
 - Roadmap, module map and plans: [doc/sw67/ROADMAP.md](doc/sw67/ROADMAP.md)
 - RLV: [doc/sw67/RLV.md](doc/sw67/RLV.md)
+- King Jahmir AI guide (gateway, viewer panel, status): [doc/sw67/KING-JAHMIR.md](doc/sw67/KING-JAHMIR.md)
 - Upstream build reference: [doc/BUILD.md](doc/BUILD.md)
 
 ## Quick build

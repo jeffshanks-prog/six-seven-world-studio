@@ -215,6 +215,7 @@
 #include "rlvfloaters.h"
 #include "sw67floateraccessibility.h"
 #include "sw67floatercreatorprojects.h"
+#include "sw67floaterkingjahmir.h"
 #include "sw67floaterperformance.h"
 #include "sw67floaterproductphoto.h"
 #include "sw67floaterworkspaces.h"
@@ -545,6 +546,8 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("sw67_performance", "floater_sw67_performance.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPerformance>);
     LLFloaterReg::add("sw67_creator_projects", "floater_sw67_creator_projects.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterCreatorProjects>);
     LLFloaterReg::add("sw67_product_photo", "floater_sw67_product_photo.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterProductPhoto>);
+    LLFloaterReg::add("sw67_king_jahmir", "floater_sw67_king_jahmir.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterKingJahmir>);
+    LLFloaterReg::add("sw67_king_jahmir_bubble", "floater_sw67_king_jahmir_bubble.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterKingJahmirBubble>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

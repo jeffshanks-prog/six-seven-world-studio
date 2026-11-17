@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: King Jahmir, the 6|7 AI guide.
+     Colours: gold #D4AF37, black #111111, charcoal #333333, white #FFFFFF
+     (colors.xml SW67*). Gold on black 9.6:1, white on charcoal 12.6:1.
+     Keyboard: Tab moves through the controls; Enter in the message box
+     sends; Esc closes. Every status starts with a symbol and a word, so it
+     reads without colour. A- and A+ change the conversation's text size. -->
+<floater
+ bg_opaque_color="SW67Charcoal"
+ bg_alpha_color="SW67Charcoal"
+ background_visible="true"
+ background_opaque="true"
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="660"
+ width="440"
+ min_height="520"
+ min_width="360"
+ layout="topleft"
+ name="sw67_king_jahmir"
+ save_rect="true"
+ single_instance="true"
+ title="KING JAHMIR">
+  <icon
+   follows="left|top"
+   height="24"
+   image_name="SW67_KingJahmir_Crown"
+   layout="topleft"
+   left="10"
+   name="crown_icon"
+   tool_tip="King Jahmir's crown"
+   top="24"
+   width="24" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="40"
+   name="name_text"
+   text_color="SW67Gold"
+   top="24"
+   width="380">King Jahmir, your 6|7 AI guide</text>
+  <text
+   follows="left|top|right"
+   font="SansSerifSmall"
+   height="14"
+   layout="topleft"
+   left="40"
+   name="mode_text"
+   text_color="SW67White"
+   top="40"
+   width="390">AI assistant</text>
+  <tab_container
+   follows="all"
+   height="600"
+   layout="topleft"
+   left="0"
+   name="tabs"
+   tab_position="top"
+   tab_min_width="120"
+   top="58"
+   width="440">
+    <panel
+     bg_opaque_color="SW67Charcoal"
+     background_visible="true"
+     background_opaque="true"
+     follows="all"
+     height="580"
+     label="Chat"
+     layout="topleft"
+     name="chat_panel"
+     width="440">
+      <text
+       follows="left|top|right"
+       height="18"
+       layout="topleft"
+       left="10"
+       name="status_text"
+       text_color="SW67White"
+       tool_tip="King Jahmir's status"
+       top="6"
+       width="420" />
+      <text_editor
+       bg_readonly_color="SW67Black"
+       bg_writeable_color="SW67Black"
+       follows="all"
+       height="250"
+       layout="topleft"
+       left="10"
+       max_length="262144"
+       name="transcript"
+       read_only="true"
+       tab_group="1"
+       text_color="SW67White"
+       text_readonly_color="SW67White"
+       tool_tip="The conversation. Gold underlined text opens an app window or a help page when clicked."
+       top="28"
+       width="420"
+       word_wrap="true" />
+      <panel
+       follows="left|right|bottom"
+       height="56"
+       layout="topleft"
+       left="10"
+       name="starters_panel"
+       top="284"
+       width="420">
+        <button follows="left|top" height="24" label="Explain my stats" layout="topleft" left="0" name="starter_0" tab_group="2" top="0" width="136" />
+        <button follows="left|top" height="24" label="How do I use this feature?" layout="topleft" left="142" name="starter_1" tab_group="2" top="0" width="136" />
+        <button follows="left|top" height="24" label="Help me build furniture" layout="topleft" left="284" name="starter_2" tab_group="2" top="0" width="136" />
+        <button follows="left|top" height="24" label="Show my next level requirements" layout="topleft" left="0" name="starter_3" tab_group="2" top="30" width="136" />
+        <button follows="left|top" height="24" label="Troubleshoot a problem" layout="topleft" left="142" name="starter_4" tab_group="2" top="30" width="136" />
+        <button follows="left|top" height="24" label="What can I do here?" layout="topleft" left="284" name="starter_5" tab_group="2" top="30" width="136" />
+      </panel>
+      <panel
+       bg_opaque_color="SW67Black"
+       background_visible="true"
+       background_opaque="true"
+       follows="left|right|bottom"
+       height="110"
+       layout="topleft"
+       left="10"
+       name="confirm_panel"
+       top="284"
+       visible="false"
+       width="420">
+        <text
+         follows="left|top|right"
+         font="SansSerifBold"
+         height="16"
+         layout="topleft"
+         left="6"
+         name="confirm_title"
+         text_color="SW67Gold"
+         top="4"
+         width="408">Confirm?</text>
+        <text_editor
+         bg_readonly_color="SW67Charcoal"
+         follows="left|top|right"
+         height="52"
+         layout="topleft"
+         left="6"
+         name="confirm_preview"
+         read_only="true"
+         tab_group="3"
+         text_readonly_color="SW67White"
+         tool_tip="What would be sent or saved. Nothing happens until you press Confirm."
+         top="22"
+         width="408"
+         word_wrap="true" />
+        <button follows="left|top" height="24" label="Confirm" layout="topleft" left="6" name="confirm_btn" tab_group="3" tool_tip="Send or save exactly what is shown above." top="80" width="120" />
+        <button follows="left|top" height="24" label="Cancel" layout="topleft" left="132" name="cancel_action_btn" tab_group="3" tool_tip="Nothing is sent or saved." top="80" width="120" />
+      </panel>
+      <button follows="left|bottom" height="22" label="Open" layout="topleft" left="10" name="open_0" tab_group="4" tool_tip="Opens the window King Jahmir suggested." top="400" visible="false" width="136" />
+      <button follows="left|bottom" height="22" label="Open" layout="topleft" left="152" name="open_1" tab_group="4" tool_tip="Opens the window King Jahmir suggested." top="400" visible="false" width="136" />
+      <button follows="left|bottom" height="22" label="Open" layout="topleft" left="294" name="open_2" tab_group="4" tool_tip="Opens the window King Jahmir suggested." top="400" visible="false" width="136" />
+      <line_editor
+       follows="left|right|bottom"
+       height="24"
+       label="Ask King Jahmir..."
+       layout="topleft"
+       left="10"
+       max_length_chars="4000"
+       name="message_input"
+       tab_group="5"
+       tool_tip="Type your message, then press Enter or Send."
+       top="428"
+       width="350" />
+      <button follows="right|bottom" height="24" label="Send" layout="topleft" left="364" name="send_btn" tab_group="5" tool_tip="Send your message to King Jahmir." top="428" width="66" />
+      <button follows="left|bottom" height="22" label="Retry" layout="topleft" left="10" name="retry_btn" tab_group="6" tool_tip="Send the same message again. It is answered once, however often you retry." top="458" visible="false" width="80" />
+      <button follows="left|bottom" height="22" label="Stop waiting" layout="topleft" left="94" name="stop_btn" tab_group="6" tool_tip="Give up on the message that has not been answered." top="458" visible="false" width="100" />
+      <button follows="right|bottom" height="22" label="A-" layout="topleft" left="330" name="text_smaller_btn" tab_group="6" tool_tip="Smaller conversation text" top="458" width="48" />
+      <button follows="right|bottom" height="22" label="A+" layout="topleft" left="382" name="text_larger_btn" tab_group="6" tool_tip="Larger conversation text" top="458" width="48" />
+      <button follows="left|bottom" height="22" label="New conversation" layout="topleft" left="10" name="new_btn" tab_group="7" tool_tip="Start over. The current conversation stays in your history until you delete it." top="486" width="130" />
+      <button follows="left|bottom" height="22" label="History" layout="topleft" left="146" name="history_btn" tab_group="7" tool_tip="Load your past conversations into the list." top="486" width="70" />
+      <combo_box
+       enabled="false"
+       follows="left|right|bottom"
+       height="22"
+       label="Press History"
+       layout="topleft"
+       left="222"
+       name="history_combo"
+       tab_group="7"
+       tool_tip="Open a past conversation."
+       top="486"
+       width="208" />
+      <button follows="left|bottom" height="22" label="Delete conversation" layout="topleft" left="10" name="delete_btn" tab_group="8" tool_tip="Delete this conversation from the King Jahmir server. You will be asked to confirm." top="514" width="150" />
+      <button follows="left|bottom" height="22" label="Delete all" layout="topleft" left="166" name="delete_all_btn" tab_group="8" tool_tip="Delete every conversation with King Jahmir from his server. You will be asked to confirm." top="514" width="100" />
+      <text
+       follows="left|right|bottom"
+       font="SansSerifSmall"
+       height="28"
+       layout="topleft"
+       left="10"
+       name="ai_note"
+       text_color="SW67White"
+       top="542"
+       width="420"
+       word_wrap="true">King Jahmir is an AI assistant and can make mistakes. He never sees your private chats, inventory or other residents' information.</text>
+    </panel>
+    <panel
+     bg_opaque_color="SW67Charcoal"
+     background_visible="true"
+     background_opaque="true"
+     follows="all"
+     height="580"
+     label="Settings &amp; privacy"
+     layout="topleft"
+     name="settings_panel"
+     width="440">
+      <text follows="left|top" font="SansSerifBold" height="16" layout="topleft" left="10" name="gateway_heading" text_color="SW67Gold" top="8" width="420">King Jahmir server</text>
+      <line_editor
+       follows="left|top|right"
+       height="22"
+       label="https://..."
+       layout="topleft"
+       left="10"
+       max_length_chars="200"
+       name="gateway_input"
+       tab_group="1"
+       tool_tip="The address of the King Jahmir gateway your 6|7 provider runs."
+       top="28"
+       width="340" />
+      <button follows="right|top" height="22" label="Save" layout="topleft" left="356" name="gateway_save_btn" tab_group="1" top="28" width="74" />
+      <text follows="left|top|right" height="16" layout="topleft" left="10" name="gateway_note" text_color="SW67White" top="54" width="420" />
+      <text follows="left|top" font="SansSerifBold" height="16" layout="topleft" left="10" name="account_heading" text_color="SW67Gold" top="76" width="420">6|7 sign-in</text>
+      <text follows="left|top|right" height="16" layout="topleft" left="10" name="account_status_text" text_color="SW67White" top="96" width="420" />
+      <line_editor
+       follows="left|top|right"
+       height="22"
+       is_password="true"
+       label="Paste your 6|7 session token"
+       layout="topleft"
+       left="10"
+       max_length_chars="4096"
+       name="token_input"
+       tab_group="2"
+       tool_tip="Your 6|7 session token. It is kept in the viewer's protected store, never in settings. This is not your Second Life password."
+       top="116"
+       width="250" />
+      <button follows="right|top" height="22" label="Sign in" layout="topleft" left="266" name="sign_in_btn" tab_group="2" top="116" width="80" />
+      <button follows="right|top" height="22" label="Sign out" layout="topleft" left="350" name="sign_out_btn" tab_group="2" top="116" width="80" />
+      <text follows="left|top" font="SansSerifBold" height="16" layout="topleft" left="10" name="privacy_heading" text_color="SW67Gold" top="150" width="420">Privacy (all off until you turn them on)</text>
+      <check_box control_name="SW67KingJahmirContextual" follows="left|top" height="16" label="Use this screen for help (sends the front window's name)" layout="topleft" left="10" name="contextual_check" tab_group="3" tool_tip="Lets you ask &quot;Explain this screen&quot;. Only the window's name and feature are sent." top="170" width="420" />
+      <check_box control_name="SW67KingJahmirAccountHelp" follows="left|top" height="16" label="Live account help (read my own records)" layout="topleft" left="10" name="account_check" tab_group="3" tool_tip="Lets King Jahmir read your own stats, level and activity records when you ask. No records service exists yet." top="192" width="420" />
+      <check_box control_name="SW67KingJahmirMemory" follows="left|top" height="16" label="Remember my preferences across conversations" layout="topleft" left="10" name="memory_check" tab_group="3" tool_tip="King Jahmir may propose saving a preference; nothing is saved until you confirm." top="214" width="420" />
+      <check_box control_name="SW67KingJahmirBubble" follows="left|top" height="16" label="Show the crown bubble after login" layout="topleft" left="10" name="bubble_check" tab_group="3" top="236" width="420" />
+      <text follows="left|top|right" height="16" layout="topleft" left="10" name="retention_text" text_color="SW67White" top="258" width="420" word_wrap="true" />
+      <text follows="left|top" font="SansSerifBold" height="16" layout="topleft" left="10" name="prefs_heading" text_color="SW67Gold" top="282" width="420">Saved preferences</text>
+      <scroll_list
+       draw_heading="true"
+       follows="all"
+       height="120"
+       layout="topleft"
+       left="10"
+       name="pref_list"
+       tab_group="4"
+       tool_tip="Preferences King Jahmir remembers about you. Select one to delete it."
+       top="302"
+       width="420">
+        <scroll_list.columns label="Preference" name="key" width="150" />
+        <scroll_list.columns label="Value" name="value" dynamicwidth="true" />
+      </scroll_list>
+      <line_editor follows="left|bottom" height="22" label="name, e.g. answer_length" layout="topleft" left="10" max_length_chars="40" name="pref_key_input" tab_group="5" top="430" width="160" />
+      <line_editor follows="left|right|bottom" height="22" label="value, e.g. short" layout="topleft" left="176" max_length_chars="200" name="pref_value_input" tab_group="5" top="430" width="254" />
+      <button follows="left|bottom" height="22" label="Save preference" layout="topleft" left="10" name="pref_save_btn" tab_group="5" top="458" width="130" />
+      <button follows="left|bottom" height="22" label="Delete selected" layout="topleft" left="146" name="pref_delete_btn" tab_group="5" top="458" width="130" />
+      <button follows="left|bottom" height="22" label="Refresh" layout="topleft" left="282" name="pref_refresh_btn" tab_group="5" top="458" width="80" />
+      <text
+       follows="left|right|bottom"
+       font="SansSerifSmall"
+       height="60"
+       layout="topleft"
+       left="10"
+       name="voice_note"
+       text_color="SW67White"
+       top="490"
+       width="420"
+       word_wrap="true">Voice input and read-aloud: UNAVAILABLE. The viewer has no speech engine yet; text chat works on its own. This software is not provided or supported by Linden Lab, the makers of Second Life.</text>
+    </panel>
+  </tab_container>
+</floater>

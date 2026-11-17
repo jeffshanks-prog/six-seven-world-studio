@@ -262,9 +262,11 @@ if(AL_BUILD_VIEWER)
     sw67accessibility.cpp
     sw67floateraccessibility.cpp
     sw67floatercreatorprojects.cpp
+    sw67floaterkingjahmir.cpp
     sw67floaterperformance.cpp
     sw67floaterproductphoto.cpp
     sw67floaterworkspaces.cpp
+    sw67kingjahmir.cpp
     sw67rlvstate.cpp
     sw67viewerfiles.cpp
     sw67workspaces.cpp
@@ -1153,9 +1155,11 @@ if(AL_BUILD_VIEWER)
     sw67accessibility.h
     sw67floateraccessibility.h
     sw67floatercreatorprojects.h
+    sw67floaterkingjahmir.h
     sw67floaterperformance.h
     sw67floaterproductphoto.h
     sw67floaterworkspaces.h
+    sw67kingjahmir.h
     sw67rlvstate.h
     sw67viewerfiles.h
     sw67workspaces.h

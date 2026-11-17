@@ -177,6 +177,13 @@
          name="SW67 Studio"
          tear_off="true">
             <menu_item_call
+             label="King Jahmir"
+             name="SW67 King Jahmir">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_king_jahmir" />
+            </menu_item_call>
+            <menu_item_call
              label="Accessibility..."
              name="SW67 Accessibility">
                 <menu_item_call.on_click

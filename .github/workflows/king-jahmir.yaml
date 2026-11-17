@@ -1,0 +1,30 @@
+# 6|7 World Studio: the King Jahmir gateway's tests (services/king-jahmir).
+# No network or API key needed. Runs on pull requests that touch it and by
+# hand only, to keep Actions minutes down.
+name: king-jahmir
+
+on:
+  pull_request:
+    paths: ["services/king-jahmir/**", "doc/sw67/help/**", ".github/workflows/king-jahmir.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test
+        working-directory: services/king-jahmir
+        run: |
+          pip install -r requirements.txt
+          KJ_AUTH_SECRET=ci-only-secret-0123456789abcdefghijklmnop python -m kingjahmir check-docs
+          python -m unittest -v

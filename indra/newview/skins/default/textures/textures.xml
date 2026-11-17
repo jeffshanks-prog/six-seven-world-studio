@@ -199,6 +199,7 @@ with the same filename but different name
   <texture name="Command_Stats_Icon"        file_name="toolbar_icons/stats.png"        preload="true" />
   <texture name="Command_Search_Icon"       file_name="toolbar_icons/search.png"       preload="true" />
   <texture name="Command_Snapshot_Icon"     file_name="toolbar_icons/snapshot.png"     preload="true" />
+  <texture name="SW67_KingJahmir_Crown" file_name="sw67/king_jahmir_crown.png" preload="true" />
   <texture name="Command_Snapshot_Disk_Icon" file_name="toolbar_icons/snapshot_disk.png"     preload="true" />
   <texture name="Command_Speak_Icon"        file_name="toolbar_icons/speak.png"        preload="true" />
   <texture name="Command_ToggleHUD_Icon"    file_name="toolbar_icons/toggle_hud.png"  preload="true" />
