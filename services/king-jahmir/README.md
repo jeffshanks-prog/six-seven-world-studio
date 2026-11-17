@@ -66,8 +66,10 @@ for the retention clean-up. The help pages travel with it in
 editing `doc/sw67/help`; a test fails while the copy is stale).
 
 1. **Database.** In the Supabase project, open **Connect** and copy the
-   **Transaction pooler** connection string (port 6543). The gateway creates
-   its own tables (all named `kj_...`) on first start.
+   **Transaction pooler** connection string (port 6543) and put the database
+   password in it. The gateway creates its own tables (all named `kj_...`) on
+   first start, with row level security on and no policies, so Supabase's
+   Data API (the project's public key) can read none of them.
 2. **Project.** In Vercel, import the GitHub repository as a new project and
    set **Root Directory** to `services/king-jahmir`. No framework, no build
    command.

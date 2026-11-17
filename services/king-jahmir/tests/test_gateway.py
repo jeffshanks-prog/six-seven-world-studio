@@ -732,6 +732,20 @@ class ServerlessTests(Base):
         self.app.store.finish_request(USER, "race-key-01", {"reply": "x"})
         self.assertEqual(self.app.store.begin_request(USER, "race-key-01"), ("done", {"reply": "x"}))
 
+    def test_postgres_tables_closed_to_supabase_data_api(self):
+        if not TEST_DB:
+            self.skipTest("PostgreSQL only")
+        self.make()
+        from kingjahmir.store import _TABLE_NAMES
+        rows = self.app.store._q("SELECT relname, relrowsecurity FROM pg_class WHERE relname LIKE 'kj_%' "
+                                 "AND relkind='r'")
+        self.assertEqual({r["relname"] for r in rows}, set(_TABLE_NAMES))
+        self.assertTrue(all(r["relrowsecurity"] for r in rows))
+        if self.app.store._q("SELECT 1 AS one FROM pg_roles WHERE rolname='anon'"):
+            for t in _TABLE_NAMES:
+                self.assertFalse(self.app.store._q(
+                    "SELECT has_table_privilege('anon', ?, 'SELECT') AS ok", (t,))[0]["ok"], t)
+
     def test_cron_purge_needs_the_secret(self):
         self.make()
         with self.assertRaises(HttpError):
