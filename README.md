@@ -1,52 +1,34 @@
-<picture>
-  <source srcset="doc/alchemy_logo.png">
-  <img alt="Alchemy Viewer Logo" src="doc/alchemy_logo.png">
-</picture>
+# 6|7 World Studio
 
-# Alchemy Viewer
+A third-party viewer for [Second Life](https://secondlife.com) focused on
+automation, content creation, accessibility and events.
 
-[![License: LGPL 2.1](https://img.shields.io/badge/License-LGPL_2.1-blue.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/release/AlchemyViewer/Alchemy)](https://github.com/AlchemyViewer/Alchemy/releases)
-[![Discord](https://img.shields.io/badge/Discord-Join-7289da?logo=discord&logoColor=white)][discord]
+**This software is not provided or supported by Linden Lab, the makers of
+Second Life.**
 
-[Alchemy Viewer](https://www.alchemyviewer.org) is a third-party client for [Second Life](https://secondlife.com), forked from the official [Linden Lab viewer](https://github.com/secondlife/viewer). We focus on a cohesive, modern experience built on thoughtful defaults — while staying on the bleeding edge of new platform features.
+6|7 World Studio is built on the [Alchemy Viewer](https://github.com/AlchemyViewer/Alchemy),
+itself forked from the [Linden Lab viewer](https://github.com/secondlife/viewer),
+and is licensed under the [GNU LGPL 2.1](LICENSE). See [NOTICE](NOTICE).
 
-## 📥 Download
+- Foundation decision, licences and policy: [doc/sw67/FOUNDATION.md](doc/sw67/FOUNDATION.md)
+- Milestone 1 status, build and run instructions: [doc/sw67/MILESTONE-1.md](doc/sw67/MILESTONE-1.md)
+- RLV: [doc/sw67/RLV.md](doc/sw67/RLV.md)
+- Upstream build reference: [doc/BUILD.md](doc/BUILD.md)
 
-Most users install a [pre-built release][releasesgh] for Windows, macOS, or Linux. Release candidates and project viewers are announced on our [Discord server][discord].
-
-## 🔨 Building from source
-
-Alchemy uses CMake with vcpkg for dependency management. Platform setup, presets, build options, tests, packaging, and troubleshooting all live in [**doc/BUILD.md**](doc/BUILD.md).
+## Quick build
 
 ```
-git clone --recurse-submodules https://github.com/AlchemyViewer/Alchemy.git alchemy
-cd alchemy
-cmake -S indra --preset <preset>                     # see BUILD.md for presets
-cmake --build build-<OS>-<preset> --config Release
+git clone --recurse-submodules https://github.com/jeffshanks-prog/six-seven-world-studio.git
+cd six-seven-world-studio
+cmake -S indra --preset vs2026-os        # Windows; Linux: ninja-os
+cmake --build build-Windows-vs2026-os --config Release
 ```
 
-## 🤝 Contribute
+Open-source presets (`-os`) only: they need no proprietary SDKs.
 
-File bug reports, suggest enhancements, or open a pull request — see [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
+## Upstream
 
-## 🙏 Acknowledgements
-
-Alchemy stands on the work of:
-
-- [Linden Lab](https://www.lindenlab.com/) and the [Second Life Viewer](https://github.com/secondlife/viewer) contributors
-- The many open-source libraries that power the viewer (see [`indra/vcpkg.json`](indra/vcpkg.json))
-
-## 🔗 Resources
-
-- [Website](https://www.alchemyviewer.org)
-- [Downloads][releasesgh]
-- [Issue tracker](https://github.com/AlchemyViewer/Alchemy/issues)
-- [Discord][discord]
-
-## 📜 License
-
-Alchemy is licensed under the [GNU Lesser General Public License v2.1](LICENSE), inherited from the upstream Linden Lab viewer.
-
-[releasesgh]: https://github.com/AlchemyViewer/Alchemy/releases
-[discord]: https://discordapp.com/invite/KugCgs6
+```
+git remote add upstream https://github.com/AlchemyViewer/Alchemy.git
+git fetch upstream && git merge upstream/main
+```

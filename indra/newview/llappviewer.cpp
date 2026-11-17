@@ -684,7 +684,7 @@ LLAppViewer::LLAppViewer()
 
     // Need to do this initialization before we do anything else, since anything
     // that touches files should really go through the lldir API
-    gDirUtilp->initAppDirs("AlchemyNext");
+    gDirUtilp->initAppDirs("SixSevenWorldStudio");
     //
     // IMPORTANT! Do NOT put anything that will write
     // into the log files during normal startup until AFTER
@@ -2813,7 +2813,7 @@ namespace
             return log_file;
         }
 
-        return gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "Alchemy.log");
+        return gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "SixSevenWorldStudio.log");
     }
 
     // Sibling of the log file with its extension replaced (".old", ".crash").
@@ -2850,7 +2850,7 @@ namespace
         std::string log_file = LLError::logFileName();
         if (log_file.empty())
         {
-            log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "Alchemy.log");
+            log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "SixSevenWorldStudio.log");
         }
         return log_file;
     }
@@ -2901,14 +2901,14 @@ bool LLAppViewer::initConfiguration()
         if (gDirUtilp->fileExists(settings_file_list))
         {
             LL_ERRS() << "Cannot load default configuration file settings_files.xml. "
-                << "Please reinstall viewer from https://www.alchemyviewer.org/downloads "
+                << "Please reinstall viewer from https://github.com/jeffshanks-prog/six-seven-world-studio/releases "
                 << "and contact the Alchemy Viewer team if the issue persists after reinstall."
                 << LL_ENDL;
         }
         else
         {
             LL_ERRS() << "Default configuration file settings_files.xml not found. "
-                << "Please reinstall viewer from https://www.alchemyviewer.org/downloads "
+                << "Please reinstall viewer from https://github.com/jeffshanks-prog/six-seven-world-studio/releases "
                 << "and contact the Alchemy Viewer team if issue persists after reinstall."
                 << LL_ENDL;
         }
@@ -3306,7 +3306,9 @@ bool LLAppViewer::initConfiguration()
     }
     else
     {
-        gWindowTitle = LLTrans::getString("APP_NAME");
+        // 6|7 World Studio: the TPV policy (1.g) asks for the release name and
+        // version on the login screen; the window title carries both.
+        gWindowTitle = LLTrans::getString("APP_NAME") + " " + LLVersionInfo::instance().getVersion();
     }
 #if LL_DEBUG
     gWindowTitle += std::string(" [DEBUG]");

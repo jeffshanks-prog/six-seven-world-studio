@@ -1,0 +1,24 @@
+6|7 World Studio
+Copyright (c) 2026, 6|7 World Studio contributors.
+
+This software is not provided or supported by Linden Lab, the makers of
+Second Life. Second Life is a trademark of Linden Research, Inc.; it is used
+here only to name the platform this viewer connects to.
+
+6|7 World Studio is a modified version of the Alchemy Viewer
+(https://github.com/AlchemyViewer/Alchemy), Copyright (c) Alchemy Development
+Group and contributors, which is based on the Second Life Viewer source code,
+Copyright (c) Linden Research, Inc. and contributors. RLVa is Copyright (c)
+Kitty Barnett. These are licensed under the GNU Lesser General Public License,
+version 2.1 (see LICENSE and doc/LGPL-license.txt). Linden Lab's viewer
+artwork is under doc/LICENSE-logos.txt.
+
+Our modifications, including indra/sw67core and indra/newview/sw67*, are
+licensed under the same LGPL 2.1.
+
+Alchemy's branding artwork (the alchemy-branding package, All Rights
+Reserved) is not included. The 6|7 World Studio icons and artwork in
+indra/newview/sw67branding and the login logos are our own.
+
+Third-party libraries bundled with builds carry their own licences, which the
+build installs beside the viewer from each vcpkg port's copyright file.

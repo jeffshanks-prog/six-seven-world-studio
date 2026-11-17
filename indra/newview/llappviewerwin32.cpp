@@ -112,7 +112,7 @@ void ll_nvapi_init(NvDRSSessionHandle hSession)
     }
 
     NvAPI_UnicodeString profile_name;
-    std::wstring w_app_name = TEXT("Alchemy Viewer");
+    std::wstring w_app_name = TEXT("6|7 World Studio");
     wsprintf(reinterpret_cast<wchar_t*>(profile_name), L"%s", w_app_name.c_str());
     NvDRSProfileHandle hProfile = 0;
     // (3) Check if we already have an application profile for the viewer

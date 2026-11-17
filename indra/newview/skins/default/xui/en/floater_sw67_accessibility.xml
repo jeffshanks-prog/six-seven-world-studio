@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: accessibility profile. Keyboard: Tab moves between
+     controls in order; every control has a text label. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="false"
+ height="470"
+ width="470"
+ layout="topleft"
+ name="sw67_accessibility"
+ save_rect="true"
+ title="6|7 ACCESSIBILITY">
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="10"
+   name="interface_heading"
+   width="450">Interface</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="20"
+   top="34"
+   name="preset_label"
+   width="140">Colour preset:</text>
+  <combo_box
+   follows="left|top"
+   height="23"
+   layout="topleft"
+   left="160"
+   top="30"
+   name="preset_combo"
+   tool_tip="Colours for 6|7 panels and status indicators. Every status also shows a shape and a label."
+   width="200">
+    <combo_box.item label="Standard" name="standard" value="standard" />
+    <combo_box.item label="Protanopia" name="protanopia" value="protanopia" />
+    <combo_box.item label="Deuteranopia" name="deuteranopia" value="deuteranopia" />
+    <combo_box.item label="Tritanopia" name="tritanopia" value="tritanopia" />
+    <combo_box.item label="High contrast" name="high_contrast" value="high_contrast" />
+    <combo_box.item label="Custom" name="custom" value="custom" />
+  </combo_box>
+  <slider
+   can_edit_text="true"
+   decimal_digits="2"
+   follows="left|top"
+   height="16"
+   increment="0.05"
+   initial_value="1"
+   label="Text scale:"
+   label_width="135"
+   layout="topleft"
+   left="20"
+   min_val="0.75"
+   max_val="3"
+   name="text_scale"
+   tool_tip="Text size for 6|7 panels. Saved now; applied as each 6|7 module adopts the framework."
+   top="62"
+   width="400" />
+  <check_box
+   height="16"
+   label="Highlight keyboard focus"
+   layout="topleft"
+   left="20"
+   name="focus_highlight"
+   top="88"
+   width="200" />
+  <check_box
+   height="16"
+   label="Reduce motion"
+   layout="topleft"
+   left="240"
+   name="reduce_motion"
+   top="88"
+   width="200" />
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="20"
+   top="124"
+   name="preview_heading"
+   width="430">Status preview (colour, shape and label):</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="20"
+   top="150"
+   name="status_0"
+   width="105">OK</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="130"
+   top="150"
+   name="status_1"
+   width="105">Warning</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="240"
+   top="150"
+   name="status_2"
+   width="105">Error</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="350"
+   top="150"
+   name="status_3"
+   width="105">Info</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="20"
+   top="170"
+   name="status_4"
+   width="105">Idle</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="130"
+   top="170"
+   name="status_5"
+   width="105">Restricted</text>
+  <text
+   follows="left|top"
+   height="16"
+   layout="topleft"
+   left="240"
+   top="170"
+   name="status_6"
+   width="105">Live</text>
+  <text
+   follows="left|top"
+   height="32"
+   layout="topleft"
+   left="20"
+   top="194"
+   name="contrast_report"
+   word_wrap="true"
+   width="430">Contrast check</text>
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="236"
+   name="scene_heading"
+   width="450">3D scene colour filter (only on your screen, never in the interface)</text>
+  <combo_box
+   follows="left|top"
+   height="23"
+   layout="topleft"
+   left="20"
+   top="258"
+   name="scene_vision"
+   tool_tip="Adjusts the rendered world for your colour vision. Others in Second Life are not affected."
+   width="200">
+    <combo_box.item label="Off" name="off" value="typical" />
+    <combo_box.item label="Compensate: protanopia" name="protanopia" value="protanopia" />
+    <combo_box.item label="Compensate: deuteranopia" name="deuteranopia" value="deuteranopia" />
+    <combo_box.item label="Compensate: tritanopia" name="tritanopia" value="tritanopia" />
+  </combo_box>
+  <slider
+   can_edit_text="true"
+   decimal_digits="2"
+   follows="left|top"
+   height="16"
+   increment="0.05"
+   initial_value="1"
+   label="Strength:"
+   label_width="70"
+   layout="topleft"
+   left="230"
+   min_val="0"
+   max_val="1"
+   name="scene_strength"
+   top="262"
+   width="220" />
+  <check_box
+   height="16"
+   label="Also apply the filter to snapshots (off keeps exported images in true colour)"
+   layout="topleft"
+   left="20"
+   name="scene_in_snapshots"
+   top="290"
+   width="440" />
+  <text
+   follows="left|top"
+   font="SansSerifBold"
+   height="16"
+   layout="topleft"
+   left="10"
+   top="324"
+   name="rlv_heading"
+   width="450">RLV (RestrainedLove)</text>
+  <text
+   follows="left|top"
+   height="48"
+   layout="topleft"
+   left="20"
+   top="346"
+   name="rlv_status"
+   word_wrap="true"
+   width="430">RLV status</text>
+  <button
+   follows="left|top"
+   height="23"
+   label="Show active restrictions"
+   layout="topleft"
+   left="20"
+   name="rlv_show_btn"
+   top="400"
+   width="200" />
+  <button
+   follows="left|top"
+   height="23"
+   label="RLV settings..."
+   layout="topleft"
+   left="230"
+   name="rlv_prefs_btn"
+   tool_tip="RLV is off by default. Turn it on in Preferences; it takes effect at your next login."
+   top="400"
+   width="150" />
+</floater>

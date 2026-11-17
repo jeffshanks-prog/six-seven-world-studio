@@ -522,7 +522,7 @@ bool LLWindowSDL::createContext(int x, int y, int width, int height, int bits, b
     if (colorBits < 32)
     {
         setupFailure(
-                "Alchemy Viewer requires True Color (32-bit) to run in a window.\n"
+                "6|7 World Studio requires True Color (32-bit) to run in a window.\n"
                 "Please go to Control Panels -> Display -> Settings and\n"
                 "set the screen to 32-bit color.\n"
                 "Alternately, if you choose to run fullscreen, Alchemy Viewer\n"

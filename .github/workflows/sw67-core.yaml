@@ -1,0 +1,43 @@
+# 6|7 World Studio: builds and tests sw67core (accessibility framework, RLV
+# gate) on every push and pull request. Fast and cheap: no viewer
+# dependencies. The full viewer build is the Build workflow.
+name: sw67core
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["indra/sw67core/**", ".github/workflows/sw67-core.yaml"]
+  pull_request:
+    paths: ["indra/sw67core/**", ".github/workflows/sw67-core.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch Catch2 v3
+        shell: bash
+        run: |
+          git clone --depth 1 -b v3.7.1 https://github.com/catchorg/Catch2 "$RUNNER_TEMP/catch2"
+          cmake -S "$RUNNER_TEMP/catch2" -B "$RUNNER_TEMP/catch2-build" -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/catch2-install"
+          cmake --build "$RUNNER_TEMP/catch2-build" --config Release --parallel
+          cmake --install "$RUNNER_TEMP/catch2-build" --config Release
+      - name: Configure, build and test
+        shell: bash
+        run: |
+          cmake -S indra/sw67core -B build-sw67core -DSW67_BUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/catch2-install"
+          cmake --build build-sw67core --config Release --parallel
+          ctest --test-dir build-sw67core -C Release --output-on-failure

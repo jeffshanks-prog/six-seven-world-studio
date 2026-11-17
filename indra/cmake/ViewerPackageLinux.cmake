@@ -26,7 +26,7 @@ include_guard()
 
 set(
   AL_PACKAGE_CONTACT
-  "Alchemy Viewer Project <staff@alchemyviewer.org>"
+  "6|7 World Studio <noreply@users.noreply.github.com>"
   CACHE STRING
   "The maintainer the .deb and .rpm name"
 )
@@ -39,9 +39,9 @@ set(CPACK_AL_APP_ID "${AL_APP_ID}")
 set(CPACK_PACKAGE_CONTACT "${AL_PACKAGE_CONTACT}")
 set(
   CPACK_PACKAGE_DESCRIPTION
-  "Alchemy is a third-party viewer for Second Life and OpenSimulator grids,
-built on Linden Lab's viewer with a modern renderer, post-processing, and a
-script editor of its own."
+  "6|7 World Studio is a third-party viewer for Second Life, built on the
+Alchemy Viewer and Linden Lab's viewer source (LGPL-2.1). It is not provided
+or supported by Linden Lab, the makers of Second Life."
 )
 
 set(CPACK_DEBIAN_PACKAGE_NAME "${AL_LINUX_PACKAGE}")

@@ -21,7 +21,7 @@ include_guard()
 # ---------------------------------------------------------------------------
 # Names. The channel decides the application name and the package name.
 
-string(REGEX REPLACE "^Alchemy[ ]*" "" al_channel_variant "${AL_CHANNEL}")
+string(REGEX REPLACE "^67 World Studio[ ]*" "" al_channel_variant "${AL_CHANNEL}")
 string(TOLOWER "${al_channel_variant}" al_channel_variant_lower)
 if(al_channel_variant_lower MATCHES "^release")
   set(AL_CHANNEL_TYPE release)
@@ -33,12 +33,12 @@ else()
   set(AL_CHANNEL_TYPE test)
 endif()
 
-# "Alchemy Viewer" for the release channel, the channel name otherwise.
+# "67 World Studio" for the release channel, the channel name otherwise.
 if(AL_CHANNEL_TYPE STREQUAL "release")
-  set(AL_APP_NAME "Alchemy Viewer")
+  set(AL_APP_NAME "67 World Studio")
   string(REGEX REPLACE "^[Rr]elease[ ]*" "" al_package_suffix "${al_channel_variant}")
 else()
-  set(AL_APP_NAME "Alchemy ${al_channel_variant}")
+  set(AL_APP_NAME "67 World Studio ${al_channel_variant}")
   set(al_package_suffix "${al_channel_variant}")
 endif()
 string(REPLACE " " "" AL_APP_NAME_ONEWORD "${AL_APP_NAME}")
@@ -49,7 +49,7 @@ if(al_package_suffix)
   string(PREPEND al_package_suffix "_")
 endif()
 string(REPLACE "." "_" al_package_version "${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}")
-set(AL_PACKAGE_NAME "Alchemy${al_package_suffix}_${al_package_version}_${ARCH}")
+set(AL_PACKAGE_NAME "SixSevenWorldStudio${al_package_suffix}_${al_package_version}_${ARCH}")
 
 # The Linux desktop's names, one set to a channel so channels install side by
 # side. The application ID names the desktop entry, its icon and its AppStream
@@ -61,11 +61,11 @@ set(AL_PACKAGE_NAME "Alchemy${al_package_suffix}_${al_package_version}_${ARCH}")
 string(TOLOWER "${al_package_suffix}" al_linux_words)
 string(REGEX REPLACE "[^a-z0-9]+" "_" al_linux_words "${al_linux_words}")
 string(REGEX REPLACE "^_+|_+$" "" al_linux_words "${al_linux_words}")
-set(AL_APP_ID "org.alchemyviewer.viewer")
+set(AL_APP_ID "com.sixsevenworldstudio.viewer")
 if(AL_CHANNEL_TYPE STREQUAL "release")
-  set(AL_LINUX_PACKAGE "alchemy-viewer")
+  set(AL_LINUX_PACKAGE "sixseven-world-studio")
 else()
-  set(AL_LINUX_PACKAGE "alchemy")
+  set(AL_LINUX_PACKAGE "sixseven")
 endif()
 if(al_linux_words)
   # An element of the ID must not begin with a digit.

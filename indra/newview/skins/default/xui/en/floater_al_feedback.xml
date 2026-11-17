@@ -13,7 +13,7 @@
  single_instance="true"
  title="SEND FEEDBACK">
   <floater.string name="placeholder_problem">What happened, and what did you expect? Steps that make it happen again help the most.</floater.string>
-  <floater.string name="placeholder_idea">What would you like Alchemy to do, and what for?</floater.string>
+  <floater.string name="placeholder_idea">What would you like 6|7 World Studio to do, and what for?</floater.string>
   <floater.string name="placeholder_other">What's on your mind?</floater.string>
   <floater.string name="counter">[COUNT] / [MAX]</floater.string>
   <floater.string name="linked_date">[day,datetime,local] [mth,datetime,local]</floater.string>
@@ -39,7 +39,7 @@
   <floater.string name="logs_location_hidden">Logs name the places you've been, so they stay out while your location is hidden.</floater.string>
   <floater.string name="label_send">Send</floater.string>
   <floater.string name="label_send_held">Send ([SECONDS])</floater.string>
-  <floater.string name="send_tooltip">Send this report to the Alchemy developers (Ctrl+Enter)</floater.string>
+  <floater.string name="send_tooltip">Send this report to the 6|7 World Studio developers (Ctrl+Enter)</floater.string>
   <floater.string name="send_busy">Sending…</floater.string>
   <floater.string name="send_held">You can send another report in [SECONDS] seconds.</floater.string>
   <floater.string name="send_too_short">Write a little more first.</floater.string>
@@ -50,8 +50,8 @@
   <floater.string name="sending">Sending…</floater.string>
   <floater.string name="restored">Your unsent message is back.</floater.string>
   <floater.string name="restored_queued">This report is waiting to be sent automatically.</floater.string>
-  <floater.string name="kept_sent">Your report has now reached the Alchemy developers.</floater.string>
-  <floater.string name="kept_given_up">Your report couldn't reach the server, and Alchemy has stopped trying. It's still here to send.</floater.string>
+  <floater.string name="kept_sent">Your report has now reached the 6|7 World Studio developers.</floater.string>
+  <floater.string name="kept_given_up">Your report couldn't reach the server, and 6|7 World Studio has stopped trying. It's still here to send.</floater.string>
   <floater.string name="queued_one">An earlier report is waiting to be sent automatically.</floater.string>
   <floater.string name="queued_many">[COUNT] earlier reports are waiting to be sent automatically.</floater.string>
   <floater.string name="action_discard">Discard</floater.string>
@@ -66,7 +66,7 @@
   <floater.string name="title_system_info">SYSTEM INFORMATION</floater.string>
   <floater.string name="title_settings">SETTINGS YOU'VE CHANGED</floater.string>
   <floater.string name="title_whats_in">WHAT'S IN A REPORT</floater.string>
-  <floater.string name="whats_in">A report goes to the Alchemy developers' Sentry project, the one crash reports go to, and only when you press Send.
+  <floater.string name="whats_in">A report goes to the 6|7 World Studio developers' Sentry project, the one crash reports go to, and only when you press Send.
 
 Every report carries:
 - your message, and your email if you give one
@@ -448,7 +448,7 @@ A report that can't reach the server is kept and sent automatically for up to a 
    top="552"
    width="436"
    word_wrap="true">
-    Sent to the Alchemy developers when you press Send, and only then.
+    Sent to the 6|7 World Studio developers when you press Send, and only then.
   </text>
   <panel
    background_visible="true"

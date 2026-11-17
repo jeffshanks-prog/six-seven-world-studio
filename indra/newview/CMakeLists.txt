@@ -94,20 +94,23 @@ if(AL_BUILD_VIEWER)
   set(ICON_PATH "test")
   set(VIEWER_MACOSX_PHASE "d")
   string(TOLOWER ${AL_CHANNEL} channel_lower)
-  if(channel_lower MATCHES "^alchemy release")
+  if(channel_lower MATCHES "^67 world studio release")
     set(ICON_PATH "release")
     set(VIEWER_MACOSX_PHASE "f")
-  elseif(channel_lower MATCHES "^alchemy beta")
+  elseif(channel_lower MATCHES "^67 world studio beta")
     set(ICON_PATH "beta")
     set(VIEWER_MACOSX_PHASE "b")
-  elseif(channel_lower MATCHES "^alchemy project")
+  elseif(channel_lower MATCHES "^67 world studio project")
     set(ICON_PATH "project")
     set(VIEWER_MACOSX_PHASE "a")
   endif()
   message(VERBOSE "Copying icons for ${ICON_PATH}")
 
-  find_package(unofficial-alchemy-branding CONFIG REQUIRED)
-  set(BRANDING_SOURCE_DIR "${ALCHEMY_BRANDING_DIR}")
+  # 6|7 World Studio's own artwork, in-tree (scripts/branding/make_icons.py
+  # draws the placeholders). Alchemy's branding port is All Rights Reserved
+  # and is not used. The file names keep upstream's so the install and
+  # package steps need no change.
+  set(BRANDING_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sw67branding")
   # Linux's window takes the hicolor PNGs installed for the desktop entry
   # (ViewerInstall.cmake), and macOS's the bundle's alchemy.icns.
   if(WINDOWS)
@@ -256,6 +259,9 @@ if(AL_BUILD_VIEWER)
     altextureboost.cpp
     alwatersurface.cpp
     alfloaterscriptstudio.cpp
+    sw67accessibility.cpp
+    sw67floateraccessibility.cpp
+    sw67rlvstate.cpp
     alfloaterwebprofile.cpp
     alfloaterxuilibrary.cpp
     alfloaterxuistudio.cpp
@@ -1138,6 +1144,9 @@ if(AL_BUILD_VIEWER)
     altextureboost.h
     altexturetable.h
     alfloaterscriptstudio.h
+    sw67accessibility.h
+    sw67floateraccessibility.h
+    sw67rlvstate.h
     alfloaterwebprofile.h
     alfloaterxuilibrary.h
     alfloaterxuistudio.h
@@ -2076,6 +2085,7 @@ if(AL_BUILD_VIEWER)
     app_settings/settings_files.xml
     app_settings/settings_per_account.xml
     app_settings/settings_per_account_alchemy.xml
+    app_settings/settings_sw67.xml
     app_settings/std_bump.ini
     app_settings/toolbars.xml
     app_settings/trees.xml
@@ -2128,6 +2138,7 @@ if(AL_BUILD_VIEWER)
       al::flags
       alrender
       alscript
+      sw67core
       llaudio
       llcharacter
       llimage
@@ -2190,8 +2201,8 @@ if(AL_BUILD_VIEWER)
     target_link_libraries(${AL_VIEWER_BINARY_NAME} PRIVATE d3d11 dxgi)
 
     string(TOLOWER ${AL_CHANNEL} channel_lower)
-    if(channel_lower MATCHES "^alchemy release")
-      set(OUTPUT_BINARY_NAME "AlchemyViewer")
+    if(channel_lower MATCHES "^67 world studio release")
+      set(OUTPUT_BINARY_NAME "SixSevenWorldStudio")
     else()
       set(OUTPUT_BINARY_NAME "${AL_CHANNEL_ONEWORD}")
     endif()
@@ -2210,18 +2221,21 @@ if(AL_BUILD_VIEWER)
     set(MACOSX_EXECUTABLE_NAME "${AL_CHANNEL}")
     set(MACOSX_BUNDLE_INFO_STRING "${AL_CHANNEL}")
     set(MACOSX_BUNDLE_ICON_FILE "alchemy.icns")
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.alchemyviewer.viewer")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.sixsevenworldstudio.viewer")
     set(
       MACOSX_BUNDLE_LONG_VERSION_STRING
       "${AL_CHANNEL} ${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}"
     )
-    set(MACOSX_BUNDLE_BUNDLE_NAME "Alchemy")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "6|7 World Studio")
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}")
     set(
       MACOSX_BUNDLE_BUNDLE_VERSION
       "${VIEWER_SHORT_VERSION}${VIEWER_MACOSX_PHASE}${VIEWER_VERSION_REVISION}"
     )
-    set(MACOSX_BUNDLE_COPYRIGHT "Copyright © 2013-2026 Alchemy Development Group")
+    set(
+      MACOSX_BUNDLE_COPYRIGHT
+      "Copyright © 2026 6|7 World Studio contributors. Portions © Linden Research, Inc. and Alchemy Development Group (LGPL-2.1)."
+    )
 
     set_target_properties(
       ${AL_VIEWER_BINARY_NAME}
@@ -2396,7 +2410,7 @@ ${settings_install}</map>
     CONFIGURE
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/build_data.json"
     CONTENT
-      "{\"Type\": \"viewer\", \"Version\": \"${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}\", \"Channel Base\": \"Alchemy\", \"Channel\": \"${AL_CHANNEL}\", \"Platform\": \"${build_data_platform}\", \"Address Size\": ${ADDRESS_SIZE}, \"Update Service\": \"https://update.secondlife.com/update\"${build_data_extra}}
+      "{\"Type\": \"viewer\", \"Version\": \"${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}\", \"Channel Base\": \"${SW67_CHANNEL_BASE}\", \"Channel\": \"${AL_CHANNEL}\", \"Platform\": \"${build_data_platform}\", \"Address Size\": ${ADDRESS_SIZE}, \"Update Service\": \"https://update.secondlife.com/update\"${build_data_extra}}
 "
     @ONLY
   )

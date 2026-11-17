@@ -11210,8 +11210,12 @@ void LLPipeline::renderFinalize()
         // CVD Compensation
         static LLCachedControl<S32> cvd_mode(gSavedSettings, "RenderCVDMode", 0);
         static LLCachedControl<F32> cvd_amount(gSavedSettings, "RenderCVDAmount", 0.0f);
-        blit.uniform1i(LLShaderMgr::CVD_MODE, suppress_effects ? 0 : llclamp(cvd_mode(), 0, 3));
-        blit.uniform1f(LLShaderMgr::CVD_AMOUNT, suppress_effects ? 0.0f : llclamp(cvd_amount(), 0.0f, 1.0f));
+        // 6|7 World Studio: the scene colour filter stays out of snapshots
+        // unless the user opts in, so exported images keep true colours.
+        static LLCachedControl<bool> cvd_in_snapshots(gSavedSettings, "SW67SceneFilterInSnapshots", false);
+        const bool cvd_suppressed = suppress_effects || (gSnapshot && !cvd_in_snapshots());
+        blit.uniform1i(LLShaderMgr::CVD_MODE, cvd_suppressed ? 0 : llclamp(cvd_mode(), 0, 3));
+        blit.uniform1f(LLShaderMgr::CVD_AMOUNT, cvd_suppressed ? 0.0f : llclamp(cvd_amount(), 0.0f, 1.0f));
 
         // Film Grain
         static LLCachedControl<bool>     film_grain_animated(gSavedSettings, "RenderFilmGrainAnimated", true);

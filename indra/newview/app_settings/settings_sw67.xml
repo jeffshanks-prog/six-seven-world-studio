@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<llsd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="llsd.xsd">
+    <map>
+        <key>SW67Accessibility</key>
+        <map>
+            <key>Comment</key>
+            <string>6|7 World Studio accessibility profile (interface palette preset, text scale, keyboard focus, reduce motion, custom colours, scene colour filter), as sw67::a11y::serialize writes it. Edited in the Accessibility floater; every 6|7 module reads it through SW67Accessibility.</string>
+            <key>Persist</key>
+            <integer>1</integer>
+            <key>Type</key>
+            <string>LLSD</string>
+            <key>Value</key>
+            <map />
+        </map>
+        <key>SW67SceneFilterInSnapshots</key>
+        <map>
+            <key>Comment</key>
+            <string>When off (the default), the scene colour filter (RenderCVDMode) is left out of snapshots, so exported images keep their true colours. Set from the 6|7 Accessibility floater.</string>
+            <key>Persist</key>
+            <integer>1</integer>
+            <key>Type</key>
+            <string>Boolean</string>
+            <key>Value</key>
+            <integer>0</integer>
+        </map>
+    </map>
+</llsd>

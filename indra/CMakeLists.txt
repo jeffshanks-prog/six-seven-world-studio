@@ -9,13 +9,17 @@ include(CMakeDependentOption)
 
 set(
   AL_PROJECT_NAME
-  "Alchemy"
+  "SixSevenWorldStudio"
   CACHE STRING
-  "The root project/makefile/solution name. Defaults to Alchemy."
+  "The root project/makefile/solution name. Defaults to SixSevenWorldStudio."
 )
 
 # Set our base channel
-set(AL_CHANNEL "Alchemy Test" CACHE STRING "Viewer Channel Name")
+# 6|7 World Studio: channels are "67 World Studio <Release|Beta|Project|Test>".
+# The channel is a file name on every platform, so it spells the brand without
+# the "|"; the UI shows "6|7 World Studio" (APP_NAME in strings.xml).
+set(SW67_CHANNEL_BASE "67 World Studio" CACHE INTERNAL "Channel base name")
+set(AL_CHANNEL "67 World Studio Test" CACHE STRING "Viewer Channel Name")
 
 # Default deploy grid
 set(AL_GRID agni CACHE STRING "Target Grid")
@@ -262,7 +266,7 @@ set(AL_SENTRY_DSN "" CACHE STRING "The DSN of the Sentry project crash reports g
 # Default Tracy profiling on for test builds, but off for all others
 set(BUILDING_TEST_CHANNEL OFF)
 string(TOLOWER "${AL_CHANNEL}" channel_lower)
-if(channel_lower MATCHES "^alchemy test")
+if(channel_lower MATCHES "^67 world studio test")
   set(BUILDING_TEST_CHANNEL ON)
 endif()
 cmake_dependent_option(
@@ -640,6 +644,8 @@ add_subdirectory(llxml)
 add_subdirectory(llplugin)
 add_subdirectory(llui)
 add_subdirectory(viewer_components)
+# 6|7 World Studio's viewer-independent core: accessibility, RLV gate.
+add_subdirectory(sw67core)
 
 if(AL_BUILD_ORACLE)
   # Tracy starts its profiler, with its threads and a listening socket, in

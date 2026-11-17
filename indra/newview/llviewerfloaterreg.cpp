@@ -213,6 +213,7 @@
 // *NOTE: Please add files in alphabetical order to keep merges easy.
 // [RLVa:KB] - Checked: 2010-03-11
 #include "rlvfloaters.h"
+#include "sw67floateraccessibility.h"
 // [/RLVa:KB]
 // handle secondlife:///app/openfloater/{NAME} URLs
 const std::string FLOATER_PROFILE("profile");
@@ -535,6 +536,7 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("rlv_locks", "floater_rlv_locks.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<RlvFloaterLocks>);
     LLFloaterReg::add("rlv_strings", "floater_rlv_strings.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<RlvFloaterStrings>);
 // [/RLVa:KB]
+    LLFloaterReg::add("sw67_accessibility", "floater_sw67_accessibility.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterAccessibility>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

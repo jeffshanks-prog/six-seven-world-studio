@@ -1,5 +1,11 @@
 # CLAUDE.md
 
+> **This repository is 6|7 World Studio**, a fork of Alchemy. Our own code is
+> `indra/sw67core` (viewer-independent, tested standalone) and
+> `indra/newview/sw67*`; product docs are in `doc/sw67/`. Build only `-os`
+> presets. Never ship Alchemy's branding port (All Rights Reserved). The rest
+> of this file is upstream Alchemy's guidance and still applies.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview

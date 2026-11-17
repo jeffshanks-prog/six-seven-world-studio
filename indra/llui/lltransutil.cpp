@@ -45,8 +45,8 @@ bool LLTransUtil::parseStrings(const std::string& xml_filename, const std::set<s
     if (!success)
     {
         const std::string error_string =
-            "Alchemy Viewer couldn't access some of the files it needs and will be closed."
-            "\n\nPlease reinstall viewer from https://www.alchemyviewer.org/downloads and "
+            "6|7 World Studio couldn't access some of the files it needs and will be closed."
+            "\n\nPlease reinstall viewer from https://github.com/jeffshanks-prog/six-seven-world-studio/releases and "
             "contact the Alchemy Viewer team if the issue persists after reinstall.";
         LLError::LLUserWarningMsg::show(error_string, LLError::LLUserWarningMsg::ERROR_MISSING_FILES);
         gDirUtilp->dumpCurrentDirectories(LLError::LEVEL_WARN);

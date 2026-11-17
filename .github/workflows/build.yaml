@@ -1,3 +1,8 @@
+# 6|7 World Studio: adapted from Alchemy's build workflow. Builds run on
+# demand (Actions > Build > Run workflow) or for a SixSeven* tag, not on every
+# push, because viewer builds use several hours of Actions minutes in a
+# private repository. Windows x64 and Linux x64 only; macOS and arm64 rows
+# are left out for the same reason. Always an open-source (-os) build.
 name: Build
 
 on:
@@ -19,24 +24,8 @@ on:
         description: "Project Name (used for channel name in Project builds)"
         required: false
         type: string
-  pull_request:
-    # Everything but documentation and the GitHub files no build reads;
-    # later patterns win.
-    paths:
-      - "**"
-      - "!**/*.md"
-      - "!doc/**"
-      - "!LICENSE"
-      - "!.github/**"
-      - ".github/workflows/build.yaml"
-      - ".github/actions/**"
   push:
-    branches: ["main", "release/*", "beta/*", "project/*"]
-    tags: ["Alchemy*"]
-  # A weekly Develop build of the default branch, untagged, so it posts no
-  # release: its installers are the run's artifacts.
-  schedule:
-    - cron: "21 2 * * 6" # 2:21am UTC Saturday
+    tags: ["SixSeven*"]
 
 # Every job reads the repository and nothing more, unless it says otherwise.
 permissions:
@@ -74,7 +63,7 @@ jobs:
       # When you want to use a string variable as a workflow YAML boolean, it's
       # important to ensure it's the empty string when false. If you omit || '',
       # its value when false is "false", which is interpreted as true.
-      RELEASE_RUN: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'Alchemy') && 'Y' || '' }}
+      RELEASE_RUN: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'SixSeven') && 'Y' || '' }}
       FROM_FORK: ${{ github.event.pull_request.head.repo.fork }}
     steps:
       # The branch the build is of. A pull request or push names its own; a
@@ -117,7 +106,7 @@ jobs:
         shell: bash
         env:
           BUILD_VCS_BRANCH: ${{ steps.which-branch.outputs.branch }}
-          VIEWER_CHANNEL_BASE: "Alchemy"
+          VIEWER_CHANNEL_BASE: "67 World Studio"
           # The Sentry project crash reports go to; unset, the viewer is
           # built without a crash reporter.
           SENTRY_DSN: ${{ vars.SENTRY_DSN }}
@@ -196,7 +185,7 @@ jobs:
           branch=$BUILD_VCS_BRANCH
           # A tag as tag-release names it: Alchemy_<Channel>#<sha>-<suffix>,
           # where a Project tag's suffix is the project, underscores for spaces.
-          tag_re='^Alchemy_(Test|Develop|Project|Beta|Release)#[0-9a-fA-F]+(-(.+))?$'
+          tag_re='^SixSeven_(Test|Develop|Project|Beta|Release)#[0-9a-fA-F]+(-(.+))?$'
           if [[ "$INPUT_CHANNEL" != "" && "$INPUT_CHANNEL" != "Auto" ]];
           then
               if [[ "$INPUT_CHANNEL" == "Project" ]];
@@ -249,39 +238,10 @@ jobs:
       # One platform failing says nothing about the others: let them finish.
       fail-fast: false
       matrix:
-        runner: ["windows-2025-vs2026", "xcode-27", "ubuntu-26.04"]
+        runner: ["windows-2025-vs2026", "ubuntu-26.04"]
         configuration: [release]
-        arch: [x64, arm64]
-        build_variant: [Viewer, Tests]
-        exclude:
-          # The x86-64 Linux and Windows runners do not build arm64; the arm64
-          # rows below bring their own runner.
-          - runner: ubuntu-26.04
-            arch: arm64
-          - runner: windows-2025-vs2026
-            arch: arm64
-          - runner: xcode-27
-            arch: x64
-        include:
-          # Linux on arm64: NEON is a first-class target, and this is the
-          # one row where GCC compiles the SIMD layer for it.
-          - runner: ubuntu-26.04-arm
-            configuration: release
-            arch: arm64
-            build_variant: Viewer
-          - runner: ubuntu-26.04-arm
-            configuration: release
-            arch: arm64
-            build_variant: Tests
-          # Windows on arm64, built and tested natively.
-          - runner: windows-11-vs2026-arm
-            configuration: release
-            arch: arm64
-            build_variant: Viewer
-          - runner: windows-11-vs2026-arm
-            configuration: release
-            arch: arm64
-            build_variant: Tests
+        arch: [x64]
+        build_variant: [Viewer]
 
     runs-on: ${{ matrix.runner }}
     # A failing test row is reported without failing the run.
@@ -681,7 +641,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        arch: [x64, arm64]
+        arch: [x64]
     runs-on: windows-2025-vs2026
     env:
       SIGN_PACKAGES: ${{ github.event_name != 'pull_request' }}
@@ -811,6 +771,8 @@ jobs:
   # above.
   sign-and-package-mac:
     needs: [setup, build]
+    # No macOS build in this repository's matrix yet.
+    if: ${{ false }}
     timeout-minutes: 60
     strategy:
       matrix:
@@ -1095,8 +1057,6 @@ jobs:
         include:
           - arch: x64
             runner: ubuntu-26.04
-          - arch: arm64
-            runner: ubuntu-26.04-arm
     runs-on: ${{ matrix.runner }}
     env:
       # As in the Windows packaging job.

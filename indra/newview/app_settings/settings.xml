@@ -5,17 +5,18 @@
     <key>Include</key>
     <array>
       <string>settings_alchemy.xml</string>
+      <string>settings_sw67.xml</string>
     </array>
     <key>RestrainedLove</key>
     <map>
       <key>Comment</key>
-      <string>Toggles RLVa features (requires restart)</string>
+      <string>Toggles RLVa features (requires restart). 6|7 World Studio ships with RLV off: the user turns it on explicitly in Preferences.</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <boolean>1</boolean>
+      <boolean>0</boolean>
     </map>
     <key>RestrainedLoveDebug</key>
     <map>

@@ -897,7 +897,7 @@ static void register_uninstall_info(const std::wstring& install_dir,
                       (BYTE*)app_name.c_str(), (DWORD)((app_name.size() + 1) * sizeof(wchar_t)));
         RegSetValueExW(hkey, L"DisplayVersion", 0, REG_SZ,
                       (BYTE*)version.c_str(), (DWORD)((version.size() + 1) * sizeof(wchar_t)));
-        const std::wstring publisher_string(L"Alchemy Development Group");
+        const std::wstring publisher_string(L"6|7 World Studio");
         RegSetValueExW(hkey, L"Publisher", 0, REG_SZ,
                       (BYTE*)publisher_string.c_str(), (DWORD)((publisher_string.size() + 1) * sizeof(wchar_t)));
         RegSetValueExW(hkey, L"UninstallString", 0, REG_SZ,
@@ -1002,7 +1002,7 @@ static void on_first_run(void* p_user_data, const char* app_version)
             app_data_path.pop_back();
         }
 
-        std::string user_settings_path = app_data_path + "\\AlchemyNext\\user_settings\\settings.xml";
+        std::string user_settings_path = app_data_path + "\\SixSevenWorldStudio\\user_settings\\settings.xml";
         LLControlGroup settings("global");
         if (settings.loadFromFile(user_settings_path))
         {

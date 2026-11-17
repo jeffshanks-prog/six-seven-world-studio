@@ -219,7 +219,7 @@ LLControlVariable::LLControlVariable(const std::string& name, eControlType type,
     if ((persist != PERSIST_NO) && mComment.empty())
     {
         std::string error_string =
-            "Alchemy Viewer failed to initialize settings. Setting " + mName + " is invalid. "
+            "6|7 World Studio failed to initialize settings. Setting " + mName + " is invalid. "
             "Either settings' files were supplied incorrectly or default files were corrupted."
             "\n\nPlease reinstall viewer from https://www.alchemyviewer.org/downloads/ and "
             "contact the Alchemy Viewer team if the issue persists after reinstall.";

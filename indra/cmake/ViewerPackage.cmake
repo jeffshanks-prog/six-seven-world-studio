@@ -14,7 +14,7 @@
 # Included from newview/CMakeLists.txt after ViewerInstall.cmake.
 include_guard()
 
-set(al_velopack_authors "Alchemy Viewer Project")
+set(al_velopack_authors "6|7 World Studio")
 set(al_velopack_splash_color "#00a5dc")
 set(al_velopack_version "${VIEWER_SHORT_VERSION}-${VIEWER_VERSION_REVISION}")
 # An installed viewer updates from releases.<channel>.json, so each platform
@@ -98,8 +98,11 @@ set(CPACK_PACKAGE_VERSION "${VIEWER_SHORT_VERSION}.${VIEWER_VERSION_REVISION}")
 set(CPACK_PACKAGE_VERSION_MAJOR "${VIEWER_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${VIEWER_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${VIEWER_VERSION_PATCH}")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Alchemy Viewer, a client for Second Life")
-set(CPACK_PACKAGE_HOMEPAGE_URL "https://www.alchemyviewer.org")
+set(
+  CPACK_PACKAGE_DESCRIPTION_SUMMARY
+  "6|7 World Studio, a third-party viewer for Second Life (not provided or supported by Linden Lab)"
+)
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/jeffshanks-prog/six-seven-world-studio")
 set(CPACK_PACKAGE_CHECKSUM SHA256)
 set(CPACK_VERBATIM_VARIABLES ON)
 set(CPACK_ARCHIVE_THREADS 0)

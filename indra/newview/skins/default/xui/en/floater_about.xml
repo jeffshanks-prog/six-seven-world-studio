@@ -92,7 +92,7 @@
    fit_panel="false"
    layout="topleft"
    name="alchemy_credits_tab"
-   title="Alchemy">
+   title="6|7 World Studio">
     <panel
      border="false" 
      follows="all"
@@ -103,14 +103,14 @@
       <text
           follows="top|left|right"
           font.style="BOLD"
-          height="10"
+          height="28"
           layout="topleft"
           left="5"
           name="alchemy_intro"
           top="0"
           width="435"
           wrap="true">
-Alchemy is brought to you by the Alchemy Development Group:
+6|7 World Studio is not provided or supported by Linden Lab, the makers of Second Life. It is built on the Alchemy Viewer, brought to you by the Alchemy Development Group:
       </text>
       <text_editor
        enabled="false" 
