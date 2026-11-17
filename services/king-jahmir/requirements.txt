@@ -1,2 +1,4 @@
 # King Jahmir gateway. Python 3.11+.
 anthropic==2.9.0
+# PostgreSQL storage (KJ_DATABASE_URL), used on Vercel with Supabase.
+psycopg[binary]==3.2.13

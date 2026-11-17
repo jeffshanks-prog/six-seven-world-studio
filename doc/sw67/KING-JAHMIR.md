@@ -38,7 +38,7 @@ token in protected store                account provider (UNAVAILABLE today)
 | Preferences (optional memory) | **Implemented** | Off by default; proposals need Confirm; view, edit and delete in the panel. |
 | Conversation history, deletion, retention | **Implemented** | Delete one or all (with a confirmation dialog); auto-delete after 30 days. |
 | Viewer core (`sw67core/assistant`) | **Implemented** (9 new test cases; 73 total, all passing) | Reply rendering, protocol, error messages, unread count, retry state. |
-| Viewer bubble and panel | **Implemented, untested in-world; not yet compiled** | Crown bubble, conversation panel, settings tab, menu item **Me > 6\|7 Studio > King Jahmir**. The next CI viewer build is its compile check. |
+| Viewer bubble and panel | **Implemented**, builds on Windows and Linux; seen in-world (bubble and Settings tab) | Crown bubble, conversation panel, settings tab, menu item **Me > 6\|7 Studio > King Jahmir**. Says "Not set up yet" until a server and sign-in are configured. |
 | Voice | **UNAVAILABLE** | The viewer has no speech recognition or read-aloud engine. Text chat works on its own. |
 
 ## 3. What was verified, and how
@@ -72,9 +72,12 @@ with curl.
    `python -m kingjahmir issue-token` until the Milestone 5 account service
    issues them on sign-in. Residents paste the token into the panel's
    Settings tab.
-3. **Hosting.** The gateway needs a server with TLS, `ANTHROPIC_API_KEY`,
-   `KJ_AUTH_SECRET` and `KJ_OWNER_IDS` (Jeff's agent UUID). Then set the
-   viewer's gateway address (Settings tab, or `SW67KingJahmirGatewayURL`).
+3. **Hosting.** Planned on Vercel with the Supabase project "6|7 Back
+   Office" for storage (steps in `services/king-jahmir/README.md`, "Host it on
+   Vercel with Supabase"). It needs `ANTHROPIC_API_KEY`, `KJ_AUTH_SECRET`,
+   `KJ_OWNER_IDS` (Jeff's agent UUID), `KJ_DATABASE_URL` and `CRON_SECRET`.
+   Then set the viewer's gateway address (Settings tab, or
+   `SW67KingJahmirGatewayURL`).
 4. **Not yet run against the live Claude API.** First run: ask the six
    starter questions and check the answers cite help pages and use the
    status labels.

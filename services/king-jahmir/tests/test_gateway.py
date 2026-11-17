@@ -2,6 +2,11 @@
 stand-in or the real Anthropic SDK pointed at a local fake Messages API.
 
     cd services/king-jahmir && python -m unittest -v
+
+Storage is SQLite in memory unless KJ_TEST_DATABASE_URL names a PostgreSQL
+database, which every test then empties and uses (as on Vercel):
+
+    KJ_TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:54329/kj_test python -m unittest
 """
 
 from __future__ import annotations
@@ -26,6 +31,7 @@ from kingjahmir.knowledge import KnowledgeBase
 from kingjahmir.render import sanitize
 from kingjahmir.server import App, Handler, HttpError
 
+TEST_DB = os.environ.get("KJ_TEST_DATABASE_URL", "")
 SECRET = b"k" * 40
 USER = "11111111-2222-3333-4444-555555555555"
 OTHER = "99999999-2222-3333-4444-555555555555"
@@ -35,8 +41,20 @@ OWNER = "aaaaaaaa-2222-3333-4444-555555555555"
 def cfg(**kw) -> Config:
     env = {"KJ_AUTH_SECRET": SECRET.decode(), "KJ_OWNER_IDS": OWNER, "KJ_DB_PATH": ":memory:",
            "KJ_RATE_PER_MINUTE": "600", "KJ_RATE_BURST": "100"}
+    if TEST_DB:
+        env["KJ_DATABASE_URL"] = TEST_DB
     env.update({k: str(v) for k, v in kw.items()})
     return Config.from_env(env)
+
+
+def reset_db() -> None:
+    """Empties the PostgreSQL test database between tests."""
+    if not TEST_DB:
+        return
+    import psycopg
+    with psycopg.connect(TEST_DB, autocommit=True) as conn:
+        conn.execute("DROP TABLE IF EXISTS kj_turns, kj_conversations, kj_requests, kj_pending_actions, "
+                     "kj_preferences, kj_support_requests, kj_rate_buckets, kj_busy")
 
 
 def bearer(sub=USER, **kw) -> str:
@@ -95,6 +113,7 @@ class Base(unittest.TestCase):
     def make(self, client=None, provider=None, **kw):
         if getattr(self, "app", None):
             self.app.store.close()
+        reset_db()
         self.app = App(cfg(**kw), client=client, provider=provider)
         return self.app
 
@@ -488,7 +507,7 @@ class ActionTests(Base):
                            anthropic.APIConnectionError(request=anthropic._base_client.httpx2.Request("POST", "http://x"))))
         with self.assertRaises(HttpError):
             self.chat("support", "sup-000003")
-        rows = self.app.store._q("SELECT status FROM pending_actions")
+        rows = self.app.store._q("SELECT status FROM kj_pending_actions")
         self.assertEqual([r["status"] for r in rows], ["cancelled"])
 
     def test_preferences_optional_and_editable(self):
@@ -527,7 +546,7 @@ class ActionTests(Base):
     def test_retention_purge(self):
         self.make(Scripted(text("hi")))
         cid = self.chat("hello", "ret-000001")["conversation_id"]
-        self.app.store._q("UPDATE conversations SET updated=? WHERE id=?", (time.time() - 40 * 86400, cid))
+        self.app.store._q("UPDATE kj_conversations SET updated=? WHERE id=?", (time.time() - 40 * 86400, cid))
         self.assertEqual(self.app.store.purge(30), 1)
         self.assertEqual(self.app.conversations(self.p())["conversations"], [])
 
@@ -568,7 +587,9 @@ class SdkEndToEndTests(unittest.TestCase):
         threading.Thread(target=api.serve_forever, daemon=True).start()
         client = anthropic.Anthropic(api_key="test-key", base_url=f"http://127.0.0.1:{api.server_port}",
                                      max_retries=0, timeout=10)
+        reset_db()
         app = App(cfg(), client=client)
+        self.addCleanup(app.store.close)
         Handler.app = app
         gw = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         threading.Thread(target=gw.serve_forever, daemon=True).start()
@@ -623,10 +644,14 @@ class SdkEndToEndTests(unittest.TestCase):
             self.assertIn(st, (400, 413))
         finally:
             gw.shutdown()
+            gw.server_close()
             api.shutdown()
+            api.server_close()
 
     def test_help_pages_escape_html(self):
+        reset_db()
         app = App(cfg())
+        self.addCleanup(app.store.close)
         app.kb.pages["workspace-profiles"].body += "\n<script>alert(1)</script>"
         page = app.help_page("workspace-profiles")
         self.assertNotIn("<script>", page)
@@ -641,6 +666,136 @@ class DevModeTests(Base):
         self.assertIn("DEVELOPMENT MOCK MODEL", r["reply"])
         self.assertTrue(r["development_mode"])
         self.assertTrue(self.app.bootstrap(p)["mock_model"])
+
+
+# ---- serverless hosting (Vercel + Supabase) ------------------------------
+class ServerlessTests(Base):
+    """Every request may land on a different instance: what one request
+    leaves for the next must be in the store, not in the process."""
+
+    def second_instance(self, client=None):
+        other = App(cfg(), client=client)  # same database, fresh process state
+        self.addCleanup(other.store.close)
+        if not TEST_DB:  # SQLite in memory is per connection: share the store instead
+            other.store.close()
+            other.store = self.app.store
+            other.limiter.store = other.ip_limiter.store = self.app.store
+        return other
+
+    def test_retry_on_another_instance_replays(self):
+        self.make(Scripted(text("Once.")))
+        r1 = self.chat("hello", "same-key-0001")
+        other = self.second_instance(Scripted())  # would fail if it called the model
+        r2 = other.chat(other.authenticate(bearer()), {"message": "hello"}, "same-key-0001", "127.0.0.1")
+        self.assertTrue(r2["replayed"])
+        self.assertEqual(r1["reply"], r2["reply"])
+
+    def test_one_message_at_a_time_across_instances(self):
+        self.make(Scripted(text("ok")))
+        self.assertTrue(self.app.store.try_busy(USER))
+        other = self.second_instance(Scripted(text("ok")))
+        with self.assertRaises(HttpError) as e:
+            other.chat(other.authenticate(bearer()), {"message": "hi"}, "busy-key-0001", "127.0.0.1")
+        self.assertEqual(e.exception.code, "busy")
+        self.app.store.clear_busy(USER)
+        r = other.chat(other.authenticate(bearer()), {"message": "hi"}, "busy-key-0001", "127.0.0.1")
+        self.assertEqual(r["reply"], "ok")
+        # A mark left by a request that died expires.
+        self.assertTrue(self.app.store.try_busy(OTHER))
+        self.app.store._q("UPDATE kj_busy SET until=? WHERE uid=?", (time.time() - 1, OTHER))
+        self.assertTrue(self.app.store.try_busy(OTHER))
+
+    def test_rate_limit_shared_across_instances(self):
+        self.make(KJ_RATE_PER_MINUTE=1, KJ_RATE_BURST=2)
+        other = self.second_instance()
+        t = 1_000_000.0
+        self.assertEqual(self.app.limiter.check(USER, t), 0)
+        self.assertEqual(other.limiter.check(USER, t), 0)
+        self.assertGreater(self.app.limiter.check(USER, t), 0)  # the burst of 2 is spent across both
+        self.assertEqual(other.limiter.check(USER, t + 61), 0)  # one token back after a minute
+        self.assertEqual(other.limiter.check(OTHER, t), 0)  # other residents unaffected
+
+    def test_daily_cap(self):
+        self.make(KJ_DAILY_MESSAGES=2)
+        t = 86400.0 * 1000 + 10
+        self.assertEqual(self.app.limiter.check(USER, t), 0)
+        self.assertEqual(self.app.limiter.check(USER, t + 20), 0)
+        self.assertGreater(self.app.limiter.check(USER, t + 40), 3600)
+        self.assertEqual(self.app.limiter.check(USER, t + 86400), 0)  # next day
+
+    def test_same_key_never_runs_twice_concurrently(self):
+        self.make()
+        states = [self.app.store.begin_request(USER, "race-key-01")[0] for _ in range(3)]
+        self.assertEqual(states, ["new", "pending", "pending"])
+        self.app.store.finish_request(USER, "race-key-01", None)
+        self.assertEqual(self.app.store.begin_request(USER, "race-key-01")[0], "new")
+        self.app.store.finish_request(USER, "race-key-01", {"reply": "x"})
+        self.assertEqual(self.app.store.begin_request(USER, "race-key-01"), ("done", {"reply": "x"}))
+
+    def test_cron_purge_needs_the_secret(self):
+        self.make()
+        with self.assertRaises(HttpError):
+            self.app.cron_purge("Bearer anything")  # no CRON_SECRET configured
+        self.make(CRON_SECRET="c" * 32)
+        for bad in (None, "", "Bearer wrong", "c" * 32):
+            with self.assertRaises(HttpError):
+                self.app.cron_purge(bad)
+        cid = self.app.store.create_conversation(USER, "old")
+        self.app.store._q("UPDATE kj_conversations SET updated=? WHERE id=?", (time.time() - 40 * 86400, cid))
+        self.assertEqual(self.app.cron_purge("Bearer " + "c" * 32)["deleted_conversations"], 1)
+
+    def test_vercel_config(self):
+        env = {"KJ_AUTH_SECRET": "x" * 40, "VERCEL": "1", "VERCEL_PROJECT_PRODUCTION_URL": "kj.example.app"}
+        with self.assertRaises(ConfigError):
+            Config.from_env(env)  # no database: a function's disk keeps nothing
+        with self.assertRaises(ConfigError):
+            Config.from_env({**env, "KJ_DATABASE_URL": "mysql://nope"})
+        c = Config.from_env({**env, "KJ_DATABASE_URL": "postgresql://u:p@h:6543/postgres"})
+        self.assertEqual(c.public_url, "https://kj.example.app")
+        self.assertTrue(c.trust_forwarded_for)
+
+    def test_bundled_help_matches_the_docs(self):
+        from kingjahmir.config import _REPO_DOCS, BUNDLED_DOCS
+        from kingjahmir.knowledge import bundle_files
+        if not (_REPO_DOCS / "features.json").is_file():
+            self.skipTest("not in the repository")
+        self.assertEqual(bundle_files(_REPO_DOCS), bundle_files(BUNDLED_DOCS),
+                         "kingjahmir/help is out of date: run python -m kingjahmir bundle-docs")
+        KnowledgeBase(BUNDLED_DOCS, "https://kj.example")  # and it loads
+
+    def test_vercel_entry_point_restores_the_path(self):
+        reset_db()
+        env = {"KJ_AUTH_SECRET": SECRET.decode(), "KJ_DB_PATH": ":memory:"}
+        if TEST_DB:
+            env["KJ_DATABASE_URL"] = TEST_DB
+        old = dict(os.environ)
+        os.environ.update(env)
+        try:
+            import importlib.util
+            from pathlib import Path
+            spec = importlib.util.spec_from_file_location(
+                "kj_vercel_index", Path(__file__).resolve().parent.parent / "api" / "index.py")
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+        finally:
+            os.environ.clear()
+            os.environ.update(old)
+        self.addCleanup(mod.handler.app.store.close)
+        gw = ThreadingHTTPServer(("127.0.0.1", 0), mod.handler)
+        threading.Thread(target=gw.serve_forever, daemon=True).start()
+        try:
+            base = f"http://127.0.0.1:{gw.server_port}"
+            with urllib.request.urlopen(base + "/api/index?__kjpath=healthz") as r:
+                self.assertTrue(json.loads(r.read())["ok"])
+            with urllib.request.urlopen(base + "/api/index?__kjpath=help/workspace-profiles") as r:
+                self.assertIn(b"Workspace Profiles", r.read())
+            req = urllib.request.Request(base + "/api/index?__kjpath=v1/bootstrap",
+                                         headers={"Authorization": bearer()})
+            with urllib.request.urlopen(req) as r:
+                self.assertEqual(json.loads(r.read())["assistant"], "King Jahmir")
+        finally:
+            gw.shutdown()
+            gw.server_close()
 
 
 if __name__ == "__main__":

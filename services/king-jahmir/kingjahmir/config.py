@@ -7,6 +7,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 _REPO_DOCS = Path(__file__).resolve().parents[3] / "doc" / "sw67" / "help"
+# A copy of the help pages inside the package, for hosts that deploy only this
+# folder (Vercel). `python -m kingjahmir bundle-docs` refreshes it; a test
+# fails while it differs from doc/sw67/help.
+BUNDLED_DOCS = Path(__file__).resolve().parent / "help"
+DEFAULT_DOCS = _REPO_DOCS if (_REPO_DOCS / "features.json").is_file() else BUNDLED_DOCS
 
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
 
@@ -40,8 +45,10 @@ class Config:
     host: str = "127.0.0.1"
     port: int = 8767
     public_url: str = "http://127.0.0.1:8767"
-    docs_dir: Path = _REPO_DOCS
+    docs_dir: Path = DEFAULT_DOCS
     db_path: str = "kingjahmir.sqlite3"
+    database_url: str = ""
+    cron_secret: str = ""
     auth_secret: bytes = b""
     auth_issuer: str = "sw67-accounts"
     owner_ids: frozenset = field(default_factory=frozenset)
@@ -86,12 +93,23 @@ class Config:
         account_url = env.get("KJ_ACCOUNT_API_URL", "").rstrip("/")
         if account_url and not (account_url.startswith("https://") or dev):
             raise ConfigError("KJ_ACCOUNT_API_URL must be https outside development mode")
+        database_url = env.get("KJ_DATABASE_URL", "").strip()
+        if database_url and not database_url.startswith(("postgres://", "postgresql://")):
+            raise ConfigError("KJ_DATABASE_URL must be a postgresql:// connection string")
+        if env.get("VERCEL") and not database_url:
+            raise ConfigError("On Vercel, set KJ_DATABASE_URL: a function's own disk does not keep data")
+        public_url = env.get("KJ_PUBLIC_URL", "")
+        if not public_url and env.get("VERCEL_PROJECT_PRODUCTION_URL"):
+            public_url = "https://" + env["VERCEL_PROJECT_PRODUCTION_URL"]
+        public_url = public_url or f"http://{host}:{port}"
         return Config(
             host=host,
             port=port,
-            public_url=env.get("KJ_PUBLIC_URL", f"http://{host}:{port}").rstrip("/"),
-            docs_dir=Path(env.get("KJ_DOCS_DIR", str(_REPO_DOCS))),
+            public_url=public_url.rstrip("/"),
+            docs_dir=Path(env.get("KJ_DOCS_DIR") or str(DEFAULT_DOCS)),
             db_path=env.get("KJ_DB_PATH", "kingjahmir.sqlite3"),
+            database_url=database_url,
+            cron_secret=env.get("CRON_SECRET", ""),
             auth_secret=secret,
             auth_issuer=env.get("KJ_AUTH_ISSUER", "sw67-accounts"),
             owner_ids=owners,
@@ -111,5 +129,6 @@ class Config:
             max_turns_per_conversation=_int(env, "KJ_MAX_TURNS", 60, 2, 1000),
             account_api_url=account_url,
             account_api_token=env.get("KJ_ACCOUNT_API_TOKEN", ""),
-            trust_forwarded_for=_bool(env, "KJ_TRUST_FORWARDED_FOR"),
+            # Vercel sets X-Forwarded-For itself, so it can be trusted there.
+            trust_forwarded_for=_bool(env, "KJ_TRUST_FORWARDED_FOR", default=bool(env.get("VERCEL"))),
         )
