@@ -49,6 +49,7 @@ class Config:
     db_path: str = "kingjahmir.sqlite3"
     database_url: str = ""
     cron_secret: str = ""
+    setup_code: str = ""
     auth_secret: bytes = b""
     auth_issuer: str = "sw67-accounts"
     owner_ids: frozenset = field(default_factory=frozenset)
@@ -98,6 +99,9 @@ class Config:
             raise ConfigError("KJ_DATABASE_URL must be a postgresql:// connection string")
         if env.get("VERCEL") and not database_url:
             raise ConfigError("On Vercel, set KJ_DATABASE_URL: a function's own disk does not keep data")
+        setup_code = env.get("KJ_SETUP_CODE", "").strip()
+        if setup_code and len(setup_code) < 16:
+            raise ConfigError("KJ_SETUP_CODE must be at least 16 characters")
         public_url = env.get("KJ_PUBLIC_URL", "")
         if not public_url and env.get("VERCEL_PROJECT_PRODUCTION_URL"):
             public_url = "https://" + env["VERCEL_PROJECT_PRODUCTION_URL"]
@@ -110,6 +114,7 @@ class Config:
             db_path=env.get("KJ_DB_PATH", "kingjahmir.sqlite3"),
             database_url=database_url,
             cron_secret=env.get("CRON_SECRET", ""),
+            setup_code=setup_code,
             auth_secret=secret,
             auth_issuer=env.get("KJ_AUTH_ISSUER", "sw67-accounts"),
             owner_ids=owners,

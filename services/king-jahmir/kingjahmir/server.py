@@ -29,11 +29,12 @@ import re
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qsl
 
 from . import __version__, prompt
 from .account import make_provider
 from .assistant import Assistant, AssistantError, history_ok, make_client
-from .auth import AuthError, Principal, verify
+from .auth import AuthError, Principal, issue, verify
 from .knowledge import KnowledgeBase
 from .ratelimit import RateLimiter
 from .store import Store
@@ -74,6 +75,7 @@ class App:
         self.limiter = RateLimiter(self.store, "u", cfg.rate_per_minute, cfg.rate_burst, cfg.daily_messages)
         self.ip_limiter = RateLimiter(self.store, "ip", cfg.rate_per_minute * 4, cfg.rate_burst * 4,
                                       cfg.daily_messages * 10)
+        self.setup_limiter = RateLimiter(self.store, "setup", 5, 5, 20)
 
     # ---- helpers ----------------------------------------------------------
     def authenticate(self, header: str | None) -> Principal:
@@ -249,6 +251,49 @@ class App:
         log.info(json.dumps({"event": "retention_purge", "conversations": n}))
         return {"ok": True, "deleted_conversations": n}
 
+    # ---- owner sign-in page ------------------------------------------------
+    def setup_token(self, code: str, agent_id: str, ip: str) -> str:
+        """An owner's sign-in token, for KJ_SETUP_CODE and an id in KJ_OWNER_IDS.
+        Until the 6|7 account service issues tokens, this lets the owner sign
+        in without the command line."""
+        if not self.cfg.setup_code:
+            raise HttpError(404, "not_found", "The sign-in page is turned off.")
+        wait = self.setup_limiter.check(ip)
+        if wait:
+            raise HttpError(429, "rate_limited", "Too many tries. Wait a minute and try again.", True, wait)
+        agent_id = (agent_id or "").strip().lower()
+        if not hmac.compare_digest(code.strip().encode(), self.cfg.setup_code.encode()) \
+                or agent_id not in self.cfg.owner_ids:
+            raise HttpError(403, "forbidden", "That setup code or avatar key is not right.")
+        log.info(json.dumps({"event": "owner_token_issued"}))
+        return issue(self.cfg.auth_secret, self.cfg.auth_issuer, agent_id, scopes=["chat", "account:read"],
+                     roles=["owner"], lifetime=30 * 86400)
+
+    def setup_page(self, token: str | None = None, error: str | None = None) -> str:
+        style = ("body{font-family:sans-serif;max-width:40em;margin:2em auto;padding:0 1em;background:#111111;"
+                 "color:#FFFFFF;line-height:1.5}h1{color:#D4AF37}label{display:block;margin-top:1em}"
+                 "input,textarea{width:100%;padding:.5em;background:#333333;color:#FFFFFF;border:1px solid #D4AF37}"
+                 "button{margin-top:1em;padding:.6em 1.2em;background:#D4AF37;color:#111111;border:0;"
+                 "font-weight:bold}.err{color:#FFB3B3}")
+        if token:
+            body = ("<h1>Your King Jahmir sign-in</h1><p>Copy all of this text. In the viewer open "
+                    "<b>King Jahmir &gt; Settings &amp; privacy</b>, paste it under <b>6|7 sign-in</b> and press "
+                    "<b>Sign in</b>. It works for 30 days. Keep it private, like a password.</p>"
+                    f"<textarea rows=6 readonly>{html.escape(token)}</textarea>")
+        else:
+            err = f'<p class=err role=alert>{html.escape(error)}</p>' if error else ""
+            body = ("<h1>King Jahmir owner sign-in</h1>"
+                    "<p>Enter the setup code you saved in Vercel as KJ_SETUP_CODE and your avatar's key.</p>"
+                    f"{err}<form method=post action=/setup>"
+                    "<label for=code>Setup code</label><input id=code name=code type=password required "
+                    "autocomplete=off>"
+                    "<label for=agent>Avatar key (UUID)</label><input id=agent name=agent required "
+                    "autocomplete=off>"
+                    "<button type=submit>Get my sign-in</button></form>")
+        return (f"<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport "
+                f"content='width=device-width,initial-scale=1'><title>King Jahmir sign-in</title>"
+                f"<style>{style}</style><body>{body}</body></html>")
+
     # ---- help pages -------------------------------------------------------
     def help_page(self, page_id: str | None) -> str:
         style = ("body{font-family:sans-serif;max-width:46em;margin:2em auto;padding:0 1em;background:#111111;"
@@ -300,7 +345,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         if content_type.startswith("text/html"):
-            self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
+            self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'")
         for k, v in (extra or {}).items():
             self.send_header(k, v)
         self.end_headers()
@@ -327,6 +372,17 @@ class Handler(BaseHTTPRequestHandler):
             raise HttpError(400, "bad_request", "Body must be a JSON object.")
         return data
 
+    def _form(self) -> dict:
+        """A small urlencoded form body."""
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+        except ValueError as e:
+            raise HttpError(400, "bad_request", "Bad Content-Length.") from e
+        if n < 0 or n > 4096:
+            raise HttpError(413, "too_large", "Request too large.")
+        raw = self.rfile.read(n).decode("utf-8", "replace") if n else ""
+        return {k: v for k, v in parse_qsl(raw, keep_blank_values=True)}
+
     def _dispatch(self):
         started = time.time()
         who = "-"
@@ -347,6 +403,21 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/cron/purge" and self.command == "GET":
                 self._send(200, self.app.cron_purge(self.headers.get("Authorization")))
                 return self._log(200, started)
+            if path == "/setup" and self.command in ("GET", "POST"):
+                if not self.app.cfg.setup_code:
+                    raise HttpError(404, "not_found", "No such route.")
+                if self.command == "GET":
+                    self._send(200, self.app.setup_page(), "text/html; charset=utf-8")
+                    return self._log(200, started)
+                form = self._form()
+                try:
+                    page = self.app.setup_page(self.app.setup_token(form.get("code", ""), form.get("agent", ""),
+                                                                    self._client_ip()))
+                    status = 200
+                except HttpError as e:
+                    page, status = self.app.setup_page(error=e.message), e.status
+                self._send(status, page, "text/html; charset=utf-8")
+                return self._log(status, started)
             if not path.startswith("/v1/"):
                 raise HttpError(404, "not_found", "No such route.")
             body = self._body() if self.command in ("POST", "PUT") else {}

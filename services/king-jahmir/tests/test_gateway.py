@@ -746,6 +746,34 @@ class ServerlessTests(Base):
                 self.assertFalse(self.app.store._q(
                     "SELECT has_table_privilege('anon', ?, 'SELECT') AS ok", (t,))[0]["ok"], t)
 
+    def test_owner_setup_page(self):
+        self.make()
+        with self.assertRaises(HttpError) as e:  # off without KJ_SETUP_CODE
+            self.app.setup_token("x" * 20, OWNER, "1.2.3.4")
+        self.assertEqual(e.exception.status, 404)
+        self.make(KJ_SETUP_CODE="correct horse battery staple")
+        for code, agent in (("wrong code entirely", OWNER), ("correct horse battery staple", USER),
+                            ("", OWNER)):
+            with self.assertRaises(HttpError) as e:
+                self.app.setup_token(code, agent, "1.2.3.4")
+            self.assertEqual(e.exception.status, 403)
+        tok = self.app.setup_token(" correct horse battery staple ", OWNER.upper(), "1.2.3.5")
+        p = self.app.authenticate("Bearer " + tok)
+        self.assertTrue(p.owner)
+        self.assertTrue(p.can("account:read"))
+        for _ in range(5):  # guessing is rate limited per address
+            try:
+                self.app.setup_token("guess guess guess", OWNER, "9.9.9.9")
+            except HttpError:
+                pass
+        with self.assertRaises(HttpError) as e:
+            self.app.setup_token("correct horse battery staple", OWNER, "9.9.9.9")
+        self.assertEqual(e.exception.status, 429)
+        page = self.app.setup_page(token="<tok>")
+        self.assertIn("&lt;tok&gt;", page)
+        with self.assertRaises(ConfigError):
+            cfg(KJ_SETUP_CODE="short")
+
     def test_cron_purge_needs_the_secret(self):
         self.make()
         with self.assertRaises(HttpError):
