@@ -30,6 +30,11 @@ add_library(
   src/photo_product.cpp
   src/entitlements.cpp
   src/assistant_chat.cpp
+  src/backup.cpp
+  src/privacy_recording.cpp
+  src/outfit_planner.cpp
+  src/pose_studio.cpp
+  src/event_rehearsal.cpp
 )
 add_library(sw67::core ALIAS sw67core)
 target_include_directories(sw67core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -61,6 +66,11 @@ if(SW67_BUILD_TESTS OR (DEFINED AL_BUILD_TESTS AND AL_BUILD_TESTS))
     tests/photo_test.cpp
     tests/entitlements_test.cpp
     tests/assistant_test.cpp
+    tests/backup_test.cpp
+    tests/privacy_test.cpp
+    tests/outfit_test.cpp
+    tests/pose_test.cpp
+    tests/event_test.cpp
   )
   target_link_libraries(sw67core_tests PRIVATE sw67core Catch2::Catch2WithMain)
   if(TARGET al::flags)

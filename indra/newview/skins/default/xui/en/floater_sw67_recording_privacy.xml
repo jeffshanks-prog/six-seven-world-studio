@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Recording Privacy Mode. Keyboard: Tab moves through the choices, then the switch. Whether it is on is said in words in the status line, with the Live shape, not by colour. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="518"
+ width="480"
+ min_height="438"
+ min_width="420"
+ layout="topleft"
+ name="sw67_recording_privacy"
+ save_rect="true"
+ title="6|7 RECORDING PRIVACY">
+  <text
+   follows="left|top|right"
+   height="44"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="460"
+   wrap="true"
+   layout="topleft">Hides what a stream or recording should not show, on this screen only. Nothing is sent, nobody else's view changes, and messages still arrive in your conversation windows.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="58"
+   name="hide_heading"
+   width="300"
+   font="SansSerifBold"
+   layout="topleft">Hide while privacy mode is on</text>
+  <check_box
+   height="16"
+   label="Your own name tag"
+   left="20"
+   top="80"
+   name="hide_my_name"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Other people's name tags"
+   left="20"
+   top="102"
+   name="hide_other_names"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Group titles"
+   left="20"
+   top="124"
+   name="hide_group_titles"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Nearby chat pop-ups"
+   left="20"
+   top="146"
+   name="hide_chat_popups"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="IM, group and conference pop-ups"
+   left="20"
+   top="168"
+   name="hide_im_popups"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Chat bubbles"
+   left="20"
+   top="190"
+   name="hide_chat_bubbles"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Your location in the navigation bar"
+   left="20"
+   top="212"
+   name="hide_location"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Your L$ balance (status bar and snapshots)"
+   left="20"
+   top="234"
+   name="hide_balance"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Hover tips with object and land names"
+   left="20"
+   top="256"
+   name="hide_hover_tips"
+   tab_group="1"
+   width="440"
+   initial_value="true"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Turn privacy mode on"
+   left="10"
+   top="284"
+   name="toggle_btn"
+   tab_group="1"
+   width="200"
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="150"
+   left="10"
+   top="316"
+   name="preview_text"
+   tab_group="1"
+   width="460"
+   max_length="131072"
+   word_wrap="true"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="474"
+   name="status_text"
+   width="460"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

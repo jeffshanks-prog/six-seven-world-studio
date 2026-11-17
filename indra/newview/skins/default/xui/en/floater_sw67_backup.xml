@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Settings Backup and Restore. Keyboard: Tab moves through the controls top to bottom. Nothing changes until Restore; the preview lists every change first. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="580"
+ width="540"
+ min_height="500"
+ min_width="460"
+ layout="topleft"
+ name="sw67_backup"
+ save_rect="true"
+ title="6|7 SETTINGS BACKUP">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="520"
+   wrap="true"
+   layout="topleft">Back up your own settings and 6|7 files to one file you keep. Passwords, keys, stream credentials and consent opt-ins such as RLV never go in.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="44"
+   name="create_heading"
+   width="300"
+   font="SansSerifBold"
+   layout="topleft">Make a backup</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="68"
+   name="note_label"
+   width="60"
+   layout="topleft">Label:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="70"
+   top="64"
+   name="backup_note"
+   tab_group="1"
+   width="460"
+   max_length_bytes="200"
+   default_text="e.g. before reinstalling"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Include accessibility settings (colour filters, UI scale, text size)"
+   left="10"
+   top="94"
+   name="include_a11y"
+   tab_group="1"
+   width="500"
+   initial_value="true"
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="116"
+   name="summary_text"
+   width="520"
+   wrap="true"
+   layout="topleft"></text>
+  <button
+   follows="left|top"
+   height="23"
+   label="Save backup..."
+   left="10"
+   top="150"
+   name="create_btn"
+   tab_group="1"
+   width="140"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="186"
+   name="restore_heading"
+   width="300"
+   font="SansSerifBold"
+   layout="topleft">Restore from a backup</text>
+  <button
+   follows="left|top"
+   height="23"
+   label="Open backup..."
+   left="10"
+   top="208"
+   name="open_btn"
+   tab_group="1"
+   width="140"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Settings"
+   left="170"
+   top="212"
+   name="restore_settings"
+   tab_group="1"
+   width="90"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Accessibility settings"
+   left="270"
+   top="212"
+   name="restore_a11y"
+   tab_group="1"
+   width="170"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="6|7 files"
+   left="10"
+   top="238"
+   name="restore_files"
+   tab_group="1"
+   width="100"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Replace files that differ (yours are kept as .before-restore)"
+   left="120"
+   top="238"
+   name="replace_files"
+   tab_group="1"
+   width="410"
+   initial_value="false"
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="230"
+   left="10"
+   top="262"
+   name="preview_text"
+   tab_group="1"
+   width="520"
+   max_length="131072"
+   word_wrap="false"
+   enabled="false"
+   layout="topleft" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Restore"
+   left="10"
+   top="500"
+   name="restore_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Makes the changes listed above. An undo point is saved first."
+   layout="topleft" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Undo restore"
+   left="138"
+   top="500"
+   name="undo_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Puts the settings back as they were before the last restore."
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="44"
+   left="10"
+   top="530"
+   name="status_text"
+   width="520"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

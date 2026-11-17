@@ -261,14 +261,20 @@ if(AL_BUILD_VIEWER)
     alfloaterscriptstudio.cpp
     sw67accessibility.cpp
     sw67floateraccessibility.cpp
+    sw67floaterbackup.cpp
     sw67floatercreatorprojects.cpp
+    sw67floatereventrehearsal.cpp
     sw67floaterkingjahmir.cpp
+    sw67floateroutfits.cpp
     sw67floaterperformance.cpp
+    sw67floaterposestudio.cpp
     sw67floaterproductphoto.cpp
+    sw67floaterrecordingprivacy.cpp
     sw67floaterworkspaces.cpp
     sw67kingjahmir.cpp
     sw67rlvstate.cpp
     sw67viewerfiles.cpp
+    sw67viewersettings.cpp
     sw67workspaces.cpp
     alfloaterwebprofile.cpp
     alfloaterxuilibrary.cpp
@@ -1154,14 +1160,20 @@ if(AL_BUILD_VIEWER)
     alfloaterscriptstudio.h
     sw67accessibility.h
     sw67floateraccessibility.h
+    sw67floaterbackup.h
     sw67floatercreatorprojects.h
+    sw67floatereventrehearsal.h
     sw67floaterkingjahmir.h
+    sw67floateroutfits.h
     sw67floaterperformance.h
+    sw67floaterposestudio.h
     sw67floaterproductphoto.h
+    sw67floaterrecordingprivacy.h
     sw67floaterworkspaces.h
     sw67kingjahmir.h
     sw67rlvstate.h
     sw67viewerfiles.h
+    sw67viewersettings.h
     sw67workspaces.h
     alfloaterwebprofile.h
     alfloaterxuilibrary.h

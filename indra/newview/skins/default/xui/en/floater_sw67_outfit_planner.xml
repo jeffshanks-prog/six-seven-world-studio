@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Outfit Planner. Keyboard: Tab moves from the saved outfits to the editor, the preview and Wear. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="604"
+ width="630"
+ min_height="540"
+ min_width="560"
+ layout="topleft"
+ name="sw67_outfit_planner"
+ save_rect="true"
+ title="6|7 OUTFIT PLANNER">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="600"
+   wrap="true"
+   layout="topleft">Plan outfits as files you keep, see exactly what wearing one puts on and takes off, then Wear. Items are never deleted, bought or moved; missing ones are only listed.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="44"
+   name="saved_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Saved outfits</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top"
+   height="200"
+   left="10"
+   top="62"
+   name="outfit_list"
+   tab_group="1"
+   width="200">
+    <scroll_list.columns name="name" label="Outfit" width="120" />
+    <scroll_list.columns name="occasion" label="Occasion" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="From what I wear"
+   left="10"
+   top="268"
+   name="capture_btn"
+   tab_group="1"
+   width="200"
+   tool_tip="Starts a new outfit from everything you wear now."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove plan"
+   left="10"
+   top="296"
+   name="delete_btn"
+   tab_group="1"
+   width="200"
+   tool_tip="Removes only the outfit plan file (kept as .deleted). No inventory item is touched."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="220"
+   top="46"
+   name="name_label"
+   width="70"
+   layout="topleft">Name:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="290"
+   top="42"
+   name="outfit_name"
+   tab_group="1"
+   width="330"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="220"
+   top="74"
+   name="occasion_label"
+   width="70"
+   layout="topleft">Occasion:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="290"
+   top="70"
+   name="outfit_occasion"
+   tab_group="1"
+   width="330"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="220"
+   top="102"
+   name="tags_label"
+   width="70"
+   layout="topleft">Tags:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="290"
+   top="98"
+   name="outfit_tags"
+   tab_group="1"
+   width="330"
+   max_length_bytes="400"
+   default_text="comma separated"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="220"
+   top="130"
+   name="notes_label"
+   width="70"
+   layout="topleft">Notes:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="290"
+   top="126"
+   name="outfit_notes"
+   tab_group="1"
+   width="330"
+   max_length_bytes="4000"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="110"
+   left="220"
+   top="156"
+   name="item_list"
+   tab_group="1"
+   width="400">
+    <scroll_list.columns name="kind" label="Kind" width="90" />
+    <scroll_list.columns name="name" label="Item" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Add selected in inventory"
+   left="220"
+   top="272"
+   name="add_selected_btn"
+   tab_group="1"
+   width="190"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Take out of outfit"
+   left="418"
+   top="272"
+   name="remove_item_btn"
+   tab_group="1"
+   width="150"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Take off what the outfit lacks"
+   left="220"
+   top="302"
+   name="replace_check"
+   tab_group="1"
+   width="220"
+   initial_value="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Keep my HUDs on"
+   left="450"
+   top="302"
+   name="keep_huds"
+   tab_group="1"
+   width="170"
+   initial_value="true"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Save outfit"
+   left="520"
+   top="326"
+   name="save_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="170"
+   left="10"
+   top="356"
+   name="preview_text"
+   tab_group="1"
+   width="610"
+   max_length="131072"
+   word_wrap="false"
+   enabled="false"
+   layout="topleft" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Wear"
+   left="10"
+   top="534"
+   name="wear_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Wears the outfit as previewed. RLV is asked about every item first; if any is blocked, nothing changes."
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="562"
+   name="status_text"
+   width="610"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

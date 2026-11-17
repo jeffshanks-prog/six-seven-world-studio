@@ -13,7 +13,7 @@ Nothing is called complete without code and tests that ran.
 Where a module lives:
 
 - `indra/sw67core`: logic with no viewer dependencies, unit tested on its own
-  (`ctest`, 64 test cases as of this report).
+  (`ctest`, 111 test cases as of 2026-11-17).
 - `indra/newview/sw67*`: thin viewer windows and adapters over sw67core and
   the Alchemy systems below.
 
@@ -29,9 +29,9 @@ Where a module lives:
 
 M2 increments, as the spec prioritises them:
 
-1. **First** (this report): Workspace Profiles, Performance Assistant,
+1. **First** ([MILESTONE-2.md](MILESTONE-2.md)): Workspace Profiles, Performance Assistant,
    Creator Project Manager, Product Photography (manual).
-2. **Next**: Outfit Planner, Pose and Photo Studio, Event Rehearsal (its
+2. **Next** ([MILESTONE-2.2.md](MILESTONE-2.2.md)): Outfit Planner, Pose and Photo Studio, Event Rehearsal (its
    simulation core; live execution is M4), Recording Privacy Mode, Settings
    Backup and Restore.
 3. **Then**: the manual halves of Stage and Lighting and the Performance
@@ -50,11 +50,11 @@ M2 increments, as the spec prioritises them:
 | 5 | Creator Project Manager | M2.1 | Script Studio (`alfloaterscriptstudio`, its external-file masters) for scripts later | Basic (files never gated) | **Implemented, untested in-world**; inventory linking from the window **Planned** (manifest and tests support it) |
 | 6 | Product Photography (manual) | M2.1 | `LLViewerWindow::rawSnapshot`, `LLAgentCamera`, `LLSelectMgr` bounding box, Lightbox looks | Basic | **Implemented, untested in-world**: angles, sizes, naming, originals kept, exports, manifest. Watermarks in the viewer, backdrop and lighting switching **Planned** (planned and tested in core) |
 | 6b | AI product photography | M3 | Same, plus the AI service | AI Creator | **Planned**; output labelling and reversible edit chain implemented in core |
-| 4 | Outfit Planner | M2.2 | Outfits and COF (`llappearancemgr`, `llagentwearables`), RLV gate (Wear/Remove) | Basic | **Planned** |
-| 3 | Pose and Photo Studio | M2.2 | Snapshot floater, `LLAgentCamera` camera presets, animation permissions (`llviewermessage` run-time permissions) | Basic | **Planned** |
-| 13 | Recording Privacy Mode | M2.2 | Name tags (`RenderNameShowSelf`, `AvatarNameTagMode`), `LLNotifications` channels, UI hiding (`gViewerWindow->setUIVisibility`), snapshot cutouts | Basic | **Planned** |
-| 15 | Settings Backup and Restore | M2.2 | `settings_policy` (implemented: keeps secrets, accessibility and consent settings out), camera presets (`LLPresetsManager`), workspace profile files | Basic | **Planned**; its exclusion rule is **Implemented** |
-| 9 | Event Rehearsal Mode | M2.2 core, M4 live | RLV gate's action traits (sends, spends, publishes) | DJ & Hosting | **Planned** |
+| 4 | Outfit Planner | M2.2 | Outfits and COF (`llappearancemgr`, `llagentwearables`), RLV gate (Wear/Remove), attachment limit (`LLAgentBenefits`) | Basic | **Implemented, untested in-world** |
+| 3 | Pose and Photo Studio | M2.2 | Snapshot floater, `LLAgentCamera`, product photo's camera maths and file naming, own-avatar animations (`LLAgent::sendAnimationRequest`) | Basic | **Implemented, untested in-world** (manual; posing others with their consent **Planned**) |
+| 13 | Recording Privacy Mode | M2.2 | Name tag, toast, navigation bar and balance settings; perf assistant's change plans | Basic | **Implemented, untested in-world** |
+| 15 | Settings Backup and Restore | M2.2 | `settings_policy`, `LLControlGroup`, every 6\|7 file folder, toolbars and shortcuts | Basic | **Implemented, untested in-world** |
+| 9 | Event Rehearsal Mode | M2.2 core, M4 live | RLV gate's action traits (sends, spends, publishes) | DJ & Hosting | Rehearsal **Implemented, untested in-world**; running an event live **Planned** (M4) |
 | 10 | Stage and Lighting Controller | M2.3 / M4 | Scripted-object chat channels, RLV gate, accessibility `reduceMotion` | DJ & Hosting | **Planned** |
 | 11 | Dance and Performance Sequencer | M2.3 / M4 | Animation permissions, RLV gate | DJ & Hosting | **Planned** |
 | 1 | AI Director | M3 | RLV gate (`evaluateBatch`, `describeStop`), explicit-authorisation traits | Basic allowance; expanded with AI Creator | **Planned** |

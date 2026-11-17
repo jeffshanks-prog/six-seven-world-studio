@@ -218,6 +218,41 @@
                  function="Floater.Toggle"
                  parameter="sw67_product_photo" />
             </menu_item_call>
+            <menu_item_call
+             label="Event Rehearsal..."
+             name="SW67 Event Rehearsal">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_event_rehearsal" />
+            </menu_item_call>
+            <menu_item_call
+             label="Outfit Planner..."
+             name="SW67 Outfit Planner">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_outfit_planner" />
+            </menu_item_call>
+            <menu_item_call
+             label="Pose and Photo Studio..."
+             name="SW67 Pose Studio">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_pose_studio" />
+            </menu_item_call>
+            <menu_item_call
+             label="Recording Privacy Mode..."
+             name="SW67 Recording Privacy">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_recording_privacy" />
+            </menu_item_call>
+            <menu_item_call
+             label="Settings Backup and Restore..."
+             name="SW67 Backup">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_backup" />
+            </menu_item_call>
         </menu>
         <menu_item_call
          label="Lightbox..."

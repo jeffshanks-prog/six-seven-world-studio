@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Pose and Photo Studio. Keyboard: Tab moves through framings, shots and poses; double-click or Enter on a list goes to it. Playing a pose is said in words in the status line. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="454"
+ width="620"
+ min_height="454"
+ min_width="620"
+ layout="topleft"
+ name="sw67_pose_studio"
+ save_rect="true"
+ title="6|7 POSE AND PHOTO STUDIO">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="600"
+   wrap="true"
+   layout="topleft">Frame yourself, save your own shots and step through poses from your inventory. Poses play on your own avatar only. Take pictures with Snapshot.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="46"
+   name="shoot_label"
+   width="50"
+   layout="topleft">Shoot:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="60"
+   top="42"
+   name="shoot_name"
+   tab_group="1"
+   width="200"
+   max_length_bytes="120"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save"
+   left="268"
+   top="42"
+   name="save_shoot_btn"
+   tab_group="1"
+   width="60"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="New"
+   left="334"
+   top="42"
+   name="new_shoot_btn"
+   tab_group="1"
+   width="60"
+   layout="topleft" />
+  <combo_box
+   follows="left|top"
+   height="23"
+   left="400"
+   top="42"
+   name="shoot_combo"
+   tab_group="1"
+   width="210"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="76"
+   name="framing_heading"
+   width="190"
+   font="SansSerifBold"
+   layout="topleft">Framings</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="false"
+   follows="left|top"
+   height="250"
+   left="10"
+   top="94"
+   name="framing_list"
+   tab_group="1"
+   width="190">
+    <scroll_list.columns name="name" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Frame me"
+   left="10"
+   top="350"
+   name="frame_btn"
+   tab_group="1"
+   width="190"
+   tool_tip="Moves your camera to the chosen framing. RLV is asked first."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Camera back to normal"
+   left="10"
+   top="378"
+   name="reset_btn"
+   tab_group="1"
+   width="190"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="210"
+   top="76"
+   name="shots_heading"
+   width="190"
+   font="SansSerifBold"
+   layout="topleft">My shots</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="false"
+   follows="left|top"
+   height="194"
+   left="210"
+   top="94"
+   name="shot_list"
+   tab_group="1"
+   width="190">
+    <scroll_list.columns name="name" />
+  </scroll_list>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="210"
+   top="294"
+   name="shot_name"
+   tab_group="1"
+   width="190"
+   max_length_bytes="80"
+   default_text="Name for this camera"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save this camera"
+   left="210"
+   top="322"
+   name="save_shot_btn"
+   tab_group="1"
+   width="190"
+   tool_tip="Saves where your camera is now, relative to you."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Go to shot"
+   left="210"
+   top="350"
+   name="goto_shot_btn"
+   tab_group="1"
+   width="92"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove"
+   left="308"
+   top="350"
+   name="remove_shot_btn"
+   tab_group="1"
+   width="92"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="410"
+   top="76"
+   name="poses_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Poses</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="false"
+   follows="left|top|right"
+   height="194"
+   left="410"
+   top="94"
+   name="pose_list"
+   tab_group="1"
+   width="200">
+    <scroll_list.columns name="name" />
+  </scroll_list>
+  <button
+   follows="right|top"
+   height="23"
+   label="Add selected animations"
+   left="410"
+   top="294"
+   name="add_pose_btn"
+   tab_group="1"
+   width="200"
+   tool_tip="Adds the animations selected in your inventory window."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Previous"
+   left="410"
+   top="322"
+   name="prev_btn"
+   tab_group="1"
+   width="64"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Pose"
+   left="478"
+   top="322"
+   name="play_btn"
+   tab_group="1"
+   width="64"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Next"
+   left="546"
+   top="322"
+   name="next_btn"
+   tab_group="1"
+   width="64"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Stop pose"
+   left="410"
+   top="350"
+   name="stop_btn"
+   tab_group="1"
+   width="98"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Remove"
+   left="512"
+   top="350"
+   name="remove_pose_btn"
+   tab_group="1"
+   width="98"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Snapshot..."
+   left="410"
+   top="378"
+   name="snapshot_btn"
+   tab_group="1"
+   width="200"
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="34"
+   left="10"
+   top="412"
+   name="status_text"
+   width="600"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

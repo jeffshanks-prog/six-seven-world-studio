@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Event Rehearsal Mode. Keyboard: Tab moves from the plan to the cue list, the cue editor, then Check and rehearse. The banner and every report line say in words that nothing is sent. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="664"
+ width="680"
+ min_height="600"
+ min_width="680"
+ layout="topleft"
+ name="sw67_event_rehearsal"
+ save_rect="true"
+ title="6|7 EVENT REHEARSAL">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="banner_text"
+   width="660"
+   font="SansSerifBold"
+   wrap="true"
+   layout="topleft">REHEARSAL ONLY: nothing is sent, broadcast, invited or paid. This window shows what your event would do, and when.</text>
+  <combo_box
+   follows="left|top"
+   height="23"
+   left="10"
+   top="42"
+   name="plan_combo"
+   tab_group="1"
+   width="220"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="New"
+   left="238"
+   top="42"
+   name="new_btn"
+   tab_group="1"
+   width="60"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save"
+   left="304"
+   top="42"
+   name="save_btn"
+   tab_group="1"
+   width="60"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="76"
+   name="name_label"
+   width="50"
+   layout="topleft">Event:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="60"
+   top="72"
+   name="event_name"
+   tab_group="1"
+   width="250"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="320"
+   top="76"
+   name="minutes_label"
+   width="60"
+   layout="topleft">Minutes:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="380"
+   top="72"
+   name="planned_minutes"
+   tab_group="1"
+   width="60"
+   max_length_bytes="5"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="450"
+   top="76"
+   name="budget_label"
+   width="110"
+   layout="topleft">Prize budget L$:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="560"
+   top="72"
+   name="prize_budget"
+   tab_group="1"
+   width="110"
+   max_length_bytes="9"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="140"
+   left="10"
+   top="102"
+   name="cue_list"
+   tab_group="1"
+   width="660">
+    <scroll_list.columns name="time" label="Time" width="70" />
+    <scroll_list.columns name="kind" label="Cue" width="170" />
+    <scroll_list.columns name="what" label="What" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="250"
+   name="cue_heading"
+   width="100"
+   font="SansSerifBold"
+   layout="topleft">Cue</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="272"
+   name="time_label"
+   width="40"
+   layout="topleft">At:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="50"
+   top="268"
+   name="cue_time"
+   tab_group="1"
+   width="70"
+   max_length_bytes="10"
+   default_text="m:ss"
+   layout="topleft" />
+  <combo_box
+   follows="left|top"
+   height="23"
+   left="130"
+   top="268"
+   name="cue_kind"
+   tab_group="1"
+   width="210"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="350"
+   top="272"
+   name="label_label"
+   width="50"
+   layout="topleft">Label:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="400"
+   top="268"
+   name="cue_label"
+   tab_group="1"
+   width="270"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="300"
+   name="text_label"
+   width="40"
+   layout="topleft">Text:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="50"
+   top="296"
+   name="cue_text"
+   tab_group="1"
+   width="620"
+   max_length_bytes="4096"
+   tool_tip="Chat or IM text, the stream address, or the sky or camera to use."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="328"
+   name="who_label"
+   width="40"
+   layout="topleft">Who:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="50"
+   top="324"
+   name="cue_target_name"
+   tab_group="1"
+   width="160"
+   max_length_bytes="120"
+   layout="topleft" />
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="216"
+   top="324"
+   name="cue_target_id"
+   tab_group="1"
+   width="260"
+   max_length_bytes="36"
+   default_text="person or group UUID"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Choose person..."
+   left="484"
+   top="324"
+   name="pick_btn"
+   tab_group="1"
+   width="186"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="356"
+   name="item_label"
+   width="40"
+   layout="topleft">Item:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="50"
+   top="352"
+   name="cue_item_id"
+   tab_group="1"
+   width="260"
+   max_length_bytes="36"
+   default_text="item UUID, for gifts"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="320"
+   top="356"
+   name="amount_label"
+   width="30"
+   layout="topleft">L$:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="350"
+   top="352"
+   name="cue_amount"
+   tab_group="1"
+   width="80"
+   max_length_bytes="9"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="440"
+   top="356"
+   name="channel_label"
+   width="60"
+   layout="topleft">Channel:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="500"
+   top="352"
+   name="cue_channel"
+   tab_group="1"
+   width="80"
+   max_length_bytes="10"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add cue"
+   left="10"
+   top="382"
+   name="add_cue_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Update cue"
+   left="116"
+   top="382"
+   name="update_cue_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove cue"
+   left="222"
+   top="382"
+   name="remove_cue_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Check and rehearse"
+   left="10"
+   top="416"
+   name="check_btn"
+   tab_group="1"
+   width="160"
+   tool_tip="Checks the plan and lists, in time order, everything it would do. Sends nothing."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Run rehearsal clock"
+   left="178"
+   top="416"
+   name="run_btn"
+   tab_group="1"
+   width="160"
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="346"
+   top="416"
+   name="speed_combo"
+   tab_group="1"
+   width="110">
+    <combo_box.item label="Real time" name="s1" value="1" />
+    <combo_box.item label="10x faster" name="s10" value="10" />
+    <combo_box.item label="60x faster" name="s60" value="60" />
+  </combo_box>
+  <button
+   follows="left|top"
+   height="23"
+   label="Stop"
+   left="464"
+   top="416"
+   name="stop_btn"
+   tab_group="1"
+   width="80"
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="16"
+   left="10"
+   top="446"
+   name="clock_text"
+   width="660"
+   layout="topleft"></text>
+  <text_editor
+   follows="all"
+   height="150"
+   left="10"
+   top="466"
+   name="report_text"
+   tab_group="1"
+   width="660"
+   max_length="131072"
+   word_wrap="false"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="622"
+   name="status_text"
+   width="660"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

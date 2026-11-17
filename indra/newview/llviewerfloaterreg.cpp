@@ -214,10 +214,15 @@
 // [RLVa:KB] - Checked: 2010-03-11
 #include "rlvfloaters.h"
 #include "sw67floateraccessibility.h"
+#include "sw67floaterbackup.h"
 #include "sw67floatercreatorprojects.h"
+#include "sw67floatereventrehearsal.h"
 #include "sw67floaterkingjahmir.h"
+#include "sw67floateroutfits.h"
 #include "sw67floaterperformance.h"
+#include "sw67floaterposestudio.h"
 #include "sw67floaterproductphoto.h"
+#include "sw67floaterrecordingprivacy.h"
 #include "sw67floaterworkspaces.h"
 // [/RLVa:KB]
 // handle secondlife:///app/openfloater/{NAME} URLs
@@ -548,6 +553,11 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("sw67_product_photo", "floater_sw67_product_photo.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterProductPhoto>);
     LLFloaterReg::add("sw67_king_jahmir", "floater_sw67_king_jahmir.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterKingJahmir>);
     LLFloaterReg::add("sw67_king_jahmir_bubble", "floater_sw67_king_jahmir_bubble.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterKingJahmirBubble>);
+    LLFloaterReg::add("sw67_backup", "floater_sw67_backup.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterBackup>);
+    LLFloaterReg::add("sw67_event_rehearsal", "floater_sw67_event_rehearsal.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterEventRehearsal>);
+    LLFloaterReg::add("sw67_outfit_planner", "floater_sw67_outfit_planner.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterOutfits>);
+    LLFloaterReg::add("sw67_pose_studio", "floater_sw67_pose_studio.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPoseStudio>);
+    LLFloaterReg::add("sw67_recording_privacy", "floater_sw67_recording_privacy.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterRecordingPrivacy>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);
