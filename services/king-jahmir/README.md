@@ -66,8 +66,10 @@ for the retention clean-up. The help pages travel with it in
 editing `doc/sw67/help`; a test fails while the copy is stale).
 
 1. **Database.** In the Supabase project, open **Connect** and copy the
-   **Transaction pooler** connection string (port 6543). The gateway creates
-   its own tables (all named `kj_...`) on first start.
+   **Transaction pooler** connection string (port 6543) and put the database
+   password in it. The gateway creates its own tables (all named `kj_...`) on
+   first start, with row level security on and no policies, so Supabase's
+   Data API (the project's public key) can read none of them.
 2. **Project.** In Vercel, import the GitHub repository as a new project and
    set **Root Directory** to `services/king-jahmir`. No framework, no build
    command.
@@ -78,10 +80,13 @@ editing `doc/sw67/help`; a test fails while the copy is stale).
    address.
 4. **Deploy**, then check `https://<project>.vercel.app/healthz` answers
    `"ok": true` and `"ai_client": true`.
-5. In the viewer: **King Jahmir > Settings & privacy**, paste
-   `https://<project>.vercel.app` as the server and Save, then sign in with a
-   token from `python -m kingjahmir issue-token` (run with the same
+5. Get a sign-in: with `KJ_SETUP_CODE` set, open
+   `https://<project>.vercel.app/setup`, enter the code and your avatar key,
+   and copy the token (or run `python -m kingjahmir issue-token` with the same
    `KJ_AUTH_SECRET`).
+6. In the viewer: **King Jahmir > Settings & privacy**, paste
+   `https://<project>.vercel.app` as the server and Save, then paste the token
+   under **6|7 sign-in** and press **Sign in**.
 
 Vercel's function time limit is set to 300 seconds in `vercel.json`, longer
 than the slowest turn (6 model calls of at most 60 seconds each is the
@@ -114,6 +119,7 @@ are refused when `KJ_DEV_MODE` is off.
 | `KJ_PUBLIC_URL` | `http://KJ_HOST:KJ_PORT` | The https address residents reach; used for help-page links. |
 | `KJ_DB_PATH` | `kingjahmir.sqlite3` | SQLite file for conversations, retries, drafts, preferences, support requests, rate limits. Used when `KJ_DATABASE_URL` is not set. |
 | `KJ_DATABASE_URL` | (none) | PostgreSQL connection string (`postgresql://...`) instead of SQLite. Required on Vercel; with Supabase use the transaction pooler (port 6543). |
+| `KJ_SETUP_CODE` | (none) | At least 16 characters. Turns on `/setup`, a page where an owner (an id in `KJ_OWNER_IDS`) enters this code and gets a 30-day sign-in token, with no command line. Tries are limited per address. Remove it to turn the page off. |
 | `CRON_SECRET` | (none) | Lets `GET /cron/purge` with `Authorization: Bearer <it>` run the retention clean-up (Vercel Cron). Without it the route refuses. |
 | `KJ_DOCS_DIR` | `doc/sw67/help` in this repo, else the copy in `kingjahmir/help` | Help pages and feature registry. |
 | `KJ_MODEL` | `claude-opus-5-5` | Claude model. |
@@ -160,6 +166,7 @@ All `/v1` routes need `Authorization: Bearer <token>`. Errors are
 | Route | |
 |---|---|
 | `GET /healthz` | Liveness (no auth). |
+| `GET /setup`, `POST /setup` | Owner sign-in page, only with `KJ_SETUP_CODE` set. |
 | `GET /cron/purge` | Retention clean-up; needs `Authorization: Bearer $CRON_SECRET`. |
 | `GET /help/`, `GET /help/<id>` | Help pages as plain HTML (no auth). |
 | `GET /v1/bootstrap` | Greeting, starter buttons, development mode, retention days. |

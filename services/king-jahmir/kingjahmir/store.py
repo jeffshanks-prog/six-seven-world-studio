@@ -95,6 +95,9 @@ CREATE TABLE IF NOT EXISTS kj_busy (
 );
 """
 
+_TABLE_NAMES = ("kj_conversations", "kj_turns", "kj_requests", "kj_pending_actions", "kj_preferences",
+                "kj_support_requests", "kj_rate_buckets", "kj_busy")
+
 ACTION_TTL = 24 * 3600
 REQUEST_TTL = 24 * 3600
 STALE_PENDING = 15 * 60  # a request still pending after this crashed; let it run again
@@ -158,6 +161,16 @@ class _Postgres:
                 for stmt in _TABLES.format(real="DOUBLE PRECISION", id="BIGSERIAL PRIMARY KEY").split(";"):
                     if stmt.strip():
                         cur.execute(stmt)
+                # Supabase serves the public schema through its Data API to
+                # anyone holding the project's public key. Row level security
+                # with no policies shuts every such reader out; the gateway
+                # connects as the tables' owner, which the policies don't bind.
+                cur.execute("SELECT 1 FROM pg_roles WHERE rolname IN ('anon','authenticated')")
+                supabase_roles = bool(cur.fetchall())
+                for table in _TABLE_NAMES:
+                    cur.execute(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")
+                    if supabase_roles:
+                        cur.execute(f"REVOKE ALL ON {table} FROM anon, authenticated")
 
     @contextmanager
     def _lock_free_conn(self) -> Iterator[Any]:
@@ -168,7 +181,7 @@ class _Postgres:
 
     def _exec(self, sql: str, args: tuple) -> tuple[list[dict], int]:
         with self._lock_free_conn() as conn, conn.cursor() as cur:
-            cur.execute(sql, args)
+            cur.execute(sql, args or None)  # no args: a literal % stays literal
             rows = list(cur.fetchall()) if cur.description else []
             return rows, cur.rowcount
 
