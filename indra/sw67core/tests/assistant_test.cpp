@@ -133,6 +133,12 @@ TEST_CASE("Service failures give useful messages and say whether to retry", "[as
     CHECK_FALSE(v.canRetry);
     CHECK(v.role == sw67::a11y::StatusRole::Error);
 
+    // A rejected sign-in says so, rather than asking to sign in again.
+    v = describe(parseError(401, R"({"error":{"code":"invalid_token","message":"x","retryable":false}})"));
+    CHECK(v.text.find("did not accept your sign-in") != std::string::npos);
+    v = describe(parseError(401, R"({"error":{"code":"not_signed_in","message":"x","retryable":false}})"));
+    CHECK(v.text.find("Sign in to 6|7") != std::string::npos);
+
     v = describe(parseError(502, "<html>proxy error</html>"));
     CHECK(v.text.find("html") == std::string::npos);
     CHECK(v.canRetry);
