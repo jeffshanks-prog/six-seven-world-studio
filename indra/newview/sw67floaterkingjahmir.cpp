@@ -227,7 +227,25 @@ void SW67FloaterKingJahmir::refresh()
     LLTextBox* status = getChild<LLTextBox>("status_text");
     if (st.text.empty())
     {
-        status->setText(conv.waiting() ? "King Jahmir is thinking..." : std::string());
+        // Say up front when he cannot answer, not only after a message.
+        std::string idle;
+        if (conv.waiting())
+        {
+            idle = "King Jahmir is thinking...";
+        }
+        else if (kj::gatewayUrl().empty())
+        {
+            idle = sw67viewer::statusText(sw67::a11y::StatusRole::Warning) +
+                   "  Not set up yet: his server isn't connected.";
+        }
+        else if (!kj::signedIn())
+        {
+            idle = sw67viewer::statusText(sw67::a11y::StatusRole::Warning) +
+                   "  Not signed in: see Settings & privacy.";
+        }
+        status->setText(idle);
+        status->setColor(LLUIColor(sw67viewer::statusColor(conv.waiting() ? sw67::a11y::StatusRole::Info
+                                                                          : sw67::a11y::StatusRole::Warning)));
     }
     else
     {
@@ -565,6 +583,10 @@ void SW67FloaterKingJahmirBubble::refresh()
     if (kj::conversation().waiting())
     {
         label += " He is answering.";
+    }
+    else if (kj::gatewayUrl().empty() || !kj::signedIn())
+    {
+        label += " Not set up yet, so he can't answer.";
     }
     btn->setToolTip(label);
 }
