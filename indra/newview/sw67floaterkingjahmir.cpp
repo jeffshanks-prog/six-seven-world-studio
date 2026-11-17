@@ -279,9 +279,9 @@ void SW67FloaterKingJahmir::refresh()
         ->setText(signedIn ? sw67viewer::statusText(sw67::a11y::StatusRole::Success) + "  Signed in to 6|7."
                            : sw67viewer::statusText(sw67::a11y::StatusRole::Neutral) + "  Not signed in.");
     getChild<LLUICtrl>("sign_out_btn")->setEnabled(signedIn);
-    std::string retention = "Conversations are stored on the King Jahmir server";
-    retention += boot.retentionDays > 0 ? " for " + std::to_string(boot.retentionDays) + " days, then deleted."
-                                        : " for a limited time, then deleted.";
+    // One line: the preferences heading sits right below it.
+    std::string retention = "The server deletes conversations after ";
+    retention += boot.retentionDays > 0 ? std::to_string(boot.retentionDays) + " days." : "a set time.";
     getChild<LLTextBox>("retention_text")->setText(retention);
 }
 
