@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: King Jahmir's crown bubble. Drag it by the gold strip
+     at its top. The crown is a button: click it, or Tab to it and press
+     Enter, to open or minimize the conversation. Unread replies show as
+     words ("2 new"), not by colour alone. -->
+<floater
+ bg_opaque_color="SW67Black"
+ bg_alpha_color="SW67Black"
+ background_visible="true"
+ background_opaque="true"
+ can_close="false"
+ can_minimize="false"
+ can_resize="false"
+ can_tear_off="false"
+ header_height="10"
+ height="86"
+ width="72"
+ layout="topleft"
+ name="sw67_king_jahmir_bubble"
+ save_rect="true"
+ save_visibility="false"
+ show_title="false"
+ single_instance="true"
+ title="">
+  <button
+   follows="left|top"
+   height="56"
+   image_overlay="SW67_KingJahmir_Crown"
+   label=""
+   layout="topleft"
+   left="8"
+   name="crown_btn"
+   tab_stop="true"
+   tool_tip="King Jahmir, your 6|7 AI guide. Press to open or minimize the conversation."
+   top="12"
+   width="56" />
+  <text
+   follows="left|top"
+   font="SansSerifSmallBold"
+   halign="center"
+   height="14"
+   layout="topleft"
+   left="4"
+   name="unread_text"
+   text_color="SW67Gold"
+   top="70"
+   visible="false"
+   width="64" />
+</floater>

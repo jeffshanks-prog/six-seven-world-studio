@@ -96,6 +96,7 @@
 #include "alfeedback.h"
 #include "llappviewer.h"
 #include "llstartup.h"
+#include "sw67kingjahmir.h"
 
 #if 0
 #include "llvelopack.h"
@@ -2743,6 +2744,9 @@ bool idle_startup()
 
         LLStartUp::setStartupState( STATE_STARTED );
         do_startup_frame();
+
+        // 6|7: King Jahmir's crown bubble and greeting.
+        sw67viewer::kingjahmir::onLogin();
 
         // A login that skipped the login screen asks about the last run here.
         ALFeedback::askAboutLastRun();
