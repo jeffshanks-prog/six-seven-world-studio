@@ -82,17 +82,16 @@ check the acceptance criteria directly:
 - **Hostile JSON.** Deep nesting, oversized files, bad escapes and lone
   surrogates are refused without a crash.
 
-**Not yet tested:** the four viewer windows have not run in a built viewer.
-The viewer code was written against the real APIs (`LLFloaterReg`,
-`LLToolBarView`, `LLViewerInput`, `LLTrace`, `rawSnapshot`,
-`LLAgentCamera`), but the first CI viewer build is its compile check. Once a
-build exists, run the in-world checks in section 5.
+**Viewer build:** the four windows compile and link on Windows x64 and
+Linux x64 in CI
+([Build run 44034194248](https://github.com/jeffshanks-prog/six-seven-world-studio/actions/runs/44034194248),
+commit 645be89086, with installers). **Not yet tested:** they have not been
+run in-world. Run the checks in section 5 with that build.
 
 ## 3. Limits and blockers
 
-- **Viewer build pending.** The first CI build was still configuring
-  (building vcpkg dependencies) when this increment was written. Expect a
-  round of compile fixes in the new `sw67*` viewer files.
+- **In-world checks pending.** The viewer builds, but the windows still
+  need the section 5 checks in a logged-in session.
 - **Entitlements are not enforced** in the viewer, because there is no
   billing service yet. Every tool is open in development builds.
 - **Measurements** come from the viewer's own statistics. Texture memory is
