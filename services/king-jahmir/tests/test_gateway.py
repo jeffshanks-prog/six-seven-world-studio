@@ -839,6 +839,43 @@ class ServerlessTests(Base):
             gw.shutdown()
             gw.server_close()
 
+    def test_vercel_entry_point_names_missing_settings(self):
+        old = dict(os.environ)
+        os.environ.clear()
+        os.environ.update({"VERCEL": "1", "KJ_AUTH_SECRET": "short-secret-value",
+                           "CRON_SECRET": "c" * 40, "PATH": old.get("PATH", "")})
+        try:
+            import importlib.util
+            from pathlib import Path
+            spec = importlib.util.spec_from_file_location(
+                "kj_vercel_index_unset", Path(__file__).resolve().parent.parent / "api" / "index.py")
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)  # must not raise: Vercel would show only a crash page
+        finally:
+            os.environ.clear()
+            os.environ.update(old)
+        gw = ThreadingHTTPServer(("127.0.0.1", 0), mod.handler)
+        threading.Thread(target=gw.serve_forever, daemon=True).start()
+        try:
+            with self.assertRaises(urllib.error.HTTPError) as cm:
+                urllib.request.urlopen(f"http://127.0.0.1:{gw.server_port}/api/index?__kjpath=setup")
+            self.assertEqual(cm.exception.code, 503)
+            body = cm.exception.read().decode()
+            self.assertIn("not set up yet", body)
+            for name in ("ANTHROPIC_API_KEY", "KJ_DATABASE_URL", "KJ_SETUP_CODE"):
+                self.assertIn(name, body)
+            self.assertNotIn("CRON_SECRET", body)  # saved, so not listed
+            self.assertNotIn("short-secret-value", body)  # values never shown
+        finally:
+            gw.shutdown()
+            gw.server_close()
+        # All five saved but one too short: the reason, still without values.
+        env = {"VERCEL": "1", "ANTHROPIC_API_KEY": "sk-ant-x", "KJ_DATABASE_URL": "postgresql://u:p@h/d",
+               "KJ_AUTH_SECRET": "short-secret-value", "CRON_SECRET": "c" * 40, "KJ_SETUP_CODE": "s" * 20}
+        msg = mod.setup_problem(env)
+        self.assertIn("KJ_AUTH_SECRET must be at least 32", msg)
+        self.assertNotIn("short-secret-value", msg)
+
 
 if __name__ == "__main__":
     unittest.main()
