@@ -21,6 +21,7 @@ Routes:
 
 from __future__ import annotations
 
+import hmac
 import html
 import json
 import logging
@@ -67,13 +68,12 @@ class App:
     def __init__(self, cfg, client=None, provider=None, store: Store | None = None):
         self.cfg = cfg
         self.kb = KnowledgeBase(cfg.docs_dir, cfg.public_url)
-        self.store = store or Store(cfg.db_path)
+        self.store = store or Store(cfg.db_path, cfg.database_url)
         self.provider = provider or make_provider(cfg)
         self.assistant = Assistant(cfg, client if client is not None else make_client(cfg))
-        self.limiter = RateLimiter(cfg.rate_per_minute, cfg.rate_burst, cfg.daily_messages)
-        self.ip_limiter = RateLimiter(cfg.rate_per_minute * 4, cfg.rate_burst * 4, cfg.daily_messages * 10)
-        self._user_locks: dict[str, threading.Lock] = {}
-        self._locks_guard = threading.Lock()
+        self.limiter = RateLimiter(self.store, "u", cfg.rate_per_minute, cfg.rate_burst, cfg.daily_messages)
+        self.ip_limiter = RateLimiter(self.store, "ip", cfg.rate_per_minute * 4, cfg.rate_burst * 4,
+                                      cfg.daily_messages * 10)
 
     # ---- helpers ----------------------------------------------------------
     def authenticate(self, header: str | None) -> Principal:
@@ -87,12 +87,6 @@ class App:
         if not p.can("chat"):
             raise HttpError(403, "forbidden", "This 6|7 session may not use King Jahmir.")
         return p
-
-    def _user_lock(self, sub: str) -> threading.Lock:
-        with self._locks_guard:
-            if len(self._user_locks) > 10000:
-                self._user_locks = {k: v for k, v in self._user_locks.items() if v.locked()}
-            return self._user_locks.setdefault(sub, threading.Lock())
 
     def _conv_or_404(self, p: Principal, cid: str) -> None:
         if not _CONV.match(cid or "") or not self.store.owns_conversation(p.sub, cid):
@@ -140,12 +134,12 @@ class App:
             return {**cached, "replayed": True}
         if state == "pending":
             raise HttpError(409, "in_progress", "King Jahmir is still answering that message.", True, 2)
-        lock = self._user_lock(p.sub)
-        if not lock.acquire(blocking=False):
+        # One message at a time per resident, across every gateway instance.
+        if not self.store.try_busy(p.sub):
             self.store.finish_request(p.sub, idem_key, None)
             raise HttpError(429, "busy", "Wait for King Jahmir's answer before sending another message.", True, 2)
         try:
-            wait = self.limiter.check("u:" + p.sub) or self.ip_limiter.check("ip:" + ip)
+            wait = self.limiter.check(p.sub) or self.ip_limiter.check(ip)
             if wait:
                 raise HttpError(429, "rate_limited", "You're sending messages quickly. Try again shortly.",
                                 True, wait)
@@ -190,7 +184,7 @@ class App:
             self.store.finish_request(p.sub, idem_key, None)
             raise
         finally:
-            lock.release()
+            self.store.clear_busy(p.sub)
 
     def conversations(self, p: Principal) -> dict:
         return {"conversations": self.store.list_conversations(p.sub), "retention_days": self.cfg.retention_days}
@@ -244,6 +238,16 @@ class App:
         if not p.owner:
             raise HttpError(403, "forbidden", "Only the 6|7 owner can see support requests.")
         return {"support_requests": self.store.support_requests()}
+
+    def cron_purge(self, header: str | None) -> dict:
+        """The retention clean-up, for hosts that run it on a schedule (Vercel
+        Cron sends `Authorization: Bearer $CRON_SECRET`)."""
+        secret = self.cfg.cron_secret
+        if not secret or not hmac.compare_digest((header or "").encode(), f"Bearer {secret}".encode()):
+            raise HttpError(401, "unauthorized", "Not allowed.")
+        n = self.store.purge(self.cfg.retention_days)
+        log.info(json.dumps({"event": "retention_purge", "conversations": n}))
+        return {"ok": True, "deleted_conversations": n}
 
     # ---- help pages -------------------------------------------------------
     def help_page(self, page_id: str | None) -> str:
@@ -339,6 +343,9 @@ class Handler(BaseHTTPRequestHandler):
             m = re.fullmatch(r"/help/([a-z0-9][a-z0-9_-]{0,63})", path)
             if m and self.command == "GET":
                 self._send(200, self.app.help_page(m.group(1)), "text/html; charset=utf-8")
+                return self._log(200, started)
+            if path == "/cron/purge" and self.command == "GET":
+                self._send(200, self.app.cron_purge(self.headers.get("Authorization")))
                 return self._log(200, started)
             if not path.startswith("/v1/"):
                 raise HttpError(404, "not_found", "No such route.")

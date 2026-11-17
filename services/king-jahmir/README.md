@@ -40,7 +40,7 @@ python -m kingjahmir serve              # listens on 127.0.0.1:8767
 
 Put it behind a TLS reverse proxy (Caddy, nginx) and give the viewer the
 https address. The viewer refuses plain http except to `127.0.0.1` and
-`localhost`.
+`localhost`. Or host it on Vercel with a Supabase database, below.
 
 Tests (no network, no key; they use a scripted model and the real Anthropic
 SDK pointed at a local fake API):
@@ -48,6 +48,44 @@ SDK pointed at a local fake API):
 ```
 python -m unittest -v
 ```
+
+Tests on PostgreSQL as well (as on Vercel), against any empty database:
+
+```
+KJ_TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:5432/kj_test python -m unittest
+```
+
+## Host it on Vercel with Supabase
+
+The gateway also runs as one Vercel Python function (`api/index.py`, routed by
+`vercel.json`), keeping everything it shares between requests in PostgreSQL:
+conversations, retries, drafts, preferences, support requests, rate limits and
+the one-message-at-a-time marks. A Vercel cron job calls `/cron/purge` daily
+for the retention clean-up. The help pages travel with it in
+`kingjahmir/help` (refresh with `python -m kingjahmir bundle-docs` after
+editing `doc/sw67/help`; a test fails while the copy is stale).
+
+1. **Database.** In the Supabase project, open **Connect** and copy the
+   **Transaction pooler** connection string (port 6543). The gateway creates
+   its own tables (all named `kj_...`) on first start.
+2. **Project.** In Vercel, import the GitHub repository as a new project and
+   set **Root Directory** to `services/king-jahmir`. No framework, no build
+   command.
+3. **Environment variables** (Project Settings > Environment Variables):
+   `KJ_DATABASE_URL` (step 1), `ANTHROPIC_API_KEY`, `KJ_AUTH_SECRET`,
+   `KJ_OWNER_IDS`, and `CRON_SECRET` (any long random string; Vercel sends it
+   to the cron job). `KJ_PUBLIC_URL` defaults to the project's production
+   address.
+4. **Deploy**, then check `https://<project>.vercel.app/healthz` answers
+   `"ok": true` and `"ai_client": true`.
+5. In the viewer: **King Jahmir > Settings & privacy**, paste
+   `https://<project>.vercel.app` as the server and Save, then sign in with a
+   token from `python -m kingjahmir issue-token` (run with the same
+   `KJ_AUTH_SECRET`).
+
+Vercel's function time limit is set to 300 seconds in `vercel.json`, longer
+than the slowest turn (6 model calls of at most 60 seconds each is the
+theoretical worst; turns usually take seconds).
 
 ### Development mode, no AI cost
 
@@ -74,8 +112,10 @@ are refused when `KJ_DEV_MODE` is off.
 | `KJ_OWNER_IDS` | (none) | Comma-separated agent UUIDs allowed owner tools. A token needs the `owner` role **and** to be on this list. |
 | `KJ_HOST`, `KJ_PORT` | `127.0.0.1`, `8767` | Listen address. |
 | `KJ_PUBLIC_URL` | `http://KJ_HOST:KJ_PORT` | The https address residents reach; used for help-page links. |
-| `KJ_DB_PATH` | `kingjahmir.sqlite3` | SQLite file for conversations, retries, drafts, preferences, support requests. |
-| `KJ_DOCS_DIR` | `doc/sw67/help` in this repo | Help pages and feature registry. |
+| `KJ_DB_PATH` | `kingjahmir.sqlite3` | SQLite file for conversations, retries, drafts, preferences, support requests, rate limits. Used when `KJ_DATABASE_URL` is not set. |
+| `KJ_DATABASE_URL` | (none) | PostgreSQL connection string (`postgresql://...`) instead of SQLite. Required on Vercel; with Supabase use the transaction pooler (port 6543). |
+| `CRON_SECRET` | (none) | Lets `GET /cron/purge` with `Authorization: Bearer <it>` run the retention clean-up (Vercel Cron). Without it the route refuses. |
+| `KJ_DOCS_DIR` | `doc/sw67/help` in this repo, else the copy in `kingjahmir/help` | Help pages and feature registry. |
 | `KJ_MODEL` | `claude-opus-5-5` | Claude model. |
 | `KJ_EFFORT` | `low` | `low`, `medium`, `high`, `xhigh` or `max`. Low suits chat; raise it if answers fall short. |
 | `KJ_MAX_TOKENS` | `4096` | Output cap per model call. |
@@ -84,11 +124,11 @@ are refused when `KJ_DEV_MODE` is off.
 | `KJ_WEB_SEARCH` | off | `1` adds Anthropic's web search tool (max 3 uses a message) for current external facts. Costs extra. |
 | `KJ_RATE_PER_MINUTE`, `KJ_RATE_BURST` | `8`, `4` | Messages per resident per minute, and burst. The per-address limit is 4x. |
 | `KJ_DAILY_MESSAGES` | `200` | Messages per resident per day. |
-| `KJ_RETENTION_DAYS` | `30` | Conversations untouched this long are deleted (checked hourly). |
+| `KJ_RETENTION_DAYS` | `30` | Conversations untouched this long are deleted (hourly by `serve`, daily by the Vercel cron job). |
 | `KJ_MAX_MESSAGE_CHARS` | `4000` | Longest message. |
 | `KJ_MAX_TURNS` | `60` | Messages per conversation before "start a new conversation". |
 | `KJ_ACCOUNT_API_URL`, `KJ_ACCOUNT_API_TOKEN` | (none) | The Avatar Life records service, once it exists (https only). |
-| `KJ_TRUST_FORWARDED_FOR` | off | `1` behind a reverse proxy, so per-address limits use `X-Forwarded-For`. |
+| `KJ_TRUST_FORWARDED_FOR` | off (on when `VERCEL` is set) | `1` behind a reverse proxy, so per-address limits use `X-Forwarded-For`. |
 | `KJ_DEV_MODE`, `KJ_DEV_MOCK_MODEL` | off | Development only; see above. |
 
 Logs are one JSON line per request: route (ids masked), status, time, and a
@@ -120,6 +160,7 @@ All `/v1` routes need `Authorization: Bearer <token>`. Errors are
 | Route | |
 |---|---|
 | `GET /healthz` | Liveness (no auth). |
+| `GET /cron/purge` | Retention clean-up; needs `Authorization: Bearer $CRON_SECRET`. |
 | `GET /help/`, `GET /help/<id>` | Help pages as plain HTML (no auth). |
 | `GET /v1/bootstrap` | Greeting, starter buttons, development mode, retention days. |
 | `POST /v1/chat` | `Idempotency-Key` header required. Body: `message`, optional `conversation_id`, `flags` (`contextual`, `account_help`, `memory`), `context` (`screen`, `feature`), `client.viewer_version`. Answer: `conversation_id`, `reply`, `links`, `actions`. |
@@ -166,6 +207,7 @@ explains from records rather than from the conversation.
 
 ## Scaling notes
 
-Rate limits are in memory, so run one process (it is threaded) or move them
-to a shared store before running several. SQLite suits one server; move to
-Postgres for more. Model calls are the only slow part.
+Rate limits, retries and the one-message-at-a-time marks live in the
+database, so any number of processes or serverless instances can share one
+PostgreSQL database. SQLite suits a single `serve` process. Model calls are
+the only slow part.

@@ -1,4 +1,4 @@
-"""python -m kingjahmir serve | issue-token | check-docs"""
+"""python -m kingjahmir serve | issue-token | check-docs | bundle-docs"""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("serve", help="run the gateway")
     sub.add_parser("check-docs", help="load and validate the help pages and feature registry")
+    sub.add_parser("bundle-docs", help="copy doc/sw67/help into the package (for Vercel)")
     t = sub.add_parser("issue-token", help="issue a 6|7 session token (until the account service exists)")
     t.add_argument("agent_id", help="the resident's Second Life agent UUID")
     t.add_argument("--account", action="store_true", help="add the account:read scope")
@@ -23,6 +24,11 @@ def main(argv=None) -> int:
     t.add_argument("--dev", action="store_true", help="development token (accepted only with KJ_DEV_MODE=1)")
     args = ap.parse_args(argv)
 
+    if args.cmd == "bundle-docs":  # needs no configuration
+        from .knowledge import bundle_docs
+        n = bundle_docs()
+        print(f"copied {n} files into kingjahmir/help")
+        return 0
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", stream=sys.stderr)
     try:
         cfg = Config.from_env()

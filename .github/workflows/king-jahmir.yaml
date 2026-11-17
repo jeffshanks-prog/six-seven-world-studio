@@ -15,6 +15,15 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    services:
+      postgres:  # the tests run a second time on PostgreSQL, as on Vercel with Supabase
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-only
+          POSTGRES_DB: kj_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,3 +37,8 @@ jobs:
           pip install -r requirements.txt
           KJ_AUTH_SECRET=ci-only-secret-0123456789abcdefghijklmnop python -m kingjahmir check-docs
           python -m unittest -v
+      - name: Test on PostgreSQL
+        working-directory: services/king-jahmir
+        env:
+          KJ_TEST_DATABASE_URL: postgresql://postgres:ci-only@127.0.0.1:5432/kj_test
+        run: python -m unittest -v

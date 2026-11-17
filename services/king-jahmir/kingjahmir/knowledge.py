@@ -217,3 +217,23 @@ class KnowledgeBase:
 
     def areas(self) -> list[str]:
         return sorted({f.get("area", "") for f in self.features.values() if f.get("area")})
+
+
+def bundle_files(src: Path) -> dict[str, bytes]:
+    """The files of a help folder that the knowledge base reads."""
+    return {p.name: p.read_bytes() for p in sorted(src.iterdir())
+            if p.is_file() and (p.suffix == ".md" or p.name == "features.json")}
+
+
+def bundle_docs() -> int:
+    """Copies doc/sw67/help into kingjahmir/help, replacing what was there."""
+    from .config import _REPO_DOCS, BUNDLED_DOCS
+
+    files = bundle_files(_REPO_DOCS)
+    BUNDLED_DOCS.mkdir(exist_ok=True)
+    for old in BUNDLED_DOCS.iterdir():
+        if old.is_file() and old.name not in files:
+            old.unlink()
+    for name, data in files.items():
+        (BUNDLED_DOCS / name).write_bytes(data)
+    return len(files)
