@@ -35,6 +35,7 @@ from . import __version__, prompt
 from .account import make_provider
 from .assistant import Assistant, AssistantError, history_ok, make_client
 from .auth import AuthError, Principal, issue, verify
+from . import drafts
 from .knowledge import KnowledgeBase
 from .ratelimit import RateLimiter
 from .store import Store
@@ -110,6 +111,31 @@ class App:
             "voice": "UNAVAILABLE",
             "help_index": f"{self.cfg.public_url}/help/",
         }
+
+    def draft_lsl(self, p: Principal, body: dict, ip: str) -> dict:
+        """A draft LSL script for the Creator Workbench. Text only: nothing here or
+        in the viewer compiles, uploads or runs it, and the answer says so."""
+        try:
+            req, existing = drafts.check_request(body)
+        except drafts.DraftError as e:
+            raise HttpError(e.status, e.code, e.message) from e
+        if not self.store.try_busy(p.sub):
+            raise HttpError(429, "busy", "Wait for the answer you asked for before asking again.", True, 2)
+        try:
+            wait = self.limiter.check(p.sub) or self.ip_limiter.check(ip)
+            if wait:
+                raise HttpError(429, "rate_limited", "You're asking quickly. Try again shortly.", True, wait)
+            try:
+                text = self.assistant.complete(drafts.SYSTEM, drafts.messages_for(req, existing))
+            except AssistantError as e:
+                raise HttpError(e.status, e.code, e.message, e.retryable, e.retry_after) from e
+        finally:
+            self.store.clear_busy(p.sub)
+        code, notes = drafts.split_reply(text)
+        if not code:
+            return {"code": "", "notes": notes or "No script came back. Try describing it differently.",
+                    "compiled": False, "tested": False, "draft_note": drafts.DRAFT_NOTE}
+        return {"code": code, "notes": notes, "compiled": False, "tested": False, "draft_note": drafts.DRAFT_NOTE}
 
     def chat(self, p: Principal, body: dict, idem_key: str | None, ip: str) -> dict:
         if not idem_key or not _IDEM.match(idem_key):
@@ -464,6 +490,8 @@ class Handler(BaseHTTPRequestHandler):
                 return a.set_preference(p, m.group(1), body)
         if method == "GET" and path == "/v1/owner/support_requests":
             return a.owner_support(p)
+        if method == "POST" and path == "/v1/draft/lsl":
+            return a.draft_lsl(p, body, self._client_ip())
         raise HttpError(404, "not_found", "No such route.")
 
     do_GET = do_POST = do_PUT = do_DELETE = _dispatch

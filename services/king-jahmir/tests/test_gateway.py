@@ -879,3 +879,52 @@ class ServerlessTests(Base):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---- LSL drafts -----------------------------------------------------------
+class DraftTests(Base):
+    def test_draft_is_text_marked_untested(self):
+        reply = "```lsl\ndefault { touch_start(integer n) { llSay(0, \"Hi\"); } }\n```\nSays hi when touched."
+        client = Scripted(text(reply))
+        self.make(client=client)
+        out = self.app.draft_lsl(self.p(), {"request": "say hi when touched"}, "127.0.0.1")
+        self.assertIn("llSay", out["code"])
+        self.assertNotIn("```", out["code"])
+        self.assertEqual(out["notes"], "Says hi when touched.")
+        self.assertFalse(out["compiled"])
+        self.assertFalse(out["tested"])
+        self.assertIn("not compiled or tested", out["draft_note"])
+        call = client.calls[0]
+        self.assertNotIn("tools", call)
+        self.assertIn("<request>", call["messages"][0]["content"][0]["text"])
+        # The busy flag is released, so the next draft can run.
+        client.responses.append(text("no code here"))
+        out2 = self.app.draft_lsl(self.p(), {"request": "again"}, "127.0.0.1")
+        self.assertEqual(out2["code"], "")
+
+    def test_existing_script_is_sent_as_material(self):
+        client = Scripted(text("```\ndefault {}\n```"))
+        self.make(client=client)
+        self.app.draft_lsl(self.p(), {"request": "add a timer", "existing_script": "default {}"}, "127.0.0.1")
+        parts = client.calls[0]["messages"][0]["content"]
+        self.assertEqual(len(parts), 2)
+        self.assertIn("<existing_script>", parts[1]["text"])
+
+    def test_draft_limits_and_failures(self):
+        self.make(client=Scripted())
+        with self.assertRaises(HttpError) as e:
+            self.app.draft_lsl(self.p(), {"request": "  "}, "127.0.0.1")
+        self.assertEqual(e.exception.status, 400)
+        with self.assertRaises(HttpError) as e:
+            self.app.draft_lsl(self.p(), {"request": "x" * 2001}, "127.0.0.1")
+        self.assertEqual(e.exception.code, "message_too_long")
+        with self.assertRaises(HttpError) as e:
+            self.app.draft_lsl(self.p(), {"request": "x", "existing_script": 5}, "127.0.0.1")
+        self.assertEqual(e.exception.status, 400)
+        self.make(client=None)
+        self.app.assistant.client = None
+        with self.assertRaises(HttpError) as e:
+            self.app.draft_lsl(self.p(), {"request": "hi"}, "127.0.0.1")
+        self.assertEqual(e.exception.code, "ai_not_configured")
+        # A failed call leaves the resident free to ask again.
+        self.assertTrue(self.app.store.try_busy(USER))

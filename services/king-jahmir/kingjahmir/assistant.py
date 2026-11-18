@@ -69,17 +69,19 @@ class Assistant:
         self.tools = tool_defs(cfg.web_search)
         self.system = [{"type": "text", "text": prompt.SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}]
 
-    def _call(self, messages: list[dict]):
+    def _call(self, messages: list[dict], system: list[dict] | None = None, tools: list[dict] | None = None):
         if self.client is None:
             raise AssistantError("ai_not_configured", "King Jahmir's AI service is not set up on this server.",
                                  503, False)
+        tools = self.tools if tools is None else tools
+        extra = {"tools": tools} if tools else {}
         try:
             return self.client.beta.messages.create(
                 model=self.cfg.model,
                 max_tokens=self.cfg.max_tokens,
-                system=self.system,
-                tools=self.tools,
+                system=self.system if system is None else system,
                 messages=messages,
+                **extra,
                 thinking={"type": "adaptive"},
                 output_config={"effort": self.cfg.effort},
                 betas=[FALLBACK_BETA],
@@ -105,6 +107,18 @@ class Assistant:
         except anthropic.APIStatusError as e:
             retry = e.status_code >= 500 or e.status_code == 529
             raise AssistantError("ai_error", "King Jahmir's AI service had a problem.", 503, retry) from e
+
+    def complete(self, system_text: str, messages: list[dict]) -> str:
+        """One call with no tools, for a single piece of text (an LSL draft)."""
+        resp = self._call(messages, system=[{"type": "text", "text": system_text}], tools=[])
+        if resp.stop_reason == "refusal":
+            raise AssistantError("ai_refused", "That request can't be drafted.", 422, False)
+        out = []
+        for b in resp.content:
+            d = _block_dict(b)
+            if d.get("type") == "text":
+                out.append(d.get("text", ""))
+        return "".join(out)
 
     def turn(self, ctx: ToolContext, history: list[dict], user_text: str, screen: dict | None,
              preferences: dict[str, str]) -> dict:
