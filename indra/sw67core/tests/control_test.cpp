@@ -154,3 +154,50 @@ TEST_CASE("Schedule round-trips, and an approval does not survive a changed text
     CHECK_FALSE(parseDateTime("2026-13-20 21:00").has_value());
     CHECK(formatDateTime(*parseDateTime("2026-11-20 21:05")) == "2026-11-20 21:05");
 }
+
+TEST_CASE("Shot lists and what goes to the phone", "[control]")
+{
+    using namespace sw67::event;
+    const auto shots = shotsFromText("  Wide of the stage \r\n\n DJ close-up\n" + std::string(300, 'x'));
+    REQUIRE(shots.size() == 3);
+    CHECK(shots[0] == "Wide of the stage");
+    CHECK(shots[1] == "DJ close-up");
+    CHECK(shots[2].size() == kMaxShotBytes);
+    CHECK(shotsToText({"a", "b"}) == "a\nb");
+    std::string many;
+    for (int i = 0; i < 150; ++i) many += "shot " + std::to_string(i) + "\n";
+    CHECK(shotsFromText(many).size() == kMaxShots);
+
+    ScheduledEvent e;
+    e.id = "evt-1-1";
+    e.name = "Friday Night Live";
+    e.startEpoch = 1800000000;
+    e.durationMinutes = 90;
+    e.location = "https://maps.secondlife.com/secondlife/Club/1/2/3";
+    e.streamUrl = "http://stream.example/secret";
+    e.notes = "Bring glow sticks";
+    e.team.push_back({"11111111-2222-3333-4444-555555555555", "Mia", Role::Dj});
+    e.shots = {"Wide", "Close"};
+    Announcement a;
+    a.text = "Doors at 8";
+    e.announcements.push_back(a);
+    const auto j = phonePayload(e, "Jeff");
+    CHECK(j["id"].asString("") == "evt-1-1");
+    CHECK(j["title"].asString("") == "Friday Night Live");
+    CHECK(j["starts"].asNumber(0) == 1800000000.0);
+    CHECK(j["minutes"].asInt(0) == 90);
+    CHECK(j["details"].asString("") == "Bring glow sticks");
+    CHECK(j["host_name"].asString("") == "Jeff");
+    CHECK(j["shots"].items().size() == 2);
+    const std::string text = sw67::io::writeJson(j);
+    CHECK(text.find("stream.example") == std::string::npos);
+    CHECK(text.find("11111111-2222") == std::string::npos);
+    CHECK(text.find("Doors at 8") == std::string::npos);
+
+    Schedule s;
+    s.events.push_back(e);
+    const auto back = readSchedule(writeSchedule(s));
+    REQUIRE(back.schedule);
+    REQUIRE(back.schedule->events.size() == 1);
+    CHECK(back.schedule->events[0].shots == e.shots);
+}

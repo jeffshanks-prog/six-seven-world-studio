@@ -328,6 +328,9 @@ std::string writeSchedule(const Schedule& s)
             cards.push(std::move(t));
         }
         j.set("cards", std::move(cards));
+        Json shots = Json::array();
+        for (const std::string& shot : e.shots) shots.push(Json(shot));
+        j.set("shots", std::move(shots));
         Json anns = Json::array();
         for (const Announcement& a : e.announcements)
         {
@@ -386,6 +389,9 @@ ScheduleReadResult readSchedule(std::string_view text)
             e.cards.push_back({clip(t["title"].asString(""), 120), clip(t["body"].asString(""), 2000),
                                std::clamp(t["at"].asInt(-1), -1, 24 * 60)});
         }
+        std::string shotText;
+        for (const Json& t : j["shots"].items()) shotText += t.asString("") + "\n";
+        e.shots = shotsFromText(shotText);
         for (const Json& t : j["announcements"].items())
         {
             if (e.announcements.size() >= 100) break;
@@ -405,6 +411,51 @@ ScheduleReadResult readSchedule(std::string_view text)
     }
     r.schedule = std::move(s);
     return r;
+}
+
+std::vector<std::string> shotsFromText(std::string_view text)
+{
+    std::vector<std::string> out;
+    std::size_t pos = 0;
+    while (pos <= text.size() && out.size() < kMaxShots)
+    {
+        std::size_t end = text.find('\n', pos);
+        if (end == std::string_view::npos) end = text.size();
+        std::string_view line = text.substr(pos, end - pos);
+        while (!line.empty() && std::isspace(static_cast<unsigned char>(line.front()))) line.remove_prefix(1);
+        while (!line.empty() && std::isspace(static_cast<unsigned char>(line.back()))) line.remove_suffix(1);
+        if (!line.empty()) out.push_back(clip(std::string(line), kMaxShotBytes));
+        if (end == text.size()) break;
+        pos = end + 1;
+    }
+    return out;
+}
+
+std::string shotsToText(const std::vector<std::string>& shots)
+{
+    std::string out;
+    for (const std::string& s : shots)
+    {
+        if (!out.empty()) out += '\n';
+        out += s;
+    }
+    return out;
+}
+
+sw67::io::Json phonePayload(const ScheduledEvent& e, const std::string& hostName)
+{
+    Json j = Json::object();
+    j.set("id", Json(e.id));
+    j.set("title", Json(e.name));
+    j.set("starts", Json(static_cast<long long>(e.startEpoch)));
+    j.set("minutes", Json(e.durationMinutes));
+    j.set("location", Json(e.location));
+    j.set("details", Json(e.notes));
+    j.set("host_name", Json(clip(hostName, 64)));
+    Json shots = Json::array();
+    for (const std::string& s : e.shots) shots.push(Json(s));
+    j.set("shots", std::move(shots));
+    return j;
 }
 
 } // namespace sw67::event

@@ -64,6 +64,11 @@ private:
     void onSendChat();
     void onToParty();
     void onStreamCheck();
+    void onSendToPhone();
+    void onPairPhone();
+    void onPhoneRsvps();
+    void onTakeOffPhone();
+    void phoneText(const std::string& text);
     void showStatus(sw67::a11y::StatusRole role, const std::string& text);
 
     std::string mEventId;

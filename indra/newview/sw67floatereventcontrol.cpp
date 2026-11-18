@@ -16,10 +16,13 @@
 #include "sw67floatereventcontrol.h"
 
 #include "sw67accessibility.h"
+#include "sw67kingjahmir.h"
 #include "sw67partycontacts.h"
 #include "sw67rlvstate.h"
 
+#include "llagent.h"
 #include "llaudioengine.h"
+#include "llavatarnamecache.h"
 #include "llcombobox.h"
 #include "llfloaterimnearbychat.h"
 #include "llfloaterreg.h"
@@ -33,6 +36,7 @@
 #include "roles_constants.h"
 
 #include "sw67/contacts/party.h"
+#include "sw67/io/json.h"
 
 #include <algorithm>
 #include <functional>
@@ -42,6 +46,8 @@
 using namespace sw67::event;
 using sw67::a11y::StatusRole;
 namespace events = sw67viewer::events;
+namespace party = sw67viewer::party;
+namespace kingjahmir = sw67viewer::kingjahmir;
 
 namespace
 {
@@ -52,6 +58,8 @@ const char* kCards[] = {"card_list", "card_title", "card_minute", "card_body", "
                         "remove_card_btn", "due_text"};
 const char* kAnn[] = {"ann_list", "ann_text", "new_ann_btn", "update_ann_btn", "approve_btn", "send_chat_btn", "to_party_btn"};
 const char* kStream[] = {"stream_check_btn", "about_land_btn", "stream_report"};
+const char* kPhone[] = {"phone_intro", "shots_label", "shots_editor", "send_phone_btn", "pair_btn", "rsvp_btn",
+                        "unphone_btn", "phone_text"};
 
 void addRow(LLScrollListCtrl* list, const LLSD& value, std::initializer_list<std::pair<const char*, std::string>> cols)
 {
@@ -122,6 +130,10 @@ bool SW67FloaterEventControl::postBuild()
     bind("to_party_btn", [this] { onToParty(); });
     bind("stream_check_btn", [this] { onStreamCheck(); });
     bind("about_land_btn", [] { LLFloaterReg::showInstance("about_land"); });
+    bind("send_phone_btn", [this] { onSendToPhone(); });
+    bind("pair_btn", [this] { onPairPhone(); });
+    bind("rsvp_btn", [this] { onPhoneRsvps(); });
+    bind("unphone_btn", [this] { onTakeOffPhone(); });
     return LLFloater::postBuild();
 }
 
@@ -191,6 +203,11 @@ void SW67FloaterEventControl::loadEvent()
     getChild<LLUICtrl>("location")->setValue(LLSD(have ? e->location : std::string()));
     getChild<LLUICtrl>("stream_url")->setValue(LLSD(have ? e->streamUrl : std::string()));
     getChild<LLUICtrl>("notes")->setValue(LLSD(have ? e->notes : std::string()));
+    getChild<LLUICtrl>("shots_editor")->setValue(LLSD(have ? shotsToText(e->shots) : std::string()));
+    for (const char* n : {"send_phone_btn", "rsvp_btn", "unphone_btn", "shots_editor"})
+    {
+        getChild<LLUICtrl>(n)->setEnabled(have);
+    }
     refreshTeam();
     refreshCards();
     refreshAnnouncements();
@@ -205,6 +222,7 @@ void SW67FloaterEventControl::refreshSection()
     for (const char* n : kCards) getChild<LLView>(n)->setVisible(s == "cards");
     for (const char* n : kAnn) getChild<LLView>(n)->setVisible(s == "announcements");
     for (const char* n : kStream) getChild<LLView>(n)->setVisible(s == "stream");
+    for (const char* n : kPhone) getChild<LLView>(n)->setVisible(s == "phone");
 }
 
 void SW67FloaterEventControl::refreshTeam()
@@ -584,4 +602,166 @@ void SW67FloaterEventControl::showStatus(StatusRole role, const std::string& tex
     LLTextBox* box = getChild<LLTextBox>("status_text");
     box->setText(sw67viewer::statusText(role) + "  " + text);
     box->setColor(LLUIColor(sw67viewer::statusColor(role)));
+}
+
+// ---- Phone Companion ------------------------------------------------------
+namespace
+{
+std::string hostName()
+{
+    LLAvatarName name;
+    return LLAvatarNameCache::get(gAgentID, &name) ? name.getDisplayName() : std::string();
+}
+
+std::string phonePath(const std::string& eventId, const char* tail)
+{
+    // Event ids are "evt-<start>-<n>": safe in a path as they are.
+    return "/v1/phone/events/" + eventId + tail;
+}
+} // namespace
+
+void SW67FloaterEventControl::phoneText(const std::string& text)
+{
+    getChild<LLTextBox>("phone_text")->setText(text);
+}
+
+void SW67FloaterEventControl::onSendToPhone()
+{
+    ScheduledEvent* e = current();
+    if (!e) return;
+    e->shots = shotsFromText(getChild<LLUICtrl>("shots_editor")->getValue().asString());
+    getChild<LLUICtrl>("shots_editor")->setValue(LLSD(shotsToText(e->shots)));
+    if (!events::saveSchedule())
+    {
+        showStatus(StatusRole::Error, "Could not save the schedule file.");
+        return;
+    }
+    const LLHandle<LLFloater> handle = getHandle();
+    const std::string name = e->name;
+    std::string whyNot;
+    const bool started = kingjahmir::callGateway(
+        "POST", "/v1/phone/events", sw67::io::writeJson(phonePayload(*e, hostName())),
+        [handle, name](const kingjahmir::GatewayReply& r) {
+            auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+            if (!self) return;
+            if (!r.ok)
+            {
+                self->showStatus(StatusRole::Error, r.error);
+                return;
+            }
+            const auto j = sw67::io::parseJson(r.body);
+            const int shots = j ? (*j)["shots"].asInt(0) : 0;
+            self->showStatus(StatusRole::Success, "\"" + name + "\" is on the phone with " + std::to_string(shots) +
+                                                      " shot(s). Pair a phone if you haven't yet.");
+        },
+        whyNot);
+    showStatus(started ? StatusRole::Info : StatusRole::Warning,
+               started ? std::string("Shot list saved. Sending to the phone...") : "Shot list saved. " + whyNot);
+}
+
+void SW67FloaterEventControl::onPairPhone()
+{
+    const LLHandle<LLFloater> handle = getHandle();
+    sw67::io::Json body = sw67::io::Json::object();
+    body.set("host_name", sw67::io::Json(hostName()));
+    std::string whyNot;
+    const bool started = kingjahmir::callGateway(
+        "POST", "/v1/phone/pair", sw67::io::writeJson(body),
+        [handle](const kingjahmir::GatewayReply& r) {
+            auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+            if (!self) return;
+            if (!r.ok)
+            {
+                self->showStatus(StatusRole::Error, r.error);
+                return;
+            }
+            const auto j = sw67::io::parseJson(r.body);
+            const std::string code = j ? (*j)["code"].asString("") : std::string();
+            const std::string url = j ? (*j)["url"].asString("") : std::string();
+            if (code.empty())
+            {
+                self->showStatus(StatusRole::Error, "The gateway sent an answer this viewer could not read.");
+                return;
+            }
+            self->phoneText("On your phone, open " + url + " and type " + code +
+                            ". It works once, for 10 minutes. Don't share it.");
+            self->showStatus(StatusRole::Success, "Pairing code ready.");
+        },
+        whyNot);
+    if (!started) showStatus(StatusRole::Warning, whyNot);
+}
+
+void SW67FloaterEventControl::onPhoneRsvps()
+{
+    const ScheduledEvent* e = current();
+    if (!e) return;
+    const LLHandle<LLFloater> handle = getHandle();
+    const std::string id = e->id;
+    const std::string name = e->name;
+    std::string whyNot;
+    const bool started = kingjahmir::callGateway(
+        "GET", phonePath(id, "/rsvps"), std::string(),
+        [handle, id, name](const kingjahmir::GatewayReply& r) {
+            auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+            if (!self) return;
+            if (!r.ok)
+            {
+                self->showStatus(StatusRole::Error, r.status == 404 ? std::string("This event isn't on the phone yet: press "
+                                                                                 "Save and send to phone first.")
+                                                                     : r.error);
+                return;
+            }
+            const auto root = sw67::io::parseJson(r.body);
+            if (!root || (*root)["format"].asString("") != "sw67.rsvps")
+            {
+                self->showStatus(StatusRole::Error, "The gateway sent an answer this viewer could not read.");
+                return;
+            }
+            sw67::contacts::Book& book = party::book();
+            sw67::contacts::GuestList& gl = sw67::contacts::guestListFor(book, id, name, party::selfId());
+            int accepted = 0;
+            int skipped = 0;
+            for (const sw67::io::Json& j : (*root)["rsvps"].items())
+            {
+                sw67::contacts::RsvpRecord rec;
+                rec.accountId = j["id"].asString("");
+                rec.displayName = j["name"].asString("").substr(0, 120);
+                rec.answer = sw67::contacts::parseRsvp(j["answer"].asString("")).value_or(sw67::contacts::Rsvp::Going);
+                if (j["announcements"].isBool()) rec.wantsAnnouncements = j["announcements"].asBool();
+                (sw67::contacts::acceptRsvp(book, gl, rec, party::nowUtc()).ok ? accepted : skipped)++;
+            }
+            party::save();
+            self->showStatus(StatusRole::Success,
+                             std::to_string(accepted) + " RSVP(s) added to the guest list" +
+                                 (skipped ? ", " + std::to_string(skipped) + " skipped" : std::string()) +
+                                 ". Guests typed these themselves; they aren't verified. Nothing was sent to anyone.");
+        },
+        whyNot);
+    if (!started) showStatus(StatusRole::Warning, whyNot);
+}
+
+void SW67FloaterEventControl::onTakeOffPhone()
+{
+    const ScheduledEvent* e = current();
+    if (!e) return;
+    LLSD args;
+    args["MESSAGE"] = "Take \"" + e->name + "\" off the Phone Companion? Its team chat, team invites and the RSVPs "
+                      "on the phone are deleted. Get the RSVPs first if you want them. Your schedule here doesn't change.";
+    const LLHandle<LLFloater> handle = getHandle();
+    const std::string id = e->id;
+    LLNotificationsUtil::add("GenericAlertYesCancel", args, LLSD(), [handle, id](const LLSD& n, const LLSD& r) {
+        if (LLNotificationsUtil::getSelectedOption(n, r) != 0) return;
+        std::string whyNot;
+        const bool started = kingjahmir::callGateway(
+            "POST", phonePath(id, "/delete"), "{}",
+            [handle](const kingjahmir::GatewayReply& reply) {
+                auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+                if (!self) return;
+                if (reply.ok) self->showStatus(StatusRole::Success, "Taken off the phone.");
+                else self->showStatus(StatusRole::Error, reply.status == 404 ? std::string("It wasn't on the phone.") : reply.error);
+            },
+            whyNot);
+        auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+        if (!started && self) self->showStatus(StatusRole::Warning, whyNot);
+    });
 }
