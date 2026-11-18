@@ -146,7 +146,7 @@ void SW67FloaterSoundCheck::refreshMeters()
         mClipped = false;
     }
     LLTextBox* clip = getChild<LLTextBox>("clip_text");
-    clip->setText(mClipped ? "[!] CLIPPING: lower Input gain or the bands" : "No clipping");
+    clip->setText(std::string(mClipped ? "[!] CLIPPING: lower Input gain or the bands" : "No clipping"));
     clip->setColor(LLUIColor(sw67viewer::statusColor(mClipped ? StatusRole::Error : StatusRole::Success)));
 
     std::string stream = "Stream: ";
