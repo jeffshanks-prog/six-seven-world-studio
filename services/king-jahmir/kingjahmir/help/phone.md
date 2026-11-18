@@ -28,11 +28,17 @@ password, and it is not a Second Life viewer: use the viewer to be in-world.
   Messages are deleted after the gateway's retention period.
 - **Team**: the host makes a one-use invite link for each team member and
   sends it privately. **Remove** stops that phone opening the event.
-- **RSVPs**: closed until the host presses **Open RSVPs**. Guests answer
+- **RSVPs**: closed until the host presses **Open RSVPs** on the phone, or
+  **Open RSVPs and copy link** in the viewer's Event Control Room, which
+  copies the public link to paste in a group notice, profile pick or chat.
+  The public page shows the event's name, time, place (a map link for a
+  Second Life location), a countdown, your name, and an **Add to my
+  calendar** file with a reminder. It never shows your notes. Guests answer
   with their name, profile link or account ID, and whether they're coming.
   Announcements are only for guests who tick that box themselves. Answers
-  aren't verified. In the viewer, **Get RSVPs from phone** in Event Control
-  Room adds them to the event's guest list in Party Contacts.
+  aren't verified. In the viewer, **Get RSVPs from phone** adds them to the
+  event's guest list in Party Contacts, and **Bring in new RSVPs every 2
+  minutes** does it on its own while the window is open.
 
 Push notifications are UNAVAILABLE: the page has no app to notify you
 with, so use the calendar reminder.

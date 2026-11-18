@@ -21,6 +21,7 @@ Routes:
   POST /v1/phone/pair                    a one-use code that pairs a phone
   POST /v1/phone/events                  send or update an event on the phone
   GET  /v1/phone/events/<id>/rsvps       its RSVPs, in Party Contacts' format
+  POST /v1/phone/events/<id>/rsvp_link   open or close its public RSVP page, and get the link
   POST /v1/phone/events/<id>/delete      take it off the phone
 
 The Phone Companion's pages (/phone..., /r/<code>) are HTML forms with a
@@ -297,7 +298,9 @@ class App:
                 return self.phone.pair(p, body)
             if method == "POST" and path == "/v1/phone/events":
                 return self.phone.put_event(p, body)
-            m = re.fullmatch(r"/v1/phone/events/([^/]+)/(rsvps|delete)", path)
+            m = re.fullmatch(r"/v1/phone/events/([^/]+)/(rsvps|delete|rsvp_link)", path)
+            if m and method == "POST" and m.group(2) == "rsvp_link":
+                return self.phone.rsvp_link(p, m.group(1), body)
             if m and method == "GET" and m.group(2) == "rsvps":
                 return self.phone.rsvps(p, m.group(1))
             if m and method == "POST" and m.group(2) == "delete":

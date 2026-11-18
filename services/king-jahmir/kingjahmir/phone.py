@@ -274,7 +274,21 @@ class Phone:
             for i, s in enumerate(shots):
                 d, by = done.get(s, (0, ""))
                 self._n("INSERT INTO kj_phone_shots(eid,pos,text,done,done_by) VALUES(?,?,?,?,?)", (eid, i, s, d, by))
-        return {"event": eid, "phone_url": f"{self.cfg.public_url}/phone/e/{eid}", "shots": len(shots)}
+        ev = self._event(eid) or {}
+        return {"event": eid, "phone_url": f"{self.cfg.public_url}/phone/e/{eid}", "shots": len(shots),
+                "rsvp_url": self._rsvp_url(ev), "rsvp_open": bool(ev.get("rsvp_open"))}
+
+    def _rsvp_url(self, ev: dict) -> str:
+        return f"{self.cfg.public_url}/r/{ev['rsvp_code']}" if ev.get("rsvp_code") else ""
+
+    def rsvp_link(self, p: Principal, vid: str, body: dict) -> dict:
+        """Opens or closes the event's public RSVP page from the viewer, and gives its link."""
+        ev = self._host_event(p, vid)
+        want = body.get("open", True)
+        if not isinstance(want, bool):
+            raise PhoneError(400, "bad_request", "open must be true or false.")
+        self._n("UPDATE kj_phone_events SET rsvp_open=?, updated=? WHERE eid=?", (1 if want else 0, time.time(), ev["eid"]))
+        return {"open": want, "url": self._rsvp_url(ev)}
 
     def _host_event(self, p: Principal, vid: str) -> dict:
         if not _VID.match(vid or ""):
@@ -301,6 +315,7 @@ class Phone:
         rows = self._q("SELECT account,name,answer,announcements FROM kj_phone_rsvps WHERE eid=? ORDER BY updated",
                        (ev["eid"],))
         return {"format": "sw67.rsvps", "version": 1, "event": vid, "verified": False,
+                "open": bool(ev["rsvp_open"]), "url": self._rsvp_url(ev),
                 "rsvps": [{"id": r["account"], "name": r["name"], "answer": r["answer"],
                            "announcements": bool(r["announcements"])} for r in rows]}
 
@@ -345,7 +360,9 @@ class Phone:
             m = re.fullmatch(r"/phone/join/([A-Za-z0-9_-]{16,64})", path)
             if m:
                 return self._join(m.group(1), method, now)
-            m = re.fullmatch(r"/r/([A-Za-z0-9_-]{8,24})", path)
+            m = re.fullmatch(r"/r/([A-Za-z0-9_-]{8,24})(/calendar)?", path)
+            if m and m.group(2):
+                return self._rsvp_calendar(m.group(1), method)
             if m:
                 return self._rsvp_page(m.group(1), method, form, ip, now)
             m = re.fullmatch(r"/phone/e/([A-Za-z0-9_-]{8,30})(/[a-z_]+)?(/[A-Za-z0-9_-]+)?(/[a-z]+)?", path)
@@ -606,7 +623,7 @@ class Phone:
                                       "Set-Cookie": self.set_cookie_header(cookie, MEMBER_SESSION)})
 
     def _rsvp_page(self, code: str, method: str, form: dict, ip: str, now: float) -> Page:
-        rows = self._q("SELECT eid,title,starts,minutes,location,rsvp_open,host_name FROM kj_phone_events "
+        rows = self._q("SELECT eid,title,starts,minutes,location,rsvp_open,host_name,rsvp_code FROM kj_phone_events "
                        "WHERE rsvp_code=?", (code,))
         if not rows or not rows[0]["rsvp_open"]:
             return self._message(404, "RSVPs closed", "This event isn't taking RSVPs right now.")
@@ -642,7 +659,16 @@ class Phone:
         err = f"<p class=err role=alert>{e(error)}</p>" if error else ""
         radios = "".join(f"<label><input type=radio name=answer value={k} required> {v}</label>"
                          for k, v in ANSWERS.items())
-        body = (f"<h1>RSVP: {e(ev['title'])}</h1><p>{e(slt(ev['starts']))}{host}</p>{status}{err}"
+        where = ""
+        if ev["location"]:
+            link = location_link(ev["location"])
+            where = (f"<p>Where: <a href='{e(link)}'>{e(ev['location'])}</a></p>" if link
+                     else f"<p>Where: {e(ev['location'])}</p>")
+        when = countdown(ev["starts"], ev["minutes"], now)
+        body = (f"<h1>RSVP: {e(ev['title'])}</h1><p>{e(slt(ev['starts']))}{host}</p>"
+                f"{f'<p><b>{e(when)}</b></p>' if when else ''}{where}"
+                f"<p><a href=/r/{e(code)}/calendar>Add to my calendar</a> (with a reminder 15 minutes before)</p>"
+                f"{status}{err}"
                 f"<form method=post action=/r/{e(code)}>"
                 "<label for=name>Your name</label><input id=name name=name type=text maxlength=64 required "
                 "autocomplete=nickname>"
@@ -658,7 +684,17 @@ class Phone:
                 "about you from this page.</p>")
         return self._layout(f"RSVP: {ev['title']}", body, 200 if not error else 400)
 
-    def _ics(self, ev: dict) -> Page:
+    def _rsvp_calendar(self, code: str, method: str) -> Page:
+        """The guest's calendar file: only while RSVPs are open, linking back to the RSVP page."""
+        rows = self._q("SELECT eid,title,starts,minutes,location,rsvp_open,rsvp_code FROM kj_phone_events "
+                       "WHERE rsvp_code=?", (code,))
+        if method != "GET" or not rows or not rows[0]["rsvp_open"]:
+            return self._message(404, "RSVPs closed", "This event isn't taking RSVPs right now.")
+        ev = dict(rows[0])
+        ev["details"] = ""  # the host's notes stay with the host and team
+        return self._ics(ev, self._rsvp_url(ev))
+
+    def _ics(self, ev: dict, link: str = "") -> Page:
         def esc(t: str) -> str:
             return t.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
 
@@ -671,7 +707,8 @@ class Phone:
                  f"DTEND:{end.strftime(fmt)}", f"SUMMARY:{esc(ev['title'])}"]
         if ev["location"]:
             lines.append(f"LOCATION:{esc(ev['location'])}")
-        lines.append(f"DESCRIPTION:{esc((ev['details'] or '') + chr(10) + self.cfg.public_url + '/phone/e/' + ev['eid'])}")
+        link = link or f"{self.cfg.public_url}/phone/e/{ev['eid']}"
+        lines.append(f"DESCRIPTION:{esc(((ev['details'] or '') + chr(10) + link).strip())}")
         lines += ["BEGIN:VALARM", "ACTION:DISPLAY", f"DESCRIPTION:{esc(ev['title'])} starts in 15 minutes",
                   "TRIGGER:-PT15M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"]
         name = re.sub(r"[^A-Za-z0-9_-]+", "-", ev["title"])[:40].strip("-") or "event"

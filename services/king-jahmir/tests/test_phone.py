@@ -287,6 +287,54 @@ class PhoneTests(unittest.TestCase):
         self.phone.req("POST", f"/phone/e/{eid}/rsvp_toggle", {})
         self.assertEqual(guest.req("GET", f"/r/{code}")[0], 404)
 
+    def test_viewer_opens_rsvps_and_guests_get_an_event_page_and_calendar(self):
+        import json
+        self.send_event()
+        status, out = self.api("POST", "/v1/phone/events", json.dumps({
+            "id": "evt-1700000000-1", "title": "Friday Night Live", "starts": int(time.time()) + 3 * 3600,
+            "location": "https://maps.secondlife.com/secondlife/Club/128/128/22", "details": "Team only: door code 42"}))
+        self.assertFalse(out["rsvp_open"])
+        link = out["rsvp_url"]
+        self.assertRegex(link, r"/r/[A-Za-z0-9_-]{8,24}$")
+        path = link[len(self.origin):]
+        guest = Client(self.phone.port, self.origin)
+        self.assertEqual(guest.req("GET", path)[0], 404)
+        self.assertEqual(guest.req("GET", path + "/calendar")[0], 404)
+
+        status, out = self.api("POST", "/v1/phone/events/evt-1700000000-1/rsvp_link", '{"open": true}')
+        self.assertEqual(status, 200)
+        self.assertEqual(out, {"open": True, "url": link})
+        self.assertEqual(self.api("POST", "/v1/phone/events/evt-1700000000-1/rsvp_link", '{"open": "yes"}')[0], 400)
+        self.assertEqual(self.api("POST", "/v1/phone/events/nope/rsvp_link", '{"open": true}')[0], 404)
+        self.assertEqual(self.api("POST", "/v1/phone/events/evt-1700000000-1/rsvp_link", '{"open": true}',
+                                  sub=OTHER)[0], 404)
+
+        status, page, _ = guest.req("GET", path)
+        self.assertEqual(status, 200)
+        self.assertIn("Starts in 2 hours", page)
+        self.assertIn("href='https://maps.secondlife.com/secondlife/Club/128/128/22'", page)
+        self.assertIn(f"href={path}/calendar", page)
+        self.assertNotIn("door code", page)  # the host's notes are not public
+        status, ics, r = guest.req("GET", path + "/calendar")
+        self.assertEqual(status, 200)
+        self.assertIn("text/calendar", r.getheader("Content-Type"))
+        self.assertIn("TRIGGER:-PT15M", ics)
+        self.assertIn(link, ics)
+        self.assertNotIn("door code", ics)
+        self.assertNotIn("/phone/e/", ics)
+
+        a = "12345678-aaaa-bbbb-cccc-1234567890ab"
+        guest.req("POST", path, {"name": "Sky", "account": a, "answer": "going"})
+        status, out = self.api("GET", "/v1/phone/events/evt-1700000000-1/rsvps")
+        self.assertTrue(out["open"])
+        self.assertEqual(out["url"], link)
+        self.assertEqual([r["id"] for r in out["rsvps"]], [a])
+
+        status, out = self.api("POST", "/v1/phone/events/evt-1700000000-1/rsvp_link", '{"open": false}')
+        self.assertFalse(out["open"])
+        self.assertEqual(guest.req("GET", path)[0], 404)
+        self.assertEqual(guest.req("GET", path + "/calendar")[0], 404)
+
     # ---- removal and retention -----------------------------------------------
     def test_delete_and_purge(self):
         eid = self.send_event()

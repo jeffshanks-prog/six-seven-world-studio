@@ -181,6 +181,7 @@ All `/v1` routes need `Authorization: Bearer <token>`. Errors are
 | `POST /v1/phone/pair` | A one-use, 10-minute code that pairs a phone with the caller's events. |
 | `POST /v1/phone/events` | Sends or updates an event on the Phone Companion: `id`, `title`, `starts` (epoch seconds), `minutes`, `location`, `details`, `host_name`, `shots`. |
 | `GET /v1/phone/events/<id>/rsvps` | Its RSVPs, in the `sw67.rsvps` format Party Contacts imports (`verified: false`). |
+| `POST /v1/phone/events/<id>/rsvp_link` | Opens (`{"open": true}`) or closes its public RSVP page and returns the link. The page shows the name, time, place, countdown and host name, plus a calendar file (`/r/<code>/calendar`); never the host's notes. |
 | `POST /v1/phone/events/<id>/delete` | Takes it off the phone, with its team, chat and RSVPs. |
 | `GET /phone`, `/phone/e/<id>`, `/phone/join/<invite>`, `/r/<code>` | The Phone Companion's pages: HTML forms, no scripts, a signed `SameSite=Strict` cookie, every post checked for its Origin. |
 
