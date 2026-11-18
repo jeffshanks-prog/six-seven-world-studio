@@ -24,6 +24,12 @@
          parameter="can_delete" />
     </menu_item_call>
     <menu_item_call
+     label="Save to Party Contacts"
+     name="sw67_save_party">
+      <menu_item_call.on_click
+       function="Avatar.SW67SaveParty" />
+    </menu_item_call>
+    <menu_item_call
      label="IM"
      layout="topleft"
      name="im">

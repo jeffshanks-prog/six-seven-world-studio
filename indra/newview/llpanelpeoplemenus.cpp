@@ -50,6 +50,9 @@
 // [RLVa:KB] - Checked: RLVa-2.0.1
 #include "rlvactions.h"
 // [/RLVa:KB]
+#include "sw67partycontacts.h"
+
+#include <algorithm>
 
 namespace LLPanelPeopleMenus
 {
@@ -97,6 +100,7 @@ LLContextMenu* PeopleContextMenu::createMenu()
             } });
         registrar.add("Avatar.TeleportTo",  boost::bind(&ALAvatarActions::teleportTo,                  id));
         registrar.add("Avatar.ReportAbuse", boost::bind(&ALAvatarActions::reportAbuse,                 id));
+        registrar.add("Avatar.SW67SaveParty", [id](LLUICtrl*, const LLSD&) { sw67viewer::party::saveResidents({id}, sw67::contacts::Source::People); });
 
         enable_registrar.add("Avatar.EnableItem", boost::bind(&PeopleContextMenu::enableContextMenuItem, this, _2));
         enable_registrar.add("Avatar.CheckItem",  boost::bind(&PeopleContextMenu::checkContextMenuItem, this, _2));
@@ -117,6 +121,7 @@ LLContextMenu* PeopleContextMenu::createMenu()
         // registrar.add("Avatar.Share",        boost::bind(&LLAvatarActions::startIM,                  mUUIDs)); // *TODO: unimplemented
         // registrar.add("Avatar.Pay",          boost::bind(&LLAvatarActions::pay,                      mUUIDs)); // *TODO: unimplemented
         registrar.add("Avatar.CopyData",        boost::bind(&ALAvatarActions::copyDataMultipleUI,       mUUIDs, _2));
+        registrar.add("Avatar.SW67SaveParty", [ids = mUUIDs](LLUICtrl*, const LLSD&) { sw67viewer::party::saveResidents(ids, sw67::contacts::Source::People); });
         registrar.add("Avatar.Freeze",          boost::bind(&ALAvatarActions::parcelFreezeMultiple,     mUUIDs));
         registrar.add("Avatar.Eject",           boost::bind(&ALAvatarActions::parcelEjectMultiple,      mUUIDs));
         registrar.add("Avatar.ManageEstate", [&](LLUICtrl*, const LLSD& param) {
@@ -187,6 +192,12 @@ void PeopleContextMenu::buildContextMenu(class LLMenuGL& menu, U32 flags)
         items.push_back(std::string("copy_uuid"));
     }
 
+    // [6|7] Save to Party Contacts: not while RLV hides these residents' names.
+    if (!(RlvActions::isRlvEnabled() &&
+          std::any_of(mUUIDs.begin(), mUUIDs.end(), [](const LLUUID& id) { return !RlvActions::canShowName(RlvActions::SNC_DEFAULT, id); })))
+    {
+        items.push_back(std::string("sw67_save_party"));
+    }
     hide_context_entries(menu, items, disabled_items);
 }
 
@@ -503,6 +514,12 @@ void NearbyPeopleContextMenu::buildContextMenu(class LLMenuGL& menu, U32 flags)
         items.push_back(std::string("copy_uuid"));
     }
 
+    // [6|7] Save to Party Contacts: not while RLV hides these residents' names.
+    if (!(RlvActions::isRlvEnabled() &&
+          std::any_of(mUUIDs.begin(), mUUIDs.end(), [](const LLUUID& id) { return !RlvActions::canShowName(RlvActions::SNC_DEFAULT, id); })))
+    {
+        items.push_back(std::string("sw67_save_party"));
+    }
     hide_context_entries(menu, items, disabled_items);
 }
 

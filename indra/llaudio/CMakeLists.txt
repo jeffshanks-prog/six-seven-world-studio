@@ -45,7 +45,9 @@ endif()
 if(AL_USE_FAUDIO)
   target_sources(
     llaudio
-    PRIVATE llaudioengine_faudio.cpp lllistener_faudio.cpp
-    PUBLIC FILE_SET HEADERS FILES llaudioengine_faudio.h lllistener_faudio.h
+    PRIVATE llaudioengine_faudio.cpp lllistener_faudio.cpp llaudioeq_faudio.cpp
+    PUBLIC FILE_SET HEADERS FILES llaudioengine_faudio.h lllistener_faudio.h llaudioeq_faudio.h
   )
+  # 6|7's equalizer runs sw67core's filter bank.
+  target_link_libraries(llaudio PRIVATE sw67core)
 endif()

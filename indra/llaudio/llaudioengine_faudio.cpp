@@ -26,6 +26,7 @@
 #include "linden_common.h"
 
 #include "llaudioengine_faudio.h"
+#include "llaudioeq_faudio.h"
 #include "lllistener_faudio.h"
 #include "llstring.h"
 #include "llwavfile.h"
@@ -611,6 +612,7 @@ bool LLAudioEngine_FAudio::initFAudioDevice()
             continue;
         }
         FAudioVoice_SetVolume(mGroupVoices[i], mSecondaryGain[i], FAUDIO_COMMIT_NOW);
+        attachGroupEffects(i);
     }
 
     // Reverb submix. Holds an FAudioFXReverb FAPO; source voices send a
@@ -2114,3 +2116,97 @@ LLAudioBufferFAudio::~LLAudioBufferFAudio()
         static_cast<LLAudioEngine_FAudio*>(gAudiop)->releaseBufferReferences(this);
     }
 }
+
+// ---------------------------------------------------------------------------
+// [6|7] Per-type equalizer and level meter.
+
+void LLAudioEngine_FAudio::attachGroupEffects(S32 type)
+{
+    mGroupEqAttached[type] = false;
+    mGroupMeterAttached[type] = false;
+    FAudioSubmixVoice* voice = mGroupVoices[type];
+    if (!voice) return;
+
+    FAPO* eq = sw67_create_eq_fapo();
+    FAPO* meter = nullptr;
+    if (FAudioCreateVolumeMeter(&meter, 0) != 0) meter = nullptr;
+    if (!eq)
+    {
+        if (meter) meter->Release(meter);
+        LL_WARNS() << "SW67 equalizer could not be created for audio type " << type << LL_ENDL;
+        return;
+    }
+
+    FAudioEffectDescriptor desc[2]{};
+    desc[0].pEffect = eq;
+    desc[0].InitialState = mGroupEqOn[type] ? 1 : 0;
+    desc[0].OutputChannels = mOutputChannels;
+    uint32_t count = 1;
+    if (meter)
+    {
+        desc[1].pEffect = meter;
+        desc[1].InitialState = 1;
+        desc[1].OutputChannels = mOutputChannels;
+        count = 2;
+    }
+    FAudioEffectChain chain{};
+    chain.EffectCount = count;
+    chain.pEffectDescriptors = desc;
+    const uint32_t hr = FAudioVoice_SetEffectChain(voice, &chain);
+    // The chain holds its own references now (as with the limiter above).
+    eq->Release(eq);
+    if (meter) meter->Release(meter);
+    if (hr != 0)
+    {
+        LL_WARNS() << "SW67 equalizer chain failed for audio type " << type << ": 0x" << std::hex << hr << std::dec
+                   << LL_ENDL;
+        return;
+    }
+    mGroupEqAttached[type] = true;
+    mGroupMeterAttached[type] = meter != nullptr;
+    SW67EqParameters params{};
+    for (int b = 0; b < SW67_EQ_BANDS; ++b) params.gainsDb[b] = mGroupEqGains[type][b];
+    FAudioVoice_SetEffectParameters(voice, 0, &params, sizeof(params), FAUDIO_COMMIT_NOW);
+}
+
+bool LLAudioEngine_FAudio::hasGroupEq(S32 type) const
+{
+    return type >= 0 && type < LLAudioEngine::AUDIO_TYPE_COUNT && mGroupEqAttached[type];
+}
+
+void LLAudioEngine_FAudio::setGroupEq(S32 type, bool on, const float (&gains_db)[SW67_EQ_BANDS])
+{
+    if (type < 0 || type >= LLAudioEngine::AUDIO_TYPE_COUNT) return;
+    mGroupEqOn[type] = on;
+    for (int b = 0; b < SW67_EQ_BANDS; ++b) mGroupEqGains[type][b] = std::isfinite(gains_db[b]) ? gains_db[b] : 0.f;
+    if (!mGroupEqAttached[type] || !mGroupVoices[type]) return;
+    SW67EqParameters params{};
+    for (int b = 0; b < SW67_EQ_BANDS; ++b) params.gainsDb[b] = mGroupEqGains[type][b];
+    FAudioVoice_SetEffectParameters(mGroupVoices[type], 0, &params, sizeof(params), FAUDIO_COMMIT_NOW);
+    if (on) FAudioVoice_EnableEffect(mGroupVoices[type], 0, FAUDIO_COMMIT_NOW);
+    else FAudioVoice_DisableEffect(mGroupVoices[type], 0, FAUDIO_COMMIT_NOW);
+}
+
+bool LLAudioEngine_FAudio::getGroupLevel(S32 type, F32& peak, F32& rms) const
+{
+    peak = rms = 0.f;
+    if (type < 0 || type >= LLAudioEngine::AUDIO_TYPE_COUNT || !mGroupMeterAttached[type] || !mGroupVoices[type]
+        || mOutputChannels == 0 || mOutputChannels > 32)
+    {
+        return false;
+    }
+    float peaks[32]{};
+    float rmss[32]{};
+    FAudioFXVolumeMeterLevels levels{};
+    levels.pPeakLevels = peaks;
+    levels.pRMSLevels = rmss;
+    levels.ChannelCount = mOutputChannels;
+    FAudioVoice_GetEffectParameters(mGroupVoices[type], 1, &levels, sizeof(levels));
+    for (uint32_t c = 0; c < mOutputChannels; ++c)
+    {
+        peak = llmax(peak, peaks[c]);
+        rms = llmax(rms, rmss[c]);
+    }
+    return true;
+}
+

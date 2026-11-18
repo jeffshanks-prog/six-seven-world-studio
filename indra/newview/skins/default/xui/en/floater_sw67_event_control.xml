@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Event Control Room (DJ & Hosting). Keyboard: Tab moves through the event list, its buttons, the section chooser and the section's fields. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="516"
+ width="660"
+ min_height="492"
+ min_width="620"
+ layout="topleft"
+ name="sw67_event_control"
+ save_rect="true"
+ title="6|7 EVENT CONTROL ROOM">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="640"
+   wrap="true"
+   layout="topleft">Plan and run your events. Nothing is sent, broadcast or paid from here without you approving the exact text and confirming. Rehearsal stays send-free.</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="104"
+   left="10"
+   top="40"
+   name="event_list"
+   tab_group="1"
+   width="640">
+    <scroll_list.columns name="name" label="Event" width="260" />
+    <scroll_list.columns name="when" label="Starts (your time)" width="150" />
+    <scroll_list.columns name="countdown" label="Countdown" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="New event"
+   left="10"
+   top="150"
+   name="new_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove event"
+   left="114"
+   top="150"
+   name="remove_btn"
+   tab_group="1"
+   width="110"
+   tool_tip="Removes the event from your schedule after asking. Its guest list stays in Party Contacts."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Guest list..."
+   left="228"
+   top="150"
+   name="guests_btn"
+   tab_group="1"
+   width="110"
+   tool_tip="Opens this event's guest list in Party Contacts."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Rehearse..."
+   left="342"
+   top="150"
+   name="rehearse_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Opens Event Rehearsal, which plays a run sheet through without sending anything."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Sound check..."
+   left="446"
+   top="150"
+   name="sound_check_btn"
+   tab_group="1"
+   width="120"
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="18"
+   left="10"
+   top="180"
+   name="countdown_text"
+   width="640"
+   font="SansSerifBold"
+   layout="topleft"></text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="206"
+   name="section_label"
+   width="44"
+   layout="topleft">Show:</text>
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="56"
+   top="202"
+   name="section_combo"
+   tab_group="1"
+   width="200">
+    <combo_box.item label="Event details" name="details" value="details" />
+    <combo_box.item label="DJ and host team" name="team" value="team" />
+    <combo_box.item label="Cue cards" name="cards" value="cards" />
+    <combo_box.item label="Announcements" name="announcements" value="announcements" />
+    <combo_box.item label="Stream check" name="stream" value="stream" />
+  </combo_box>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="236"
+   name="name_label"
+   width="120"
+   layout="topleft">Name:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="130"
+   top="232"
+   name="event_name"
+   tab_group="1"
+   width="520"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="264"
+   name="start_label"
+   width="120"
+   layout="topleft">Starts (your time):</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="130"
+   top="260"
+   name="start_time"
+   tab_group="1"
+   width="150"
+   max_length_bytes="16"
+   default_text="2026-11-20 21:00"
+   tool_tip="Year-month-day hour:minute, in this computer's time zone."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="290"
+   top="264"
+   name="minutes_label"
+   width="60"
+   layout="topleft">Minutes:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="350"
+   top="260"
+   name="duration"
+   tab_group="1"
+   width="70"
+   max_length_bytes="4"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="292"
+   name="location_label"
+   width="120"
+   layout="topleft">Where:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="130"
+   top="288"
+   name="location"
+   tab_group="1"
+   width="520"
+   max_length_bytes="300"
+   default_text="Second Life address or SLurl"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="320"
+   name="stream_label"
+   width="120"
+   layout="topleft">Planned stream:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="130"
+   top="316"
+   name="stream_url"
+   tab_group="1"
+   width="520"
+   max_length_bytes="1000"
+   default_text="https://..."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="348"
+   name="notes_label"
+   width="120"
+   layout="topleft">Notes:</text>
+  <text_editor
+   follows="left|top|right"
+   height="90"
+   left="130"
+   top="344"
+   name="notes"
+   tab_group="1"
+   width="520"
+   max_length="4000"
+   word_wrap="true"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save event"
+   left="130"
+   top="442"
+   name="save_btn"
+   tab_group="1"
+   width="110"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="160"
+   left="10"
+   top="232"
+   name="team_list"
+   tab_group="1"
+   width="640">
+    <scroll_list.columns name="name" label="Name" width="300" />
+    <scroll_list.columns name="role" label="Role" width="120" />
+    <scroll_list.columns name="id" label="Account" />
+  </scroll_list>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="10"
+   top="400"
+   name="member_name"
+   tab_group="1"
+   width="200"
+   max_length_bytes="120"
+   default_text="Name"
+   layout="topleft" />
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="216"
+   top="400"
+   name="member_id"
+   tab_group="1"
+   width="434"
+   max_length_bytes="200"
+   default_text="Account ID or profile link (optional)"
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="10"
+   top="428"
+   name="role_combo"
+   tab_group="1"
+   width="120">
+    <combo_box.item label="DJ" name="dj" value="dj" />
+    <combo_box.item label="Host" name="host" value="host" />
+    <combo_box.item label="Co-host" name="cohost" value="cohost" />
+    <combo_box.item label="Staff" name="staff" value="staff" />
+  </combo_box>
+  <button
+   follows="left|top"
+   height="23"
+   label="Add to team"
+   left="136"
+   top="428"
+   name="add_member_btn"
+   tab_group="1"
+   width="110"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove"
+   left="250"
+   top="428"
+   name="remove_member_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="110"
+   left="10"
+   top="232"
+   name="card_list"
+   tab_group="1"
+   width="640">
+    <scroll_list.columns name="minute" label="Minute" width="70" />
+    <scroll_list.columns name="title" label="Card" width="200" />
+    <scroll_list.columns name="body" label="Says" />
+  </scroll_list>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="10"
+   top="350"
+   name="card_title"
+   tab_group="1"
+   width="300"
+   max_length_bytes="120"
+   default_text="Card title"
+   layout="topleft" />
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="316"
+   top="350"
+   name="card_minute"
+   tab_group="1"
+   width="120"
+   max_length_bytes="5"
+   default_text="Minute (blank: any)"
+   layout="topleft" />
+  <text_editor
+   follows="left|top|right"
+   height="50"
+   left="10"
+   top="378"
+   name="card_body"
+   tab_group="1"
+   width="640"
+   max_length="2000"
+   word_wrap="true"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add card"
+   left="10"
+   top="434"
+   name="add_card_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Update card"
+   left="104"
+   top="434"
+   name="update_card_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove card"
+   left="208"
+   top="434"
+   name="remove_card_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="40"
+   left="320"
+   top="434"
+   name="due_text"
+   width="330"
+   wrap="true"
+   layout="topleft"></text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="110"
+   left="10"
+   top="232"
+   name="ann_list"
+   tab_group="1"
+   width="640">
+    <scroll_list.columns name="state" label="State" width="90" />
+    <scroll_list.columns name="text" label="Announcement" />
+  </scroll_list>
+  <text_editor
+   follows="left|top|right"
+   height="60"
+   left="10"
+   top="350"
+   name="ann_text"
+   tab_group="1"
+   width="640"
+   max_length="1023"
+   word_wrap="true"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="New draft"
+   left="10"
+   top="416"
+   name="new_ann_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save text"
+   left="104"
+   top="416"
+   name="update_ann_btn"
+   tab_group="1"
+   width="90"
+   tool_tip="Saves the text. An approved announcement becomes a draft again when its text changes."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Approve"
+   left="198"
+   top="416"
+   name="approve_btn"
+   tab_group="1"
+   width="90"
+   tool_tip="Approves this exact text. Nothing is sent yet."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Send to nearby chat..."
+   left="292"
+   top="416"
+   name="send_chat_btn"
+   tab_group="1"
+   width="170"
+   tool_tip="Asks you to confirm, then says the approved text once in nearby chat. RLV is checked first."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="IM to a list..."
+   left="466"
+   top="416"
+   name="to_party_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Opens Party Contacts with this text, to preview opted-in recipients before anything is sent."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Check stream"
+   left="10"
+   top="232"
+   name="stream_check_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Checks this parcel's music stream and what this viewer plays. Changes nothing."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="About Land..."
+   left="136"
+   top="232"
+   name="about_land_btn"
+   tab_group="1"
+   width="110"
+   tool_tip="Opens About Land, where a parcel's music address is set."
+   layout="topleft" />
+  <text_editor
+   follows="left|top|right"
+   height="190"
+   left="10"
+   top="260"
+   name="stream_report"
+   tab_group="1"
+   width="640"
+   max_length="131072"
+   word_wrap="true"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="476"
+   name="status_text"
+   width="640"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

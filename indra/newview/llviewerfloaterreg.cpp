@@ -218,16 +218,20 @@
 #include "sw67floatercreatorprojects.h"
 #include "sw67floatercreatorworkbench.h"
 #include "sw67floaterdirector.h"
+#include "sw67floaterequalizer.h"
+#include "sw67floatereventcontrol.h"
 #include "sw67floatereventrehearsal.h"
 #include "sw67floaterinventorycleanup.h"
 #include "sw67floaterkingjahmir.h"
 #include "sw67floateroutfits.h"
+#include "sw67floaterpartycontacts.h"
 #include "sw67floaterperformance.h"
 #include "sw67floaterphotolooks.h"
 #include "sw67floaterposestudio.h"
 #include "sw67floaterproductphoto.h"
 #include "sw67floaterrecordingprivacy.h"
 #include "sw67floatershopping.h"
+#include "sw67floatersoundcheck.h"
 #include "sw67floaterworkspaces.h"
 // [/RLVa:KB]
 // handle secondlife:///app/openfloater/{NAME} URLs
@@ -568,6 +572,10 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("sw67_photo_looks", "floater_sw67_photo_looks.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPhotoLooks>);
     LLFloaterReg::add("sw67_shopping", "floater_sw67_shopping.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterShopping>);
     LLFloaterReg::add("sw67_creator_workbench", "floater_sw67_creator_workbench.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterCreatorWorkbench>);
+    LLFloaterReg::add("sw67_party_contacts", "floater_sw67_party_contacts.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPartyContacts>);
+    LLFloaterReg::add("sw67_event_control", "floater_sw67_event_control.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterEventControl>);
+    LLFloaterReg::add("sw67_equalizer", "floater_sw67_equalizer.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterEqualizer>);
+    LLFloaterReg::add("sw67_sound_check", "floater_sw67_sound_check.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterSoundCheck>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

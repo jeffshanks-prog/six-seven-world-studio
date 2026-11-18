@@ -96,6 +96,7 @@
 #include "alfeedback.h"
 #include "llappviewer.h"
 #include "llstartup.h"
+#include "sw67audioeq.h"
 #include "sw67kingjahmir.h"
 
 #if 0
@@ -937,6 +938,9 @@ bool idle_startup()
                         gSavedSettings.getF32("AudioWindGustiness"));
                     gAudiop->setWindAltitudeBoost(
                         gSavedSettings.getF32("AudioWindAltitudeBoost"));
+
+                    // [6|7] The listener's saved equalizer and Sound Check.
+                    sw67viewer::audio::apply();
 
                     gAudiop->setMuted(true);
                 }

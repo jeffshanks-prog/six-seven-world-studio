@@ -779,6 +779,35 @@
     left="18"
     class="panel_voice_device_settings"/>
     </panel>
+    <panel
+    label="Equalizer"
+    name="sw67_equalizer_panel"
+    layout="topleft"
+    follows="top|left"><!-- 6|7 Equalizer Tab -->
+      <text
+       follows="left|top|right"
+       height="80"
+       layout="topleft"
+       left="20"
+       name="sw67_eq_text"
+       top="20"
+       width="470"
+       wrap="true">6|7 Sound Equalizer: 10 bands with presets (Flat, Bass Boost, Voice Clarity, Night Listening) and your own, set separately for world sounds and interface sounds, with level meters. It changes only what you hear. Parcel music and voice chat play outside this viewer's sound mixer and are not equalized; the equalizer window says so beside them.</text>
+      <button
+       follows="left|top"
+       height="23"
+       label="Open Sound Equalizer..."
+       layout="topleft"
+       left="20"
+       name="sw67_eq_button"
+       tab_group="1"
+       top="110"
+       width="200">
+        <button.commit_callback
+         function="Floater.Show"
+         parameter="sw67_equalizer" />
+      </button>
+    </panel>
 
 </tab_container>
 </panel>

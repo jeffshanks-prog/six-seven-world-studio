@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Party Contacts (DJ & Hosting). Keyboard: Tab moves through the view chooser, the list, each view's buttons, the message, Preview and Send. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="664"
+ width="640"
+ min_height="620"
+ min_width="600"
+ layout="topleft"
+ name="sw67_party_contacts"
+ save_rect="true"
+ title="6|7 PARTY CONTACTS">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="620"
+   wrap="true"
+   layout="topleft">Your own event contacts, kept apart from your Second Life friends. Saving or removing a party contact never sends a friend request or ends a friendship, and nobody gets announcements unless they opted in.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="44"
+   name="view_label"
+   width="40"
+   layout="topleft">Show:</text>
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="52"
+   top="40"
+   name="view_combo"
+   tab_group="1"
+   width="170">
+    <combo_box.item label="Personal Friends" name="friends" value="friends" />
+    <combo_box.item label="Party Contacts" name="contacts" value="contacts" />
+    <combo_box.item label="Event Guest Lists" name="guests" value="guests" />
+  </combo_box>
+  <combo_box
+   follows="left|top"
+   height="23"
+   left="228"
+   top="40"
+   name="list_combo"
+   tab_group="1"
+   width="170"
+   layout="topleft" />
+  <combo_box
+   follows="left|top|right"
+   height="23"
+   left="404"
+   top="40"
+   name="event_combo"
+   tab_group="1"
+   width="226"
+   layout="topleft" />
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="10"
+   top="68"
+   name="filter"
+   tab_group="1"
+   width="620"
+   max_length_bytes="80"
+   default_text="Filter by name"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="200"
+   left="10"
+   top="96"
+   name="people_list"
+   tab_group="1"
+   width="620"
+   multi_select="true">
+    <scroll_list.columns name="name" label="Name" width="210" />
+    <scroll_list.columns name="detail" label="Lists / RSVP" width="230" />
+    <scroll_list.columns name="extra" label="Announcements / Source" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Save to Party Contacts"
+   left="10"
+   top="302"
+   name="save_btn"
+   tab_group="1"
+   width="180"
+   tool_tip="Saves the selected friends as party contacts. Sends nothing to them."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add to list"
+   left="10"
+   top="302"
+   name="on_list_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Puts the selected contacts on the list chosen above."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Take off list"
+   left="114"
+   top="302"
+   name="off_list_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add to guest list"
+   left="218"
+   top="302"
+   name="to_guests_btn"
+   tab_group="1"
+   width="130"
+   tool_tip="Adds the selected contacts to the event chosen above."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Remove from Party Contacts"
+   left="430"
+   top="302"
+   name="remove_contact_btn"
+   tab_group="1"
+   width="200"
+   tool_tip="Takes them out of Party Contacts and its lists. A Second Life friendship is not changed."
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="10"
+   top="302"
+   name="rsvp_combo"
+   tab_group="1"
+   width="150">
+    <combo_box.item label="Not invited yet" name="not_invited" value="not_invited" />
+    <combo_box.item label="Invited, no answer" name="invited" value="invited" />
+    <combo_box.item label="Going" name="going" value="going" />
+    <combo_box.item label="Maybe" name="maybe" value="maybe" />
+    <combo_box.item label="Not going" name="not_going" value="not_going" />
+  </combo_box>
+  <button
+   follows="left|top"
+   height="23"
+   label="Set RSVP"
+   left="164"
+   top="302"
+   name="set_rsvp_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add whole list"
+   left="258"
+   top="302"
+   name="list_to_guests_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Adds every member of the list chosen above to this event's guest list."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Remove from guest list"
+   left="460"
+   top="302"
+   name="remove_guest_btn"
+   tab_group="1"
+   width="170"
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="10"
+   top="330"
+   name="consent_combo"
+   tab_group="1"
+   width="150">
+    <combo_box.item label="Not asked" name="not_asked" value="not_asked" />
+    <combo_box.item label="Opted in" name="opted_in" value="opted_in" />
+    <combo_box.item label="Opted out" name="opted_out" value="opted_out" />
+  </combo_box>
+  <button
+   follows="left|top"
+   height="23"
+   label="Set announcements"
+   left="164"
+   top="330"
+   name="set_consent_btn"
+   tab_group="1"
+   width="140"
+   tool_tip="Record what they told you. Announcements only ever go to people marked Opted in."
+   layout="topleft" />
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="310"
+   top="330"
+   name="add_id"
+   tab_group="1"
+   width="220"
+   max_length_bytes="200"
+   default_text="Account ID or profile link"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Add"
+   left="536"
+   top="330"
+   name="add_btn"
+   tab_group="1"
+   width="94"
+   layout="topleft" />
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="10"
+   top="358"
+   name="new_list_name"
+   tab_group="1"
+   width="200"
+   max_length_bytes="80"
+   default_text="New list name"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Make list"
+   left="214"
+   top="358"
+   name="new_list_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove list"
+   left="308"
+   top="358"
+   name="remove_list_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Removes the list chosen above. Its contacts stay."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Accept RSVP file..."
+   left="10"
+   top="330"
+   name="rsvp_file_btn"
+   tab_group="1"
+   width="150"
+   tool_tip="Accepts RSVPs exported from a 6|7 event page. Only an explicit tick there signs anyone up for announcements."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Share with co-host..."
+   left="166"
+   top="330"
+   name="export_share_btn"
+   tab_group="1"
+   width="160"
+   tool_tip="Saves this guest list, and only it, for the co-host chosen below."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Open shared list..."
+   left="330"
+   top="330"
+   name="import_share_btn"
+   tab_group="1"
+   width="150"
+   layout="topleft" />
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="10"
+   top="358"
+   name="share_id"
+   tab_group="1"
+   width="250"
+   max_length_bytes="200"
+   default_text="Co-host account ID or profile link"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Can edit"
+   left="266"
+   top="362"
+   name="share_edit_check"
+   tab_group="1"
+   width="80"
+   initial_value="false"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Can send invitations"
+   left="350"
+   top="362"
+   name="share_invite_check"
+   tab_group="1"
+   width="150"
+   initial_value="false"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Share"
+   left="460"
+   top="358"
+   name="share_btn"
+   tab_group="1"
+   width="80"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Stop sharing"
+   left="544"
+   top="358"
+   name="unshare_btn"
+   tab_group="1"
+   width="86"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="390"
+   name="send_label"
+   width="300"
+   layout="topleft">Message for this send (one IM each):</text>
+  <combo_box
+   layout="topleft"
+   follows="right|top"
+   height="23"
+   left="390"
+   top="386"
+   name="purpose_combo"
+   tab_group="1"
+   width="240">
+    <combo_box.item label="Invitation to this event" name="invitation" value="invitation" />
+    <combo_box.item label="Announcement to the list" name="announcement" value="announcement" />
+  </combo_box>
+  <text_editor
+   follows="left|top|right"
+   height="50"
+   left="10"
+   top="412"
+   name="send_text"
+   tab_group="1"
+   width="620"
+   max_length="1023"
+   word_wrap="true"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Preview recipients"
+   left="10"
+   top="468"
+   name="preview_btn"
+   tab_group="1"
+   width="150"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Leave selected out"
+   left="166"
+   top="468"
+   name="leave_out_btn"
+   tab_group="1"
+   width="150"
+   tool_tip="Leaves the selected people out of this send only."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Send..."
+   left="530"
+   top="468"
+   name="send_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Asks you to confirm, then sends one IM to each recipient about two seconds apart."
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="120"
+   left="10"
+   top="496"
+   name="preview_text"
+   tab_group="1"
+   width="620"
+   max_length="131072"
+   word_wrap="true"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="622"
+   name="status_text"
+   width="620"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

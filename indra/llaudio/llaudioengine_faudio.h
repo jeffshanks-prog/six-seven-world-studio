@@ -195,7 +195,24 @@ public:
     // hasn't been refreshed yet within a frame.
     void releaseBufferReferences(class LLAudioBufferFAudio* buf);
 
+    // [6|7] Per-type equalizer and level meter, on each type's submix
+    // (effect 0: the 10-band equalizer, effect 1: FAudio's volume meter).
+    // Settings are kept here and applied again whenever the voice graph is
+    // rebuilt (device hot-swap).
+    static constexpr int SW67_EQ_BANDS = 10;
+    bool hasGroupEq(S32 type) const;
+    void setGroupEq(S32 type, bool on, const float (&gains_db)[SW67_EQ_BANDS]);
+    // Peak and RMS of the type's submix since the last mixer pass, the
+    // loudest channel's, linear (1.0 = full scale). False with no meter.
+    bool getGroupLevel(S32 type, F32& peak, F32& rms) const;
+
 private:
+    void attachGroupEffects(S32 type);
+    bool  mGroupEqAttached[LLAudioEngine::AUDIO_TYPE_COUNT]{};
+    bool  mGroupMeterAttached[LLAudioEngine::AUDIO_TYPE_COUNT]{};
+    bool  mGroupEqOn[LLAudioEngine::AUDIO_TYPE_COUNT]{};
+    float mGroupEqGains[LLAudioEngine::AUDIO_TYPE_COUNT][SW67_EQ_BANDS]{};
+
     // FAudio-only init / teardown. init() composes them with the parent
     // LLAudioEngine::init bookkeeping; setOutputDevice composes them
     // without disturbing the channel pool / source list above us so
