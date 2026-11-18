@@ -59,6 +59,11 @@ struct Item
     std::string name;
     ItemKind kind = ItemKind::Object;
     std::string wearableType; ///< For body parts and clothing; empty for objects.
+    /// For objects: the attachment point it was worn on when the outfit was
+    /// saved ("Chest", "HUD Center"), or empty when not known. Second Life
+    /// keeps an item's point in the item itself, so an unworn item's point is
+    /// only known once it has been worn.
+    std::string attachPoint;
     friend bool operator==(const Item&, const Item&) = default;
 };
 
@@ -122,6 +127,39 @@ struct Plan
 /// items the user never wants taken off by an outfit (an AO HUD, say).
 Plan planOutfit(const Outfit& outfit, const std::vector<Item>& worn, const std::map<std::string, Item>& owned,
                 const Limits& limits, const std::set<std::string>& alwaysKeep = {});
+
+/// Attachment points the outfit puts more than one item on, with those items.
+/// Second Life wears several items on one point together, so this is a note
+/// for the user (they may overlap or one may be an older copy), not a block.
+std::map<std::string, std::vector<Item>> sharedPoints(const Plan& plan);
+
+/// Outfit Doctor's check after wearing: for every Wear and Remove step, did it
+/// happen? `wornNow` is what is worn once the viewer has finished, by item ID.
+struct ItemResult
+{
+    enum class Outcome
+    {
+        Done,        ///< Worn, or taken off, as planned.
+        NotWorn,     ///< Asked to wear it; it is not worn.
+        StillWorn,   ///< Asked to take it off; it is still worn.
+        Missing,     ///< Not in the inventory, so never asked for.
+    };
+    Item item;
+    bool wanted = true;  ///< True for a Wear step, false for a Remove step.
+    Outcome outcome = Outcome::Done;
+    std::string reason;
+};
+
+struct RestoreReport
+{
+    std::vector<ItemResult> results;
+    std::size_t done() const;
+    std::size_t failed() const;   ///< NotWorn, StillWorn and Missing.
+    bool complete() const { return failed() == 0; }
+    std::string describe() const; ///< A summary line, then one line per item that did not go as planned.
+};
+
+RestoreReport checkRestore(const Plan& plan, const std::set<std::string>& wornNow);
 
 /// The RLV requests for the plan's Wear and Remove steps, in order, so the
 /// gate can preview which it will block. Implicit body part swaps are left

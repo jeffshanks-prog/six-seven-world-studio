@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Inventory Cleanup Preview. Keyboard: Tab moves through Scan, the move list, Preview, Apply, the duplicate list and Show. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="628"
+ width="660"
+ min_height="560"
+ min_width="600"
+ layout="topleft"
+ name="sw67_inventory_cleanup"
+ save_rect="true"
+ title="6|7 INVENTORY CLEANUP PREVIEW">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="640"
+   wrap="true"
+   layout="topleft">Suggests moving loose items into their system folders and lists likely duplicates for you to review. Only the moves you select, preview and confirm are made, and each can be undone. Nothing is ever deleted.</text>
+  <text
+   follows="left|top|right"
+   height="16"
+   left="10"
+   top="44"
+   name="scan_folder_text"
+   width="400"
+   layout="topleft">Tidying: My Inventory</text>
+  <button
+   follows="left|top"
+   height="23"
+   label="Use folder selected in inventory"
+   left="10"
+   top="64"
+   name="use_folder_btn"
+   tab_group="1"
+   width="230"
+   tool_tip="Tidy the folder selected in your inventory window instead of My Inventory."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Scan"
+   left="248"
+   top="64"
+   name="scan_btn"
+   tab_group="1"
+   width="90"
+   tool_tip="Looks for suggestions. Changes nothing."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="96"
+   name="moves_heading"
+   width="400"
+   font="SansSerifBold"
+   layout="topleft">Suggested moves (select the ones you want)</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="150"
+   left="10"
+   top="114"
+   name="move_list"
+   tab_group="1"
+   width="640"
+   multi_select="true">
+    <scroll_list.columns name="item" label="Item" width="200" />
+    <scroll_list.columns name="move" label="From -&gt; to" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Select all"
+   left="10"
+   top="270"
+   name="select_all_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Preview selected"
+   left="118"
+   top="270"
+   name="preview_btn"
+   tab_group="1"
+   width="140"
+   tool_tip="Shows exactly what Apply would do. Changes nothing."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Apply"
+   left="266"
+   top="270"
+   name="apply_btn"
+   tab_group="1"
+   width="160"
+   tool_tip="Makes exactly the previewed moves. Enabled only after a preview of the same selection."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Undo last cleanup"
+   left="500"
+   top="270"
+   name="undo_btn"
+   tab_group="1"
+   width="150"
+   tool_tip="Previews moving the last cleanup's items back; press Apply to confirm."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="302"
+   name="dup_heading"
+   width="400"
+   font="SansSerifBold"
+   layout="topleft">Likely duplicates (review only; nothing is deleted)</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="100"
+   left="10"
+   top="320"
+   name="dup_list"
+   tab_group="1"
+   width="520">
+    <scroll_list.columns name="name" label="Name" width="280" />
+    <scroll_list.columns name="count" label="Copies" width="60" />
+    <scroll_list.columns name="why" label="Why" />
+  </scroll_list>
+  <button
+   follows="right|top"
+   height="23"
+   label="Show"
+   left="538"
+   top="320"
+   name="show_dup_btn"
+   tab_group="1"
+   width="112"
+   tool_tip="Lists where each copy is and selects the first in your inventory."
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="150"
+   left="10"
+   top="428"
+   name="preview_text"
+   tab_group="1"
+   width="640"
+   max_length="131072"
+   word_wrap="false"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="586"
+   name="status_text"
+   width="640"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

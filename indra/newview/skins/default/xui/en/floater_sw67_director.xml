@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Director Mode. Keyboard: Tab moves through the production, angles, paths, keys, export and shot list. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="664"
+ width="700"
+ min_height="600"
+ min_width="700"
+ layout="topleft"
+ name="sw67_director"
+ save_rect="true"
+ title="6|7 DIRECTOR MODE">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="680"
+   wrap="true"
+   layout="topleft">Save camera angles, build camera paths and plan a shot list. Camera moves are your own view only: nobody else sees them. With reduced motion on, paths play as cuts.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="46"
+   name="production_label"
+   width="80"
+   layout="topleft">Production:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="92"
+   top="42"
+   name="production_name"
+   tab_group="1"
+   width="220"
+   max_length_bytes="120"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save"
+   left="318"
+   top="42"
+   name="save_btn"
+   tab_group="1"
+   width="70"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="New"
+   left="394"
+   top="42"
+   name="new_btn"
+   tab_group="1"
+   width="60"
+   layout="topleft" />
+  <combo_box
+   follows="left|top|right"
+   height="23"
+   left="462"
+   top="42"
+   name="production_combo"
+   tab_group="1"
+   width="228"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="76"
+   name="angles_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Camera angles</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="false"
+   follows="left|top"
+   height="120"
+   left="10"
+   top="94"
+   name="angle_list"
+   tab_group="1"
+   width="200">
+    <scroll_list.columns name="name" />
+  </scroll_list>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="10"
+   top="220"
+   name="angle_name"
+   tab_group="1"
+   width="200"
+   max_length_bytes="80"
+   default_text="angle name"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save this camera"
+   left="10"
+   top="248"
+   name="save_angle_btn"
+   tab_group="1"
+   width="200"
+   tool_tip="Saves where your camera is now, relative to you."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Go to"
+   left="10"
+   top="276"
+   name="goto_angle_btn"
+   tab_group="1"
+   width="96"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove"
+   left="114"
+   top="276"
+   name="remove_angle_btn"
+   tab_group="1"
+   width="96"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="220"
+   top="76"
+   name="paths_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Camera paths</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top"
+   height="120"
+   left="220"
+   top="94"
+   name="path_list"
+   tab_group="1"
+   width="220">
+    <scroll_list.columns name="name" label="Path" width="150" />
+    <scroll_list.columns name="length" label="Length" />
+  </scroll_list>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="220"
+   top="220"
+   name="path_name"
+   tab_group="1"
+   width="140"
+   max_length_bytes="80"
+   default_text="path name"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="New path"
+   left="366"
+   top="220"
+   name="new_path_btn"
+   tab_group="1"
+   width="74"
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="220"
+   top="248"
+   name="easing_combo"
+   tab_group="1"
+   width="110">
+    <combo_box.item label="Smooth" name="smooth" value="smooth" />
+    <combo_box.item label="Linear" name="linear" value="linear" />
+  </combo_box>
+  <check_box
+   height="16"
+   label="Loop"
+   left="338"
+   top="251"
+   name="loop_check"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Play"
+   left="220"
+   top="276"
+   name="play_btn"
+   tab_group="1"
+   width="106"
+   tool_tip="Plays the path on your camera. It keeps playing with the interface hidden."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Stop"
+   left="334"
+   top="276"
+   name="stop_btn"
+   tab_group="1"
+   width="106"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="450"
+   top="76"
+   name="keys_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Keys</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="120"
+   left="450"
+   top="94"
+   name="key_list"
+   tab_group="1"
+   width="240">
+    <scroll_list.columns name="time" label="At" width="70" />
+    <scroll_list.columns name="name" label="Key" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   height="16"
+   left="450"
+   top="224"
+   name="key_time_label"
+   width="50"
+   layout="topleft">At (s):</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="500"
+   top="220"
+   name="key_time"
+   tab_group="1"
+   width="60"
+   max_length_bytes="10"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add key"
+   left="566"
+   top="220"
+   name="add_key_btn"
+   tab_group="1"
+   width="124"
+   tool_tip="Adds the camera where it is now as a key at that time."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Replace key"
+   left="450"
+   top="248"
+   name="replace_key_btn"
+   tab_group="1"
+   width="116"
+   tool_tip="Replaces the selected key with the camera where it is now."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove key"
+   left="574"
+   top="248"
+   name="remove_key_btn"
+   tab_group="1"
+   width="116"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="450"
+   top="280"
+   name="export_label"
+   width="140"
+   layout="topleft">Export path as frames:</text>
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="590"
+   top="276"
+   name="fps_combo"
+   tab_group="1"
+   width="52">
+    <combo_box.item label="24" name="fps24" value="24" />
+    <combo_box.item label="30" name="fps30" value="30" />
+  </combo_box>
+  <button
+   follows="right|top"
+   height="23"
+   label="Export"
+   left="646"
+   top="276"
+   name="export_btn"
+   tab_group="1"
+   width="44"
+   tool_tip="Saves the path as numbered PNG frames through the snapshot capture, to join into a video."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="312"
+   name="shots_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Shot list</text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="150"
+   left="10"
+   top="330"
+   name="shot_list"
+   tab_group="1"
+   width="680">
+    <scroll_list.columns name="done" label="Status" width="60" />
+    <scroll_list.columns name="title" label="Shot" width="220" />
+    <scroll_list.columns name="uses" label="Uses" width="260" />
+    <scroll_list.columns name="length" label="Length" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="492"
+   name="title_label"
+   width="40"
+   layout="topleft">Shot:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="52"
+   top="488"
+   name="shot_title"
+   tab_group="1"
+   width="200"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="260"
+   top="492"
+   name="uses_label"
+   width="90"
+   layout="topleft">Angle or path:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="350"
+   top="488"
+   name="shot_uses"
+   tab_group="1"
+   width="150"
+   max_length_bytes="80"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="508"
+   top="492"
+   name="seconds_label"
+   width="60"
+   layout="topleft">Seconds:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="570"
+   top="488"
+   name="shot_seconds"
+   tab_group="1"
+   width="50"
+   max_length_bytes="10"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="520"
+   name="notes_label"
+   width="40"
+   layout="topleft">Notes:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="52"
+   top="516"
+   name="shot_notes"
+   tab_group="1"
+   width="638"
+   max_length_bytes="2000"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add shot"
+   left="10"
+   top="546"
+   name="add_shot_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Update"
+   left="116"
+   top="546"
+   name="update_shot_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove"
+   left="212"
+   top="546"
+   name="remove_shot_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Done / to do"
+   left="308"
+   top="546"
+   name="done_btn"
+   tab_group="1"
+   width="110"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Frame this shot"
+   left="424"
+   top="546"
+   name="frame_shot_btn"
+   tab_group="1"
+   width="130"
+   tool_tip="Moves your camera to the shot's angle, or plays its path."
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="40"
+   left="10"
+   top="576"
+   name="shot_summary"
+   width="680"
+   wrap="true"
+   layout="topleft"></text>
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="622"
+   name="status_text"
+   width="680"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

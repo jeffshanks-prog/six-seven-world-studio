@@ -21,6 +21,9 @@
 #include "sw67/a11y/profile.h"
 #include "sw67/outfit/planner.h"
 
+#include "lltimer.h"
+
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -56,6 +59,13 @@ private:
     void onWear();
     void showStatus(sw67::a11y::StatusRole role, const std::string& text);
     static std::string outfitsDir();
+    /// Outfit Doctor: after Wear, check every item until the viewer settles.
+    void scheduleRestoreCheck(U32 attempt);
+    void checkRestore(U32 attempt);
+    static std::set<std::string> wornIds(const sw67::outfit::Plan& plan);
 
     sw67::outfit::Outfit mOutfit;
+    std::optional<sw67::outfit::Plan> mPendingPlan;
+    LLFrameTimer mCheckStarted;
+    U32 mCheckAttempt = 0;
 };

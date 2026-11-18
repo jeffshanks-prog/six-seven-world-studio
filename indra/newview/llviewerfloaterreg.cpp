@@ -216,7 +216,9 @@
 #include "sw67floateraccessibility.h"
 #include "sw67floaterbackup.h"
 #include "sw67floatercreatorprojects.h"
+#include "sw67floaterdirector.h"
 #include "sw67floatereventrehearsal.h"
+#include "sw67floaterinventorycleanup.h"
 #include "sw67floaterkingjahmir.h"
 #include "sw67floateroutfits.h"
 #include "sw67floaterperformance.h"
@@ -558,6 +560,8 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("sw67_outfit_planner", "floater_sw67_outfit_planner.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterOutfits>);
     LLFloaterReg::add("sw67_pose_studio", "floater_sw67_pose_studio.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPoseStudio>);
     LLFloaterReg::add("sw67_recording_privacy", "floater_sw67_recording_privacy.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterRecordingPrivacy>);
+    LLFloaterReg::add("sw67_inventory_cleanup", "floater_sw67_inventory_cleanup.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterInventoryCleanup>);
+    LLFloaterReg::add("sw67_director", "floater_sw67_director.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterDirector>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

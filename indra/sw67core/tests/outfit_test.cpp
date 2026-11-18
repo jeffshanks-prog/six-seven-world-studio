@@ -25,9 +25,10 @@ std::string uuid(int n)
     return buf;
 }
 
-Item body(int n, const char* type) { return {uuid(n), std::string("Body ") + type, ItemKind::BodyPart, type}; }
-Item cloth(int n, const char* type) { return {uuid(n), std::string("Cloth ") + std::to_string(n), ItemKind::Clothing, type}; }
-Item object(int n) { return {uuid(n), "Attachment " + std::to_string(n), ItemKind::Object, ""}; }
+Item body(int n, const char* type) { return {uuid(n), std::string("Body ") + type, ItemKind::BodyPart, type, ""}; }
+Item cloth(int n, const char* type) { return {uuid(n), std::string("Cloth ") + std::to_string(n), ItemKind::Clothing, type, ""}; }
+Item object(int n) { return {uuid(n), "Attachment " + std::to_string(n), ItemKind::Object, "", ""}; }
+Item objectAt(int n, const char* point) { return {uuid(n), "Attachment " + std::to_string(n), ItemKind::Object, "", point}; }
 
 std::map<std::string, Item> own(const std::vector<Item>& items)
 {
@@ -187,4 +188,76 @@ TEST_CASE("Comparing outfits lists what differs", "[outfit]")
     CHECK(d.onlyInA[0].id == uuid(1));
     CHECK(d.onlyInB[0].id == uuid(3));
     CHECK(fileNameFor(a) == "outfit.sw67outfit.json");
+}
+
+TEST_CASE("Outfit Doctor flags items sharing an attachment point", "[outfit][doctor]")
+{
+    const std::vector<Item> worn = wornNow();
+    Outfit o;
+    o.name = "Layered";
+    o.replace = false;
+    o.items = {objectAt(30, "Chest"), objectAt(31, "Chest"), objectAt(32, "Skull")};
+    std::vector<Item> all = worn;
+    for (const Item& i : o.items) all.push_back(i);
+    const Plan p = planOutfit(o, worn, own(all), Limits{});
+    const auto shared = sharedPoints(p);
+    REQUIRE(shared.size() == 1);
+    REQUIRE(shared.at("Chest").size() == 2);
+    REQUIRE(p.canWear()); // a note, not a block
+    REQUIRE(std::any_of(p.problems.begin(), p.problems.end(), [](const Problem& pr) {
+        return !pr.blocking && pr.text.find("share the Chest attachment point") != std::string::npos;
+    }));
+}
+
+TEST_CASE("Outfit Doctor keeps attachment points in the saved file", "[outfit][doctor]")
+{
+    Outfit o;
+    o.name = "Points";
+    o.items = {objectAt(30, "Left Hand"), body(5, "hair")};
+    const ReadResult r = readOutfit(writeOutfit(o));
+    REQUIRE(r.outfit);
+    REQUIRE(r.outfit->items[0].attachPoint == "Left Hand");
+    REQUIRE(r.outfit->items[1].attachPoint.empty());
+}
+
+TEST_CASE("Outfit Doctor reports each item a partly failed restore missed", "[outfit][doctor]")
+{
+    const std::vector<Item> worn = wornNow(); // 1-4 body, 10 shirt, 20, 21 objects
+    Outfit o;
+    o.name = "Saved";
+    o.items = {body(1, "shape"), body(2, "skin"), body(5, "hair"), body(4, "eyes"), cloth(11, "pants"), object(22),
+               object(23), object(99)};
+    std::vector<Item> all = worn;
+    for (const Item& i : {body(5, "hair"), cloth(11, "pants"), object(22), object(23)}) all.push_back(i);
+    // object(99) is not owned: missing.
+    const Plan p = planOutfit(o, worn, own(all), Limits{});
+
+    // Afterwards: pants and object 22 went on, object 23 did not; the shirt came
+    // off but object 21 is still worn (locked); hair swapped.
+    std::set<std::string> after = {uuid(1), uuid(2), uuid(5), uuid(4), uuid(11), uuid(22), uuid(21)};
+    const RestoreReport report = checkRestore(p, after);
+    auto outcome = [&](int n) {
+        for (const ItemResult& r : report.results)
+            if (r.item.id == uuid(n)) return r.outcome;
+        FAIL("no result for item " << n);
+        return ItemResult::Outcome::Done;
+    };
+    REQUIRE(outcome(11) == ItemResult::Outcome::Done);
+    REQUIRE(outcome(22) == ItemResult::Outcome::Done);
+    REQUIRE(outcome(23) == ItemResult::Outcome::NotWorn);
+    REQUIRE(outcome(10) == ItemResult::Outcome::Done);      // shirt removed
+    REQUIRE(outcome(21) == ItemResult::Outcome::StillWorn);
+    REQUIRE(outcome(99) == ItemResult::Outcome::Missing);
+    REQUIRE(outcome(3) == ItemResult::Outcome::Done);       // old hair swapped out
+    REQUIRE_FALSE(report.complete());
+    REQUIRE(report.failed() == 3);
+    const std::string text = report.describe();
+    REQUIRE(text.find("Attachment 23") != std::string::npos);
+    REQUIRE(text.find("Attachment 21") != std::string::npos);
+    REQUIRE(text.find("Nothing was bought") != std::string::npos);
+
+    // Everything in place: complete.
+    after.erase(uuid(21));
+    after.insert(uuid(23));
+    REQUIRE(checkRestore(planOutfit(o, worn, own(all), Limits{}), after).failed() == 1); // only the missing one
 }

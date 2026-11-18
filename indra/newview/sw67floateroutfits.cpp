@@ -20,6 +20,8 @@
 #include "sw67viewerfiles.h"
 
 #include "llagentbenefits.h"
+#include "llagentwearables.h"
+#include "llcallbacklist.h"
 #include "llappearancemgr.h"
 #include "llfile.h"
 #include "llfolderviewitem.h"
@@ -61,7 +63,16 @@ std::optional<Item> itemFrom(const LLViewerInventoryItem* item)
         out.kind = ItemKind::Clothing;
         out.wearableType = std::string(LLWearableType::getTypeName(item->getWearableType()));
         break;
-    case LLAssetType::AT_OBJECT: out.kind = ItemKind::Object; break;
+    case LLAssetType::AT_OBJECT:
+    {
+        out.kind = ItemKind::Object;
+        std::string point;
+        if (isAgentAvatarValid() && gAgentAvatarp->getAttachedPointName(item->getUUID(), point))
+        {
+            out.attachPoint = point;
+        }
+        break;
+    }
     default: return std::nullopt;
     }
     return out;
@@ -269,9 +280,11 @@ Plan SW67FloaterOutfits::planNow() const
     std::map<std::string, Item> owned;
     for (const Item& i : mOutfit.items)
     {
-        if (const auto fresh = itemFrom(ownedItem(i.id)))
+        if (auto fresh = itemFrom(ownedItem(i.id)))
         {
-            owned[fresh->id] = *fresh;
+            // An unworn item's point is only known from when it was saved.
+            if (fresh->attachPoint.empty()) fresh->attachPoint = i.attachPoint;
+            owned[fresh->id] = std::move(*fresh);
         }
     }
     Limits limits;
@@ -441,9 +454,69 @@ void SW67FloaterOutfits::onWear()
     {
         LLAppearanceMgr::instance().wearItemsOnAvatar(wear, true, false);
     }
-    showStatus(StatusRole::Success,
-               llformat("Wearing %d item(s) and taking off %d. Your appearance updates in a moment.",
+    showStatus(StatusRole::Info,
+               llformat("Wearing %d item(s) and taking off %d. Checking each item once your appearance settles...",
                         static_cast<int>(wear.size()), static_cast<int>(remove.size())));
+    mPendingPlan = plan;
+    mCheckStarted.reset();
+    const U32 attempt = ++mCheckAttempt;
+    scheduleRestoreCheck(attempt);
+}
+
+void SW67FloaterOutfits::scheduleRestoreCheck(U32 attempt)
+{
+    const LLHandle<LLFloater> handle = getHandle();
+    doAfterInterval(
+        [handle, attempt]() {
+            SW67FloaterOutfits* self = ALViewType::as<SW67FloaterOutfits>(handle.get());
+            if (self && self->mCheckAttempt == attempt)
+            {
+                self->checkRestore(attempt);
+            }
+        },
+        3.f);
+}
+
+std::set<std::string> SW67FloaterOutfits::wornIds(const Plan& plan)
+{
+    std::set<std::string> worn;
+    for (const Step& s : plan.steps)
+    {
+        LLUUID id;
+        if (!LLUUID::validate(s.item.id) || !id.set(s.item.id, false)) continue;
+        const bool on = s.item.kind == ItemKind::Object
+                            ? (isAgentAvatarValid() && gAgentAvatarp->isWearingAttachment(id))
+                            : gAgentWearables.isWearingItem(id);
+        if (on) worn.insert(s.item.id);
+    }
+    return worn;
+}
+
+void SW67FloaterOutfits::checkRestore(U32 attempt)
+{
+    if (!mPendingPlan) return;
+    LLAppearanceMgr& mgr = LLAppearanceMgr::instance();
+    const bool busy = mgr.isOutfitLocked() || mgr.isInUpdateAppearanceFromCOF();
+    const RestoreReport report = sw67::outfit::checkRestore(*mPendingPlan, wornIds(*mPendingPlan));
+    // Attachments arrive from the region one by one: wait while the viewer is
+    // still busy or anything is outstanding, up to 45 seconds.
+    if ((busy || !report.complete()) && mCheckStarted.getElapsedTimeF32() < 45.f)
+    {
+        scheduleRestoreCheck(attempt);
+        return;
+    }
+    getChild<LLUICtrl>("preview_text")->setValue(LLSD("Outfit Doctor's check after wearing:\n\n" + report.describe()));
+    if (report.complete())
+    {
+        showStatus(StatusRole::Success, "Restored. Every item is where the outfit wants it.");
+    }
+    else
+    {
+        showStatus(StatusRole::Warning, llformat("%d item(s) were not restored; they are listed above. Nothing else "
+                                                 "was changed, and nothing was bought or deleted.",
+                                                 static_cast<int>(report.failed())));
+    }
+    mPendingPlan.reset();
 }
 
 void SW67FloaterOutfits::showStatus(StatusRole role, const std::string& text)

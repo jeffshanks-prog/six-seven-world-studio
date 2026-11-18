@@ -226,7 +226,7 @@
                  parameter="sw67_event_rehearsal" />
             </menu_item_call>
             <menu_item_call
-             label="Outfit Planner..."
+             label="Outfit Doctor..."
              name="SW67 Outfit Planner">
                 <menu_item_call.on_click
                  function="Floater.Toggle"
@@ -252,6 +252,20 @@
                 <menu_item_call.on_click
                  function="Floater.Toggle"
                  parameter="sw67_backup" />
+            </menu_item_call>
+            <menu_item_call
+             label="Inventory Cleanup Preview..."
+             name="SW67 Inventory Cleanup">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_inventory_cleanup" />
+            </menu_item_call>
+            <menu_item_call
+             label="Director Mode..."
+             name="SW67 Director">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_director" />
             </menu_item_call>
         </menu>
         <menu_item_call

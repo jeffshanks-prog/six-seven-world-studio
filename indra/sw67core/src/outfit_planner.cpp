@@ -249,6 +249,14 @@ Plan planOutfit(const Outfit& outfit, const std::vector<Item>& worn, const std::
                                            " clothing layers; the limit is " + std::to_string(limits.clothingLayers) +
                                            "."});
     }
+    for (const auto& [point, items] : sharedPoints(plan))
+    {
+        std::string names;
+        for (const Item& i : items) names += (names.empty() ? "" : ", ") + (i.name.empty() ? i.id : i.name);
+        plan.problems.push_back({false, std::to_string(items.size()) + " items share the " + point +
+                                            " attachment point (" + names +
+                                            "). Second Life wears them together; check they do not overlap."});
+    }
     for (const std::string& type : bodyPartTypes())
     {
         if (!bodyPartWorn.count(type))
@@ -329,6 +337,7 @@ std::string writeOutfit(const Outfit& o)
         e.set("name", Json(i.name));
         e.set("kind", Json(kindKey(i.kind)));
         if (!i.wearableType.empty()) e.set("type", Json(i.wearableType));
+        if (!i.attachPoint.empty()) e.set("point", Json(i.attachPoint));
         items.push(std::move(e));
     }
     root.set("items", std::move(items));
@@ -370,7 +379,8 @@ ReadResult readOutfit(std::string_view text)
         }
         const auto kind = parseKind(e["kind"].asString(""));
         Item item{lowerId(e["id"].asString("")), e["name"].asString(""), kind.value_or(ItemKind::Object),
-                  e["type"].asString("")};
+                  e["type"].asString(""), e["point"].asString("").substr(0, 40)};
+        if (item.kind != ItemKind::Object) item.attachPoint.clear();
         const std::string label = item.name.empty() ? std::string("an item") : "\"" + item.name + "\"";
         if (!kind)
         {
@@ -397,6 +407,103 @@ std::string fileNameFor(const Outfit& outfit)
 {
     const std::string stem = outfit.name.empty() ? std::string("outfit") : photo::safeFileStem(outfit.name);
     return stem + ".sw67outfit.json";
+}
+
+} // namespace sw67::outfit
+
+namespace sw67::outfit
+{
+
+std::map<std::string, std::vector<Item>> sharedPoints(const Plan& plan)
+{
+    std::map<std::string, std::vector<Item>> byPoint;
+    for (const Step& s : plan.steps)
+    {
+        if (s.what != Step::What::Wear && s.what != Step::What::Keep) continue;
+        if (s.item.kind != ItemKind::Object || s.item.attachPoint.empty()) continue;
+        byPoint[s.item.attachPoint].push_back(s.item);
+    }
+    for (auto it = byPoint.begin(); it != byPoint.end();)
+    {
+        it = it->second.size() > 1 ? std::next(it) : byPoint.erase(it);
+    }
+    return byPoint;
+}
+
+std::size_t RestoreReport::done() const
+{
+    return static_cast<std::size_t>(std::count_if(results.begin(), results.end(), [](const ItemResult& r) {
+        return r.outcome == ItemResult::Outcome::Done;
+    }));
+}
+
+std::size_t RestoreReport::failed() const
+{
+    return results.size() - done();
+}
+
+std::string RestoreReport::describe() const
+{
+    std::string out;
+    if (results.empty())
+    {
+        return "Nothing needed to change.";
+    }
+    out = std::to_string(done()) + " of " + std::to_string(results.size()) + " change(s) went as planned.";
+    if (complete())
+    {
+        return out + " The outfit is restored.";
+    }
+    out += " " + std::to_string(failed()) + " did not:";
+    for (const ItemResult& r : results)
+    {
+        if (r.outcome == ItemResult::Outcome::Done) continue;
+        const std::string name = r.item.name.empty() ? r.item.id : r.item.name;
+        out += "\n  - " + name + ": " + r.reason;
+    }
+    return out;
+}
+
+RestoreReport checkRestore(const Plan& plan, const std::set<std::string>& wornNow)
+{
+    RestoreReport report;
+    for (const Step& s : plan.steps)
+    {
+        ItemResult r;
+        r.item = s.item;
+        const bool worn = wornNow.count(lowerId(s.item.id)) > 0 || wornNow.count(s.item.id) > 0;
+        switch (s.what)
+        {
+        case Step::What::Keep: continue;
+        case Step::What::Missing:
+            r.outcome = ItemResult::Outcome::Missing;
+            r.reason = "not in your inventory, so it was not asked for. Nothing was bought or replaced.";
+            break;
+        case Step::What::Wear:
+            r.wanted = true;
+            r.outcome = worn ? ItemResult::Outcome::Done : ItemResult::Outcome::NotWorn;
+            if (!worn)
+            {
+                r.reason = s.item.kind == ItemKind::Object
+                               ? "it did not attach. The region may not allow it, it may be in use, or the "
+                                 "request timed out. Try wearing it from your inventory."
+                               : "it was not put on. Try wearing it from your inventory.";
+            }
+            break;
+        case Step::What::Remove:
+            r.wanted = false;
+            r.outcome = worn ? ItemResult::Outcome::StillWorn : ItemResult::Outcome::Done;
+            if (worn)
+            {
+                r.reason = s.implicit ? "it is still worn; the new " + s.item.wearableType + " did not replace it."
+                                      : "it is still worn. It may be locked by a script or RLV, or the request "
+                                        "timed out. Take it off from your inventory.";
+            }
+            break;
+        }
+        report.results.push_back(std::move(r));
+    }
+    return report;
 }
 
 } // namespace sw67::outfit
