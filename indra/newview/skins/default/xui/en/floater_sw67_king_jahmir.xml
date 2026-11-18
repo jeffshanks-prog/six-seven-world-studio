@@ -162,7 +162,7 @@
        label="Ask King Jahmir..."
        layout="topleft"
        left="10"
-       max_length_chars="4000"
+       max_length_chars="4000" max_length_bytes="16000"
        name="message_input"
        tab_group="5"
        tool_tip="Type your message, then press Enter or Send."
@@ -218,7 +218,7 @@
        label="https://..."
        layout="topleft"
        left="10"
-       max_length_chars="200"
+       max_length_chars="200" max_length_bytes="800"
        name="gateway_input"
        tab_group="1"
        tool_tip="The address of the King Jahmir gateway your 6|7 provider runs."
@@ -235,7 +235,7 @@
        label="Paste your 6|7 session token"
        layout="topleft"
        left="10"
-       max_length_chars="4096"
+       max_length_chars="4096" max_length_bytes="4096"
        name="token_input"
        tab_group="2"
        tool_tip="Your 6|7 session token. It is kept in the viewer's protected store, never in settings. This is not your Second Life password."
@@ -264,8 +264,8 @@
         <scroll_list.columns label="Preference" name="key" width="150" />
         <scroll_list.columns label="Value" name="value" dynamicwidth="true" />
       </scroll_list>
-      <line_editor follows="left|bottom" height="22" label="name, e.g. answer_length" layout="topleft" left="10" max_length_chars="40" name="pref_key_input" tab_group="5" top="430" width="160" />
-      <line_editor follows="left|right|bottom" height="22" label="value, e.g. short" layout="topleft" left="176" max_length_chars="200" name="pref_value_input" tab_group="5" top="430" width="254" />
+      <line_editor follows="left|bottom" height="22" label="name, e.g. answer_length" layout="topleft" left="10" max_length_chars="40" max_length_bytes="160" name="pref_key_input" tab_group="5" top="430" width="160" />
+      <line_editor follows="left|right|bottom" height="22" label="value, e.g. short" layout="topleft" left="176" max_length_chars="200" max_length_bytes="800" name="pref_value_input" tab_group="5" top="430" width="254" />
       <button follows="left|bottom" height="22" label="Save preference" layout="topleft" left="10" name="pref_save_btn" tab_group="5" top="458" width="130" />
       <button follows="left|bottom" height="22" label="Delete selected" layout="topleft" left="146" name="pref_delete_btn" tab_group="5" top="458" width="130" />
       <button follows="left|bottom" height="22" label="Refresh" layout="topleft" left="282" name="pref_refresh_btn" tab_group="5" top="458" width="80" />

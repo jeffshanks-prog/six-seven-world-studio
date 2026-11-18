@@ -509,8 +509,10 @@ ErrorView describe(const ServiceError& e)
     else if (c == "not_signed_in" || c == "invalid_token" || c == "token_expired")
     {
         v.role = a11y::StatusRole::Error;
-        v.text = c == "token_expired" ? "Your 6|7 session has expired. Sign in again in King Jahmir settings."
-                                      : "Sign in to 6|7 to talk with King Jahmir (King Jahmir settings).";
+        v.text = c == "token_expired"   ? "Your 6|7 session has expired. Sign in again in King Jahmir settings."
+                 : c == "invalid_token" ? "King Jahmir did not accept your sign-in. Get a new one and paste all of "
+                                          "it in King Jahmir settings."
+                                        : "Sign in to 6|7 to talk with King Jahmir (King Jahmir settings).";
         v.canRetry = false;
     }
     else if (c == "rate_limited" || c == "busy" || c == "ai_busy" || c == "in_progress")

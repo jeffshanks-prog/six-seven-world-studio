@@ -32,6 +32,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cctype>
 
 namespace kj = sw67viewer::kingjahmir;
 using namespace sw67::assistant;
@@ -451,7 +452,10 @@ void SW67FloaterKingJahmir::onSaveGateway()
 void SW67FloaterKingJahmir::onSignIn()
 {
     LLUICtrl* field = getChild<LLUICtrl>("token_input");
-    const std::string tok = field->getValue().asString();
+    // Copying from a web page can bring spaces or line breaks along; a token has none.
+    std::string tok = field->getValue().asString();
+    tok.erase(std::remove_if(tok.begin(), tok.end(), [](unsigned char c) { return std::isspace(c) != 0; }),
+              tok.end());
     field->setValue(LLSD(""));
     if (tok.size() < 20 || tok.size() > 4096 || std::count(tok.begin(), tok.end(), '.') != 2)
     {
