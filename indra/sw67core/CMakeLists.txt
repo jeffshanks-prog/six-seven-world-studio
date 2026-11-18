@@ -42,6 +42,7 @@ add_library(
   src/shop_organizer.cpp
   src/photo_looks.cpp
   src/director.cpp
+  src/director_avi.cpp
   src/inventory_cleanup.cpp
 )
 add_library(sw67::core ALIAS sw67core)
@@ -86,6 +87,7 @@ if(SW67_BUILD_TESTS OR (DEFINED AL_BUILD_TESTS AND AL_BUILD_TESTS))
     tests/shop_test.cpp
     tests/looks_test.cpp
     tests/director_test.cpp
+    tests/avi_test.cpp
     tests/inventory_test.cpp
   )
   target_link_libraries(sw67core_tests PRIVATE sw67core Catch2::Catch2WithMain)

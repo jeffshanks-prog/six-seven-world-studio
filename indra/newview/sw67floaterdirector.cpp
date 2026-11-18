@@ -29,6 +29,7 @@
 #include "lldate.h"
 #include "llfile.h"
 #include "llformat.h"
+#include "llimagejpeg.h"
 #include "llimagepng.h"
 #include "llscrolllistctrl.h"
 #include "lltextbox.h"
@@ -93,6 +94,7 @@ SW67FloaterDirector::SW67FloaterDirector(const LLSD& key)
 
 SW67FloaterDirector::~SW67FloaterDirector()
 {
+    closeVideo(); // a viewer quitting mid-export still leaves a playable file
     if (mIdleAdded)
     {
         gIdleCallbacks.deleteFunction(&SW67FloaterDirector::onIdle, this);
@@ -469,6 +471,22 @@ void SW67FloaterDirector::tick()
     // it, then snapshot. A restriction arriving mid-export stops it.
     if (mFrame >= mFrames.times.size())
     {
+        if (mAsVideo)
+        {
+            std::string why;
+            const size_t parts = mVideoFiles.size();
+            const std::string first = parts ? mVideoFiles.front() : std::string();
+            if (!closeVideo(&why))
+            {
+                finishRun(StatusRole::Error, why);
+                return;
+            }
+            finishRun(StatusRole::Success,
+                      parts > 1 ? llformat("Saved a %d-frame video in %d parts to %s.", mWritten, static_cast<int>(parts),
+                                           mExportDir.c_str())
+                                : llformat("Saved a %d-frame video to %s.", mWritten, first.c_str()));
+            return;
+        }
         finishRun(StatusRole::Success, llformat("Exported %d frame(s) to %s. Join them into a video with your "
                                                 "editor or a tool such as ffmpeg.",
                                                 mWritten, mExportDir.c_str()));
@@ -487,11 +505,37 @@ void SW67FloaterDirector::tick()
         return;
     }
     LLPointer<LLImageRaw> raw = new LLImageRaw;
-    const S32 w = gViewerWindow->getWindowWidthRaw();
-    const S32 h = gViewerWindow->getWindowHeightRaw();
-    if (!gViewerWindow->rawSnapshot(raw, w, h, false, false, false /*show_ui*/, false /*show_hud*/, true, false, false))
+    if (mShotW <= 0 || mShotH <= 0)
+    {
+        // The first frame fixes the size for the whole export, rounded down
+        // to even sides, which video editors and encoders expect.
+        mShotW = std::min(gViewerWindow->getWindowWidthRaw(), S32(kMaxVideoSide)) & ~1;
+        mShotH = std::min(gViewerWindow->getWindowHeightRaw(), S32(kMaxVideoSide)) & ~1;
+    }
+    if (mShotW < 2 || mShotH < 2 ||
+        !gViewerWindow->rawSnapshot(raw, mShotW, mShotH, false, false, false /*show_ui*/, false /*show_hud*/, true, false,
+                                    false))
     {
         finishRun(StatusRole::Error, "The viewer could not take a snapshot for frame " + mFrames.stems[mFrame] + ".");
+        return;
+    }
+    if (mAsVideo)
+    {
+        std::string why;
+        if (!writeVideoFrame(raw, why))
+        {
+            closeVideo();
+            finishRun(StatusRole::Error, why);
+            return;
+        }
+        ++mWritten;
+        ++mFrame;
+        mFramePlaced = false;
+        if (mFrame % 10 == 0)
+        {
+            showStatus(StatusRole::Live, llformat("Recording frame %d of %d...", static_cast<int>(mFrame),
+                                                  static_cast<int>(mFrames.times.size())));
+        }
         return;
     }
     const std::string path = sw67viewer::joinPath(mExportDir, mFrames.stems[mFrame] + ".png");
@@ -513,7 +557,18 @@ void SW67FloaterDirector::tick()
 
 void SW67FloaterDirector::finishRun(StatusRole role, const std::string& text)
 {
+    std::string message = text;
     mRun = Run::None;
+    if (mVideoOut)
+    {
+        // Stopped part way: what was recorded is still a playable file.
+        std::string why;
+        if (!closeVideo(&why))
+        {
+            role = StatusRole::Error;
+            message += " " + why;
+        }
+    }
     if (mIdleAdded)
     {
         gIdleCallbacks.deleteFunction(&SW67FloaterDirector::onIdle, this);
@@ -525,7 +580,7 @@ void SW67FloaterDirector::finishRun(StatusRole role, const std::string& text)
         mSavedFov = 0.f;
     }
     getChild<LLUICtrl>("stop_btn")->setEnabled(false);
-    showStatus(role, text);
+    showStatus(role, message);
 }
 
 // ---- shot list --------------------------------------------------------------
@@ -659,6 +714,7 @@ void SW67FloaterDirector::onExport()
     }
     if (mRun != Run::None || !cameraAllowed()) return;
     const int fps = getChild<LLUICtrl>("fps_combo")->getValue().asInteger();
+    const bool asVideo = getChild<LLUICtrl>("format_combo")->getValue().asString() != "png";
     const std::string stem = (mProduction.name.empty() ? std::string("production") : mProduction.name) + "_" + p->name;
     mFrames = planFrames(*p, fps > 0 ? fps : 30, stem);
     if (mFrames.times.empty())
@@ -681,6 +737,12 @@ void SW67FloaterDirector::onExport()
     mFrame = 0;
     mFramePlaced = false;
     mWritten = 0;
+    mShotW = 0;
+    mShotH = 0;
+    mAsVideo = asVideo;
+    mExportFps = fps > 0 ? fps : 30;
+    mVideoStem = sw67::photo::safeFileStem(stem);
+    mVideoFiles.clear();
     mRun = Run::Exporting;
     if (!mIdleAdded)
     {
@@ -688,9 +750,64 @@ void SW67FloaterDirector::onExport()
         mIdleAdded = true;
     }
     getChild<LLUICtrl>("stop_btn")->setEnabled(true);
-    showStatus(StatusRole::Live, llformat("Exporting %d frame(s) at %d fps to %s%s", static_cast<int>(mFrames.times.size()),
-                                          fps > 0 ? fps : 30, mExportDir.c_str(),
+    showStatus(StatusRole::Live, llformat("Exporting %d frame(s) at %d fps as %s to %s%s", static_cast<int>(mFrames.times.size()),
+                                          fps > 0 ? fps : 30, asVideo ? "a video" : "PNG frames", mExportDir.c_str(),
                                           mFrames.capped ? " (capped at ten minutes)." : "."));
+}
+
+// ---- video files ------------------------------------------------------------
+
+bool SW67FloaterDirector::openVideoPart(std::string& why)
+{
+    const std::string path =
+        sw67viewer::joinPath(mExportDir, partFileName(mVideoStem, static_cast<int>(mVideoFiles.size()) + 1));
+    if (LLFile::isfile(path))
+    {
+        why = "Could not write " + path + " (existing files are never overwritten).";
+        return false;
+    }
+    auto out = std::make_unique<llofstream>(path, std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!out->is_open())
+    {
+        why = "Could not create " + path + ".";
+        return false;
+    }
+    if (!mVideo.begin(*out, mShotW, mShotH, mExportFps, &why))
+    {
+        return false;
+    }
+    mVideoOut = std::move(out);
+    mVideoFiles.push_back(path);
+    return true;
+}
+
+bool SW67FloaterDirector::writeVideoFrame(const LLImageRaw* raw, std::string& why)
+{
+    LLPointer<LLImageJPEG> jpeg = new LLImageJPEG(90);
+    if (!jpeg->encode(raw, 0.f) || jpeg->getDataSize() <= 0)
+    {
+        why = "Could not encode frame " + mFrames.stems[mFrame] + ".";
+        return false;
+    }
+    const auto size = static_cast<size_t>(jpeg->getDataSize());
+    if (mVideoOut && !mVideo.canAdd(size) && !closeVideo(&why))
+    {
+        return false;
+    }
+    if (!mVideoOut && !openVideoPart(why))
+    {
+        return false;
+    }
+    return mVideo.addFrame(jpeg->getData(), size, &why);
+}
+
+bool SW67FloaterDirector::closeVideo(std::string* why)
+{
+    if (!mVideoOut) return true;
+    const bool ok = mVideo.finish(why);
+    mVideoOut->close();
+    mVideoOut.reset();
+    return ok;
 }
 
 void SW67FloaterDirector::showStatus(StatusRole role, const std::string& text)

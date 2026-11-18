@@ -17,14 +17,20 @@
 
 #pragma once
 
+#include "llfile.h"
 #include "llfloater.h"
 #include "lltimer.h"
 
 #include "sw67/a11y/profile.h"
+#include "sw67/director/avi.h"
 #include "sw67/director/director.h"
 
+#include <memory>
 #include <optional>
 #include <string>
+#include <vector>
+
+class LLImageRaw;
 
 class SW67FloaterDirector final : public LLFloater
 {
@@ -102,4 +108,17 @@ private:
     bool mFramePlaced = false;
     std::string mExportDir;
     int mWritten = 0;
+    // Video export: frames go into Motion JPEG AVI files, a new numbered
+    // part each time one reaches its size cap.
+    bool writeVideoFrame(const LLImageRaw* raw, std::string& why);
+    bool openVideoPart(std::string& why);
+    bool closeVideo(std::string* why = nullptr);
+    bool mAsVideo = false;
+    int mExportFps = 30;
+    std::string mVideoStem;
+    std::vector<std::string> mVideoFiles;
+    std::unique_ptr<llofstream> mVideoOut;
+    sw67::director::MjpegAviWriter mVideo;
+    S32 mShotW = 0;
+    S32 mShotH = 0;
 };
