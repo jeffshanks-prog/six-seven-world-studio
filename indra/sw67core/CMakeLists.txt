@@ -35,6 +35,9 @@ add_library(
   src/outfit_planner.cpp
   src/pose_studio.cpp
   src/event_rehearsal.cpp
+  src/mesh_check.cpp
+  src/shop_organizer.cpp
+  src/photo_looks.cpp
   src/director.cpp
   src/inventory_cleanup.cpp
 )
@@ -73,6 +76,9 @@ if(SW67_BUILD_TESTS OR (DEFINED AL_BUILD_TESTS AND AL_BUILD_TESTS))
     tests/outfit_test.cpp
     tests/pose_test.cpp
     tests/event_test.cpp
+    tests/mesh_check_test.cpp
+    tests/shop_test.cpp
+    tests/looks_test.cpp
     tests/director_test.cpp
     tests/inventory_test.cpp
   )

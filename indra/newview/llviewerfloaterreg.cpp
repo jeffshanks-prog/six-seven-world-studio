@@ -216,15 +216,18 @@
 #include "sw67floateraccessibility.h"
 #include "sw67floaterbackup.h"
 #include "sw67floatercreatorprojects.h"
+#include "sw67floatercreatorworkbench.h"
 #include "sw67floaterdirector.h"
 #include "sw67floatereventrehearsal.h"
 #include "sw67floaterinventorycleanup.h"
 #include "sw67floaterkingjahmir.h"
 #include "sw67floateroutfits.h"
 #include "sw67floaterperformance.h"
+#include "sw67floaterphotolooks.h"
 #include "sw67floaterposestudio.h"
 #include "sw67floaterproductphoto.h"
 #include "sw67floaterrecordingprivacy.h"
+#include "sw67floatershopping.h"
 #include "sw67floaterworkspaces.h"
 // [/RLVa:KB]
 // handle secondlife:///app/openfloater/{NAME} URLs
@@ -562,6 +565,9 @@ void LLViewerFloaterReg::registerFloaters()
     LLFloaterReg::add("sw67_recording_privacy", "floater_sw67_recording_privacy.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterRecordingPrivacy>);
     LLFloaterReg::add("sw67_inventory_cleanup", "floater_sw67_inventory_cleanup.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterInventoryCleanup>);
     LLFloaterReg::add("sw67_director", "floater_sw67_director.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterDirector>);
+    LLFloaterReg::add("sw67_photo_looks", "floater_sw67_photo_looks.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterPhotoLooks>);
+    LLFloaterReg::add("sw67_shopping", "floater_sw67_shopping.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterShopping>);
+    LLFloaterReg::add("sw67_creator_workbench", "floater_sw67_creator_workbench.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<SW67FloaterCreatorWorkbench>);
 
     LLFloaterReg::add("script_debug", "floater_script_debug.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebug>);
     LLFloaterReg::add("script_debug_output", "floater_script_debug_panel.xml", (LLFloaterBuildFunc)&LLFloaterReg::build<LLFloaterScriptDebugOutput>);

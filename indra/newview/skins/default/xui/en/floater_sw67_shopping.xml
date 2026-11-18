@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Shopping and Demo Organizer. Keyboard: Tab moves through the view, filter, list, fields and buttons. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="512"
+ width="640"
+ min_height="480"
+ min_width="600"
+ layout="topleft"
+ name="sw67_shopping"
+ save_rect="true"
+ title="6|7 SHOPPING AND DEMO ORGANIZER">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="620"
+   wrap="true"
+   layout="topleft">Save stores, keep a shopping list and track the demos you tried, tagged by body, size, style and colour. Nothing is bought or paid for you; prices are notes.</text>
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="10"
+   top="42"
+   name="view_combo"
+   tab_group="1"
+   width="160">
+    <combo_box.item label="Stores" name="stores" value="stores" />
+    <combo_box.item label="Shopping list" name="list" value="list" />
+    <combo_box.item label="Demos tried" name="demos" value="demos" />
+  </combo_box>
+  <text
+   follows="left|top"
+   height="16"
+   left="180"
+   top="46"
+   name="filter_label"
+   width="44"
+   layout="topleft">Filter:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="226"
+   top="42"
+   name="filter"
+   tab_group="1"
+   width="404"
+   max_length_bytes="200"
+   default_text="e.g. body:maitreya color:red"
+   layout="topleft" />
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="180"
+   left="10"
+   top="72"
+   name="entry_list"
+   tab_group="1"
+   width="620">
+    <scroll_list.columns name="name" label="Name" width="200" />
+    <scroll_list.columns name="where" label="Store / region" width="140" />
+    <scroll_list.columns name="status" label="Status" width="100" />
+    <scroll_list.columns name="tags" label="Tags" />
+  </scroll_list>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="264"
+   name="name_label"
+   width="80"
+   layout="topleft">Name:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="92"
+   top="260"
+   name="entry_name"
+   tab_group="1"
+   width="220"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="322"
+   top="264"
+   name="store_label"
+   width="50"
+   layout="topleft">Store:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="372"
+   top="260"
+   name="entry_store"
+   tab_group="1"
+   width="258"
+   max_length_bytes="120"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="292"
+   name="extra_label"
+   width="120"
+   layout="topleft">Location:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="132"
+   top="288"
+   name="entry_extra"
+   tab_group="1"
+   width="340"
+   max_length_bytes="300"
+   layout="topleft" />
+  <combo_box
+   follows="left|top|right"
+   height="23"
+   left="480"
+   top="288"
+   name="entry_status"
+   tab_group="1"
+   width="150"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="320"
+   name="tags_label"
+   width="80"
+   layout="topleft">Tags:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="92"
+   top="316"
+   name="entry_tags"
+   tab_group="1"
+   width="538"
+   max_length_bytes="600"
+   default_text="body:Maitreya, size:M, style:casual, color:red"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="348"
+   name="notes_label"
+   width="80"
+   layout="topleft">Notes:</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="92"
+   top="344"
+   name="entry_notes"
+   tab_group="1"
+   width="538"
+   max_length_bytes="2000"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add"
+   left="10"
+   top="374"
+   name="add_btn"
+   tab_group="1"
+   width="80"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Update"
+   left="96"
+   top="374"
+   name="update_btn"
+   tab_group="1"
+   width="80"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Remove"
+   left="182"
+   top="374"
+   name="remove_btn"
+   tab_group="1"
+   width="80"
+   tool_tip="Removes the entry from the organizer only."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Use where I am"
+   left="268"
+   top="374"
+   name="here_btn"
+   tab_group="1"
+   width="120"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Add from inventory"
+   left="394"
+   top="374"
+   name="from_inventory_btn"
+   tab_group="1"
+   width="130"
+   tool_tip="Stores: selected landmarks. Demos: selected wearable demos."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Show on map"
+   left="530"
+   top="374"
+   name="map_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Shows the store on the world map. You choose whether to teleport."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Wear demo"
+   left="10"
+   top="402"
+   name="wear_btn"
+   tab_group="1"
+   width="100"
+   tool_tip="Adds the selected demo to what you wear, after asking RLV."
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="34"
+   left="10"
+   top="432"
+   name="summary_text"
+   width="620"
+   wrap="true"
+   layout="topleft"></text>
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="470"
+   name="status_text"
+   width="620"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Creator Workbench. Keyboard: Tab moves through the mesh check, the drafting request, the draft, the review box and its buttons. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="704"
+ width="560"
+ min_height="640"
+ min_width="500"
+ layout="topleft"
+ name="sw67_creator_workbench"
+ save_rect="true"
+ title="6|7 CREATOR WORKBENCH">
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="8"
+   name="mesh_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">Mesh check</text>
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="26"
+   name="mesh_intro"
+   width="540"
+   wrap="true"
+   layout="topleft">Checks a .dae, .gltf or .glb file against Second Life's limits before the uploader opens it. The uploader's own checks and fee quote still decide.</text>
+  <line_editor
+   follows="left|top|right"
+   height="23"
+   left="10"
+   top="60"
+   name="mesh_file"
+   tab_group="1"
+   width="330"
+   tool_tip="The mesh file checked last."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Choose file..."
+   left="346"
+   top="60"
+   name="pick_mesh_btn"
+   tab_group="1"
+   width="100"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Check again"
+   left="452"
+   top="60"
+   name="recheck_btn"
+   tab_group="1"
+   width="98"
+   layout="topleft" />
+  <text_editor
+   follows="left|top|right"
+   height="120"
+   left="10"
+   top="88"
+   name="mesh_report"
+   tab_group="1"
+   width="540"
+   max_length="131072"
+   word_wrap="true"
+   enabled="false"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Open in uploader"
+   left="10"
+   top="214"
+   name="open_uploader_btn"
+   tab_group="1"
+   width="140"
+   tool_tip="Opens Second Life's model uploader with this file. Available when the check found no errors. Nothing is uploaded until you choose Upload there."
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="250"
+   name="lsl_heading"
+   width="200"
+   font="SansSerifBold"
+   layout="topleft">LSL drafting</text>
+  <text
+   follows="left|top|right"
+   height="44"
+   left="10"
+   top="268"
+   name="lsl_intro"
+   width="540"
+   wrap="true"
+   layout="topleft">Describe a script and the 6|7 gateway drafts it. A draft is never compiled, saved to Second Life or run by this window: read it, tick that you reviewed it, then copy it or save it as a .lsl file and compile it in Script Studio.</text>
+  <text_editor
+   follows="left|top|right"
+   height="48"
+   left="10"
+   top="314"
+   name="lsl_request"
+   tab_group="1"
+   width="540"
+   max_length="2000"
+   word_wrap="true"
+   layout="topleft" />
+  <check_box
+   height="16"
+   label="Change the script below instead of starting fresh"
+   left="10"
+   top="368"
+   name="use_draft_check"
+   tab_group="1"
+   width="340"
+   initial_value="false"
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Draft script"
+   left="430"
+   top="364"
+   name="draft_btn"
+   tab_group="1"
+   width="120"
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="160"
+   left="10"
+   top="394"
+   name="lsl_draft"
+   tab_group="1"
+   width="540"
+   max_length="65536"
+   word_wrap="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="44"
+   left="10"
+   top="560"
+   name="draft_notes"
+   width="540"
+   wrap="true"
+   layout="topleft"></text>
+  <check_box
+   height="16"
+   label="I have read this script and will test it before using it"
+   left="10"
+   top="608"
+   name="reviewed_check"
+   tab_group="1"
+   width="380"
+   initial_value="false"
+   tool_tip="Copy and Save stay off until this is ticked. A new draft clears it."
+   layout="topleft" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Copy"
+   left="10"
+   top="632"
+   name="copy_btn"
+   tab_group="1"
+   width="90"
+   layout="topleft" />
+  <button
+   follows="left|bottom"
+   height="23"
+   label="Save .lsl..."
+   left="106"
+   top="632"
+   name="save_lsl_btn"
+   tab_group="1"
+   width="110"
+   layout="topleft" />
+  <button
+   follows="right|bottom"
+   height="23"
+   label="Open Script Studio"
+   left="400"
+   top="632"
+   name="script_studio_btn"
+   tab_group="1"
+   width="150"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="662"
+   name="status_text"
+   width="540"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

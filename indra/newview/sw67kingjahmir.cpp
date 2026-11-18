@@ -520,6 +520,60 @@ void deletePreference(const std::string& key, std::function<void(std::map<std::s
            [done](const Json& j) { done(prefsFrom(j)); });
 }
 
+bool draftLsl(const std::string& request, const std::string& existingScript,
+              std::function<void(const LslDraft&)> done, std::string& whyNot)
+{
+    static bool sDrafting = false;
+    if (gatewayUrl().empty())
+    {
+        whyNot = "AI drafting needs the 6|7 gateway: add its address in King Jahmir's Settings tab.";
+        return false;
+    }
+    if (!signedIn())
+    {
+        whyNot = "Sign in to 6|7 in King Jahmir's Settings tab to use AI drafting.";
+        return false;
+    }
+    if (sDrafting)
+    {
+        whyNot = "A draft is already on its way.";
+        return false;
+    }
+    sDrafting = true;
+    Json body = Json::object();
+    body.set("request", request);
+    if (!existingScript.empty())
+    {
+        body.set("existing_script", existingScript);
+    }
+    LLCoros::instance().launch("SW67KingJahmir::draftLsl", [text = sw67::io::writeJson(body), done]() {
+        const Answer a = call("POST", "/v1/draft/lsl", text);
+        sDrafting = false;
+        LslDraft d;
+        if (a.status == 404)
+        {
+            d.error = "AI drafting isn't available on this 6|7 gateway yet.";
+        }
+        else if (a.status < 200 || a.status > 299)
+        {
+            d.error = describe(parseError(a.status, a.body)).text;
+        }
+        else if (auto j = sw67::io::parseJson(a.body); j && j->isObject())
+        {
+            d.ok = true;
+            d.code = (*j)["code"].asString("");
+            d.notes = (*j)["notes"].asString("");
+            d.draftNote = (*j)["draft_note"].asString("Draft only: not compiled or tested.");
+        }
+        else
+        {
+            d.error = "The gateway sent an answer this viewer could not read.";
+        }
+        done(d);
+    });
+    return true;
+}
+
 bool isKnownScreen(std::string_view id)
 {
     for (std::string_view s : kScreens)

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- 6|7 World Studio: Photo Studio looks. Keyboard: Tab moves through the list, Turn on, Turn off, the save fields and the preview. -->
+<floater
+ can_close="true"
+ can_minimize="true"
+ can_resize="true"
+ height="488"
+ width="540"
+ min_height="440"
+ min_width="500"
+ layout="topleft"
+ name="sw67_photo_looks"
+ save_rect="true"
+ title="6|7 PHOTO STUDIO LOOKS">
+  <text
+   follows="left|top|right"
+   height="30"
+   left="10"
+   top="8"
+   name="intro_text"
+   width="520"
+   wrap="true"
+   layout="topleft">Colour and lighting presets for photo sessions. Only your own screen and snapshots change; other residents see the region's sky. Turn off puts your settings back exactly.</text>
+  <text
+   follows="left|top|right"
+   height="16"
+   left="10"
+   top="42"
+   name="state_text"
+   width="520"
+   layout="topleft"></text>
+  <scroll_list
+   layout="topleft"
+   draw_heading="true"
+   follows="left|top|right"
+   height="170"
+   left="10"
+   top="62"
+   name="look_list"
+   tab_group="1"
+   width="520">
+    <scroll_list.columns name="name" label="Look" width="260" />
+    <scroll_list.columns name="sky" label="Sky" width="110" />
+    <scroll_list.columns name="kind" label="Kind" />
+  </scroll_list>
+  <button
+   follows="left|top"
+   height="23"
+   label="Turn on"
+   left="10"
+   top="238"
+   name="apply_btn"
+   tab_group="1"
+   width="110"
+   tool_tip="Turns on the selected look after showing what it changes. RLV is asked before the sky changes."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Turn off"
+   left="126"
+   top="238"
+   name="off_btn"
+   tab_group="1"
+   width="110"
+   tool_tip="Puts back every setting the look changed, keeping any you changed yourself."
+   layout="topleft" />
+  <button
+   follows="right|top"
+   height="23"
+   label="Remove my look"
+   left="400"
+   top="238"
+   name="delete_btn"
+   tab_group="1"
+   width="130"
+   layout="topleft" />
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="272"
+   name="save_label"
+   width="180"
+   layout="topleft">Save my current settings as:</text>
+  <line_editor
+   follows="left|top"
+   height="23"
+   left="190"
+   top="268"
+   name="look_name"
+   tab_group="1"
+   width="160"
+   max_length_bytes="80"
+   layout="topleft" />
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="356"
+   top="268"
+   name="sky_combo"
+   tab_group="1"
+   width="90">
+    <combo_box.item label="Keep sky" name="keep" value="keep" />
+    <combo_box.item label="Sunrise" name="sunrise" value="sunrise" />
+    <combo_box.item label="Midday" name="midday" value="midday" />
+    <combo_box.item label="Sunset" name="sunset" value="sunset" />
+    <combo_box.item label="Midnight" name="midnight" value="midnight" />
+  </combo_box>
+  <button
+   follows="right|top"
+   height="23"
+   label="Save"
+   left="452"
+   top="268"
+   name="save_current_btn"
+   tab_group="1"
+   width="78"
+   layout="topleft" />
+  <text_editor
+   follows="all"
+   height="140"
+   left="10"
+   top="298"
+   name="preview_text"
+   tab_group="1"
+   width="520"
+   max_length="131072"
+   word_wrap="true"
+   enabled="false"
+   layout="topleft" />
+  <text
+   follows="left|bottom|right"
+   height="34"
+   left="10"
+   top="446"
+   name="status_text"
+   width="520"
+   wrap="true"
+   layout="topleft"></text>
+</floater>

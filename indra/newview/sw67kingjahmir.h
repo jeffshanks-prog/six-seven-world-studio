@@ -95,6 +95,21 @@ void setPreference(const std::string& key, const std::string& value,
                    std::function<void(std::map<std::string, std::string>)> done);
 void deletePreference(const std::string& key, std::function<void(std::map<std::string, std::string>)> done);
 
+/// A draft LSL script from the gateway, for the Creator Workbench. Text only:
+/// nothing here compiles, saves, uploads or runs it.
+struct LslDraft
+{
+    bool ok = false;
+    std::string code;
+    std::string notes;
+    std::string draftNote; ///< "Draft only: not compiled or tested..."
+    std::string error;     ///< When !ok: a plain sentence.
+};
+/// Asks for a draft. False (and `done` is not called) when not set up or
+/// signed in; `whyNot` says why. One draft at a time.
+bool draftLsl(const std::string& request, const std::string& existingScript,
+              std::function<void(const LslDraft&)> done, std::string& whyNot);
+
 /// Registered windows replies may link to (doc/sw67/help/features.json).
 bool isKnownScreen(std::string_view id);
 /// The help page's address on the gateway, or empty.

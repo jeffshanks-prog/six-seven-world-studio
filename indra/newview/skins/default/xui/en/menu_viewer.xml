@@ -267,6 +267,27 @@
                  function="Floater.Toggle"
                  parameter="sw67_director" />
             </menu_item_call>
+            <menu_item_call
+             label="Photo Studio Looks..."
+             name="SW67 Photo Looks">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_photo_looks" />
+            </menu_item_call>
+            <menu_item_call
+             label="Shopping and Demo Organizer..."
+             name="SW67 Shopping">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_shopping" />
+            </menu_item_call>
+            <menu_item_call
+             label="Creator Workbench..."
+             name="SW67 Creator Workbench">
+                <menu_item_call.on_click
+                 function="Floater.Toggle"
+                 parameter="sw67_creator_workbench" />
+            </menu_item_call>
         </menu>
         <menu_item_call
          label="Lightbox..."
