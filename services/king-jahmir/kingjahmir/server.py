@@ -17,6 +17,14 @@ Routes:
   POST /v1/preferences/<key>             body {"value": "..."}
   POST /v1/preferences/<key>/delete      (also DELETE /v1/preferences/<key>)
   GET  /v1/owner/support_requests        owner only
+  POST /v1/draft/lsl                     a draft LSL script (text only)
+  POST /v1/phone/pair                    a one-use code that pairs a phone
+  POST /v1/phone/events                  send or update an event on the phone
+  GET  /v1/phone/events/<id>/rsvps       its RSVPs, in Party Contacts' format
+  POST /v1/phone/events/<id>/delete      take it off the phone
+
+The Phone Companion's pages (/phone..., /r/<code>) are HTML forms with a
+phone session cookie; see phone.py.
 """
 
 from __future__ import annotations
@@ -37,6 +45,7 @@ from .assistant import Assistant, AssistantError, history_ok, make_client
 from .auth import AuthError, Principal, issue, verify
 from . import drafts
 from .knowledge import KnowledgeBase
+from .phone import Phone, PhoneError
 from .ratelimit import RateLimiter
 from .store import Store
 from .tools import PREF_KEY, Flags, ToolContext, confirm_action
@@ -77,6 +86,7 @@ class App:
         self.ip_limiter = RateLimiter(self.store, "ip", cfg.rate_per_minute * 4, cfg.rate_burst * 4,
                                       cfg.daily_messages * 10)
         self.setup_limiter = RateLimiter(self.store, "setup", 5, 5, 20)
+        self.phone = Phone(cfg, self.store)
 
     # ---- helpers ----------------------------------------------------------
     def authenticate(self, header: str | None) -> Principal:
@@ -274,8 +284,27 @@ class App:
         if not secret or not hmac.compare_digest((header or "").encode(), f"Bearer {secret}".encode()):
             raise HttpError(401, "unauthorized", "Not allowed.")
         n = self.store.purge(self.cfg.retention_days)
-        log.info(json.dumps({"event": "retention_purge", "conversations": n}))
-        return {"ok": True, "deleted_conversations": n}
+        events = self.phone.purge()
+        self.store._n("DELETE FROM kj_phone_messages WHERE created<?",  # noqa: SLF001
+                      (time.time() - self.cfg.retention_days * 86400,))
+        log.info(json.dumps({"event": "retention_purge", "conversations": n, "phone_events": events}))
+        return {"ok": True, "deleted_conversations": n, "deleted_phone_events": events}
+
+    def phone_api(self, p: Principal, method: str, path: str, body: dict) -> dict | None:
+        """The viewer's side of the Phone Companion; None when the path isn't one of its routes."""
+        try:
+            if method == "POST" and path == "/v1/phone/pair":
+                return self.phone.pair(p, body)
+            if method == "POST" and path == "/v1/phone/events":
+                return self.phone.put_event(p, body)
+            m = re.fullmatch(r"/v1/phone/events/([^/]+)/(rsvps|delete)", path)
+            if m and method == "GET" and m.group(2) == "rsvps":
+                return self.phone.rsvps(p, m.group(1))
+            if m and method == "POST" and m.group(2) == "delete":
+                return self.phone.delete_event(p, m.group(1))
+        except PhoneError as e:
+            raise HttpError(e.status, e.code, e.message, e.retry_after is not None, e.retry_after) from e
+        return None
 
     # ---- owner sign-in page ------------------------------------------------
     def setup_token(self, code: str, agent_id: str, ip: str) -> str:
@@ -353,6 +382,11 @@ class Handler(BaseHTTPRequestHandler):
     def _log(self, status: int, started: float, who: str = "-") -> None:
         route = re.sub(r"/(conv|act)_[A-Za-z0-9_-]+", r"/\1_*", self.path.split("?")[0])
         route = re.sub(r"^/v1/preferences/[^/]+", "/v1/preferences/*", route)
+        # Invite links and RSVP codes are credentials: never log them.
+        route = re.sub(r"^/phone/join/.*", "/phone/join/*", route)
+        route = re.sub(r"^/r/.*", "/r/*", route)
+        route = re.sub(r"^/phone/e/[^/]+", "/phone/e/*", route)
+        route = re.sub(r"^/v1/phone/events/[^/]+", "/v1/phone/events/*", route)
         log.info(json.dumps({"route": f"{self.command} {route}", "status": status,
                              "ms": int((time.time() - started) * 1000), "user": who}))
 
@@ -372,6 +406,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         if content_type.startswith("text/html"):
             self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'")
+            self.send_header("Referrer-Policy", "no-referrer")
         for k, v in (extra or {}).items():
             self.send_header(k, v)
         self.end_headers()
@@ -398,13 +433,13 @@ class Handler(BaseHTTPRequestHandler):
             raise HttpError(400, "bad_request", "Body must be a JSON object.")
         return data
 
-    def _form(self) -> dict:
+    def _form(self, limit: int = 4096) -> dict:
         """A small urlencoded form body."""
         try:
             n = int(self.headers.get("Content-Length") or 0)
         except ValueError as e:
             raise HttpError(400, "bad_request", "Bad Content-Length.") from e
-        if n < 0 or n > 4096:
+        if n < 0 or n > limit:
             raise HttpError(413, "too_large", "Request too large.")
         raw = self.rfile.read(n).decode("utf-8", "replace") if n else ""
         return {k: v for k, v in parse_qsl(raw, keep_blank_values=True)}
@@ -444,6 +479,13 @@ class Handler(BaseHTTPRequestHandler):
                     page, status = self.app.setup_page(error=e.message), e.status
                 self._send(status, page, "text/html; charset=utf-8")
                 return self._log(status, started)
+            if path == "/phone" or path.startswith(("/phone/", "/r/")):
+                form = self._form(16384) if self.command == "POST" else {}
+                page = self.app.phone.handle(self.command, path, form, self.headers.get("Cookie"),
+                                             self._client_ip(), self.headers.get("Origin"),
+                                             self.headers.get("Referer"))
+                self._send(page.status, page.body, page.content_type, page.headers)
+                return self._log(page.status, started)
             if not path.startswith("/v1/"):
                 raise HttpError(404, "not_found", "No such route.")
             body = self._body() if self.command in ("POST", "PUT") else {}
@@ -492,6 +534,10 @@ class Handler(BaseHTTPRequestHandler):
             return a.owner_support(p)
         if method == "POST" and path == "/v1/draft/lsl":
             return a.draft_lsl(p, body, self._client_ip())
+        if path.startswith("/v1/phone/"):
+            out = a.phone_api(p, method, path, body)
+            if out is not None:
+                return out
         raise HttpError(404, "not_found", "No such route.")
 
     do_GET = do_POST = do_PUT = do_DELETE = _dispatch

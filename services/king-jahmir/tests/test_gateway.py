@@ -54,7 +54,8 @@ def reset_db() -> None:
     import psycopg
     with psycopg.connect(TEST_DB, autocommit=True) as conn:
         conn.execute("DROP TABLE IF EXISTS kj_turns, kj_conversations, kj_requests, kj_pending_actions, "
-                     "kj_preferences, kj_support_requests, kj_rate_buckets, kj_busy")
+                     "kj_preferences, kj_support_requests, kj_rate_buckets, kj_busy, kj_phone_shots, kj_phone_members, "
+                     "kj_phone_messages, kj_phone_rsvps, kj_phone_pairs, kj_phone_events")
 
 
 def bearer(sub=USER, **kw) -> str:
@@ -203,7 +204,8 @@ class KnowledgeTests(unittest.TestCase):
                 self.assertEqual(hits[0]["page_id"], page)
 
     def test_registry_labels(self):
-        self.assertEqual(self.kb.feature("phone")["status"], "PLANNED")
+        self.assertEqual(self.kb.feature("phone")["status"], "AVAILABLE")
+        self.assertEqual(self.kb.feature("dj_tools")["status"], "PLANNED")
         self.assertEqual(self.kb.feature("avatar_stats")["status"], "UNAVAILABLE")
         self.assertEqual(self.kb.feature("Workspace Profiles")["status"], "AVAILABLE")
         self.assertEqual(self.kb.feature("pregnancy roleplay")["status"], "UNAVAILABLE")

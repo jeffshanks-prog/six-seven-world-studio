@@ -93,10 +93,73 @@ CREATE TABLE IF NOT EXISTS kj_busy (
   uid TEXT PRIMARY KEY,
   until {real} NOT NULL
 );
+-- The Phone Companion (phone.py): events a host sent from the viewer, and
+-- their shot lists, team, team chat, RSVPs and pairing codes.
+CREATE TABLE IF NOT EXISTS kj_phone_events (
+  eid TEXT PRIMARY KEY,
+  host TEXT NOT NULL,
+  vid TEXT NOT NULL,
+  host_name TEXT NOT NULL DEFAULT '',
+  title TEXT NOT NULL,
+  starts {real} NOT NULL,
+  minutes INTEGER NOT NULL,
+  location TEXT NOT NULL DEFAULT '',
+  details TEXT NOT NULL DEFAULT '',
+  rsvp_code TEXT NOT NULL UNIQUE,
+  rsvp_open INTEGER NOT NULL DEFAULT 0,
+  created {real} NOT NULL,
+  updated {real} NOT NULL,
+  UNIQUE (host, vid)
+);
+CREATE TABLE IF NOT EXISTS kj_phone_shots (
+  id {id},
+  eid TEXT NOT NULL REFERENCES kj_phone_events(eid) ON DELETE CASCADE,
+  pos INTEGER NOT NULL,
+  text TEXT NOT NULL,
+  done INTEGER NOT NULL DEFAULT 0,
+  done_by TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS kj_phone_shots_eid ON kj_phone_shots(eid, pos);
+CREATE TABLE IF NOT EXISTS kj_phone_members (
+  mid TEXT PRIMARY KEY,
+  eid TEXT NOT NULL REFERENCES kj_phone_events(eid) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  invite_hash TEXT,
+  joined {real},
+  revoked INTEGER NOT NULL DEFAULT 0,
+  created {real} NOT NULL
+);
+CREATE TABLE IF NOT EXISTS kj_phone_messages (
+  id {id},
+  eid TEXT NOT NULL REFERENCES kj_phone_events(eid) ON DELETE CASCADE,
+  author TEXT NOT NULL,
+  author_name TEXT NOT NULL,
+  text TEXT NOT NULL,
+  created {real} NOT NULL
+);
+CREATE INDEX IF NOT EXISTS kj_phone_messages_eid ON kj_phone_messages(eid, id);
+CREATE TABLE IF NOT EXISTS kj_phone_rsvps (
+  eid TEXT NOT NULL REFERENCES kj_phone_events(eid) ON DELETE CASCADE,
+  account TEXT NOT NULL,
+  name TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  announcements INTEGER NOT NULL DEFAULT 0,
+  updated {real} NOT NULL,
+  PRIMARY KEY (eid, account)
+);
+CREATE TABLE IF NOT EXISTS kj_phone_pairs (
+  code_hash TEXT PRIMARY KEY,
+  host TEXT NOT NULL,
+  host_name TEXT NOT NULL DEFAULT '',
+  expires {real} NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0
+);
 """
 
 _TABLE_NAMES = ("kj_conversations", "kj_turns", "kj_requests", "kj_pending_actions", "kj_preferences",
-                "kj_support_requests", "kj_rate_buckets", "kj_busy")
+                "kj_support_requests", "kj_rate_buckets", "kj_busy", "kj_phone_events", "kj_phone_shots",
+                "kj_phone_members", "kj_phone_messages", "kj_phone_rsvps", "kj_phone_pairs")
 
 ACTION_TTL = 24 * 3600
 REQUEST_TTL = 24 * 3600
