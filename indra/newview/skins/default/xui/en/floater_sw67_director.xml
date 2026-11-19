@@ -294,8 +294,21 @@
    left="450"
    top="280"
    name="export_label"
-   width="140"
-   layout="topleft">Export path as frames:</text>
+   width="46"
+   layout="topleft">Export:</text>
+  <combo_box
+   layout="topleft"
+   follows="left|top"
+   height="23"
+   left="496"
+   top="276"
+   name="format_combo"
+   tab_group="1"
+   tool_tip="Video saves one .avi file (Motion JPEG) that plays in common players and editors. PNG frames saves numbered images to join yourself."
+   width="90">
+    <combo_box.item label="Video (.avi)" name="format_avi" value="avi" />
+    <combo_box.item label="PNG frames" name="format_png" value="png" />
+  </combo_box>
   <combo_box
    layout="topleft"
    follows="left|top"
@@ -317,7 +330,7 @@
    name="export_btn"
    tab_group="1"
    width="44"
-   tool_tip="Saves the path as numbered PNG frames through the snapshot capture, to join into a video."
+   tool_tip="Records the path through the snapshot capture, as a video file or as numbered PNG frames. Nothing is uploaded or shared."
    layout="topleft" />
   <text
    follows="left|top"
