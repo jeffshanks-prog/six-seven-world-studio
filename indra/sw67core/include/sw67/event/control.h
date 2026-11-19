@@ -22,6 +22,7 @@
 #pragma once
 
 #include "sw67/a11y/profile.h"
+#include "sw67/io/json.h"
 
 #include <cstdint>
 #include <optional>
@@ -89,6 +90,7 @@ struct ScheduledEvent
     std::vector<TeamMember> team;
     std::vector<CueCard> cards;
     std::vector<Announcement> announcements;
+    std::vector<std::string> shots; ///< The shot list the 6|7 Phone Companion ticks off.
 };
 
 struct Schedule
@@ -97,6 +99,19 @@ struct Schedule
     ScheduledEvent* find(const std::string& id);
     const ScheduledEvent* find(const std::string& id) const;
 };
+
+inline constexpr std::size_t kMaxShots = 100;
+inline constexpr std::size_t kMaxShotBytes = 200;
+
+/// One shot a line; blank lines dropped, each line trimmed and cut to
+/// kMaxShotBytes, at most kMaxShots.
+std::vector<std::string> shotsFromText(std::string_view text);
+std::string shotsToText(const std::vector<std::string>& shots);
+
+/// What the viewer sends to the 6|7 Phone Companion for an event: its name,
+/// start, length, location, notes, shot list and the host's display name.
+/// Never the team's account IDs, the stream address or announcements.
+sw67::io::Json phonePayload(const ScheduledEvent& e, const std::string& hostName);
 
 /// "evt-<start>-<n>", unique within the schedule.
 std::string newEventId(const Schedule& s, std::int64_t startEpoch);

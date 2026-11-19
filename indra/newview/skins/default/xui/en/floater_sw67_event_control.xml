@@ -119,6 +119,7 @@
     <combo_box.item label="Cue cards" name="cards" value="cards" />
     <combo_box.item label="Announcements" name="announcements" value="announcements" />
     <combo_box.item label="Stream check" name="stream" value="stream" />
+    <combo_box.item label="Phone Companion" name="phone" value="phone" />
   </combo_box>
   <text
    follows="left|top"
@@ -511,6 +512,88 @@
    word_wrap="true"
    enabled="false"
    layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="44"
+   left="10"
+   top="232"
+   name="phone_intro"
+   width="640"
+   wrap="true"
+   layout="topleft">The 6|7 Phone Companion puts this event on your phone: RSVPs, a calendar reminder, the shot list and a private team chat. It uses your 6|7 sign-in, never your Second Life password. Sent: the name, time, place, notes and shot list.</text>
+  <text
+   follows="left|top"
+   height="16"
+   left="10"
+   top="280"
+   name="shots_label"
+   width="400"
+   layout="topleft">Shot list, one shot a line (up to 100):</text>
+  <text_editor
+   follows="left|top|right"
+   height="100"
+   left="10"
+   top="298"
+   name="shots_editor"
+   tab_group="1"
+   width="640"
+   max_length="21000"
+   word_wrap="false"
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Save and send to phone"
+   left="10"
+   top="404"
+   name="send_phone_btn"
+   tab_group="1"
+   width="170"
+   tool_tip="Saves the shot list and sends this event to the Phone Companion. Sending again updates it and keeps what was ticked off."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Pair a phone..."
+   left="184"
+   top="404"
+   name="pair_btn"
+   tab_group="1"
+   width="120"
+   tool_tip="Shows a one-use code to type on your phone. It works for 10 minutes."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Get RSVPs from phone"
+   left="308"
+   top="404"
+   name="rsvp_btn"
+   tab_group="1"
+   width="170"
+   tool_tip="Adds the answers guests gave on the phone's RSVP page to this event's guest list in Party Contacts."
+   layout="topleft" />
+  <button
+   follows="left|top"
+   height="23"
+   label="Take off phone"
+   left="482"
+   top="404"
+   name="unphone_btn"
+   tab_group="1"
+   width="150"
+   tool_tip="Removes this event, its team chat and RSVPs from the Phone Companion after asking."
+   layout="topleft" />
+  <text
+   follows="left|top|right"
+   height="40"
+   left="10"
+   top="432"
+   name="phone_text"
+   width="640"
+   wrap="true"
+   font="SansSerifBold"
+   layout="topleft"></text>
   <text
    follows="left|bottom|right"
    height="34"

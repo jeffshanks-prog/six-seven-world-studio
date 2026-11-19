@@ -110,6 +110,19 @@ struct LslDraft
 bool draftLsl(const std::string& request, const std::string& existingScript,
               std::function<void(const LslDraft&)> done, std::string& whyNot);
 
+/// One request to the 6|7 gateway with the 6|7 sign-in, for the other 6|7
+/// windows (the Phone Companion). `done` runs on the main thread with the
+/// answer's JSON body, or with a plain sentence in `error`.
+struct GatewayReply
+{
+    bool ok = false;
+    int status = 0;
+    std::string body;
+    std::string error;
+};
+bool callGateway(const std::string& method, const std::string& path, const std::string& body,
+                 std::function<void(const GatewayReply&)> done, std::string& whyNot);
+
 /// Registered windows replies may link to (doc/sw67/help/features.json).
 bool isKnownScreen(std::string_view id);
 /// The help page's address on the gateway, or empty.

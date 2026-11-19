@@ -177,6 +177,23 @@ All `/v1` routes need `Authorization: Bearer <token>`. Errors are
 | `POST /v1/actions/<id>/confirm`, `/cancel` | Carries out or drops a draft the model prepared. A second confirm returns the first result. |
 | `GET /v1/preferences`, `POST /v1/preferences/<key>`, `POST /v1/preferences/<key>/delete` | View, edit, delete saved preferences. |
 | `GET /v1/owner/support_requests` | Owner only. |
+| `POST /v1/draft/lsl` | A draft LSL script for the Creator Workbench (text only, never compiled or run). |
+| `POST /v1/phone/pair` | A one-use, 10-minute code that pairs a phone with the caller's events. |
+| `POST /v1/phone/events` | Sends or updates an event on the Phone Companion: `id`, `title`, `starts` (epoch seconds), `minutes`, `location`, `details`, `host_name`, `shots`. |
+| `GET /v1/phone/events/<id>/rsvps` | Its RSVPs, in the `sw67.rsvps` format Party Contacts imports (`verified: false`). |
+| `POST /v1/phone/events/<id>/delete` | Takes it off the phone, with its team, chat and RSVPs. |
+| `GET /phone`, `/phone/e/<id>`, `/phone/join/<invite>`, `/r/<code>` | The Phone Companion's pages: HTML forms, no scripts, a signed `SameSite=Strict` cookie, every post checked for its Origin. |
+
+### Phone Companion
+
+`kingjahmir/phone.py`. Its tables (`kj_phone_*`) sit in the same database as
+King Jahmir's (`KJ_DATABASE_URL`), never in the 6|7 Back Office. No new
+settings are needed. No Second Life credential reaches it: the host pairs a
+phone with a code from their signed-in viewer, team members join from a
+one-use invite link the host sends, and guests answer an RSVP page the host
+opens and closes. Team chat follows `KJ_RETENTION_DAYS`; an event and
+everything with it is deleted 30 days after it ends (the daily
+`/cron/purge`).
 
 ## Tools King Jahmir has
 

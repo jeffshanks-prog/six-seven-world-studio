@@ -42,10 +42,13 @@ constexpr unsigned int kConnectTimeout = 10; // seconds
 constexpr unsigned int kTransferTimeout = 150; // seconds; a turn may take several model calls
 
 // Windows a reply may link to: doc/sw67/help/features.json "screens".
-constexpr std::array<std::string_view, 15> kScreens = {
+constexpr std::array<std::string_view, 29> kScreens = {
     "sw67_king_jahmir", "sw67_accessibility", "sw67_workspaces", "sw67_performance", "sw67_creator_projects",
     "sw67_product_photo", "preferences", "performance", "lightbox", "snapshot", "inventory", "script_studio",
-    "ao", "rlv_behaviours", "camera"};
+    "ao", "rlv_behaviours", "camera", "sw67_outfit_planner", "sw67_pose_studio", "sw67_recording_privacy",
+    "sw67_backup", "sw67_event_rehearsal", "sw67_inventory_cleanup", "sw67_director", "sw67_photo_looks",
+    "sw67_shopping", "sw67_creator_workbench", "sw67_party_contacts", "sw67_event_control", "sw67_equalizer",
+    "sw67_sound_check"};
 
 // Which feature a window belongs to, for contextual help.
 const std::map<std::string, std::string, std::less<>> kScreenFeature = {
@@ -53,7 +56,14 @@ const std::map<std::string, std::string, std::less<>> kScreenFeature = {
     {"sw67_performance", "performance_assistant"}, {"sw67_creator_projects", "creator_projects"},
     {"sw67_product_photo", "product_photography"}, {"preferences", "viewer_settings"},
     {"script_studio", "script_studio"},           {"ao", "animation_overrider"},
-    {"inventory", "inventory_basic"},             {"rlv_behaviours", "rlv"}};
+    {"inventory", "inventory_basic"},             {"rlv_behaviours", "rlv"},
+    {"sw67_outfit_planner", "outfit_planner"},    {"sw67_pose_studio", "pose_studio"},
+    {"sw67_recording_privacy", "recording_privacy"}, {"sw67_backup", "settings_backup"},
+    {"sw67_event_rehearsal", "event_rehearsal"},  {"sw67_inventory_cleanup", "inventory_organizer"},
+    {"sw67_director", "director_mode"},           {"sw67_photo_looks", "photo_looks"},
+    {"sw67_shopping", "shopping_organizer"},      {"sw67_creator_workbench", "creator_workbench"},
+    {"sw67_party_contacts", "party_contacts"},    {"sw67_event_control", "hosting_tools"},
+    {"sw67_equalizer", "sound_equalizer"},        {"sw67_sound_check", "sound_check"}};
 
 Conversation sConversation;
 Status sStatus;
@@ -570,6 +580,41 @@ bool draftLsl(const std::string& request, const std::string& existingScript,
             d.error = "The gateway sent an answer this viewer could not read.";
         }
         done(d);
+    });
+    return true;
+}
+
+bool callGateway(const std::string& method, const std::string& path, const std::string& body,
+                 std::function<void(const GatewayReply&)> done, std::string& whyNot)
+{
+    if (gatewayUrl().empty())
+    {
+        whyNot = "This needs the 6|7 gateway: add its address in King Jahmir's Settings tab.";
+        return false;
+    }
+    if (!signedIn())
+    {
+        whyNot = "Sign in to 6|7 in King Jahmir's Settings tab first.";
+        return false;
+    }
+    LLCoros::instance().launch("SW67KingJahmir::callGateway", [method, path, body, done]() {
+        const Answer a = call(method, path, body);
+        GatewayReply r;
+        r.status = a.status;
+        if (a.status == 404 && path.rfind("/v1/phone/", 0) == 0 && a.body.find("No such route") != std::string::npos)
+        {
+            r.error = "The Phone Companion isn't on this 6|7 gateway yet.";
+        }
+        else if (a.status < 200 || a.status > 299)
+        {
+            r.error = describe(parseError(a.status, a.body)).text;
+        }
+        else
+        {
+            r.ok = true;
+            r.body = a.body;
+        }
+        done(r);
     });
     return true;
 }
