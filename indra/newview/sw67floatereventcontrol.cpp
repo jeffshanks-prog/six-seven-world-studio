@@ -23,6 +23,7 @@
 #include "llagent.h"
 #include "llaudioengine.h"
 #include "llavatarnamecache.h"
+#include "llclipboard.h"
 #include "llcombobox.h"
 #include "llfloaterimnearbychat.h"
 #include "llfloaterreg.h"
@@ -59,7 +60,8 @@ const char* kCards[] = {"card_list", "card_title", "card_minute", "card_body", "
 const char* kAnn[] = {"ann_list", "ann_text", "new_ann_btn", "update_ann_btn", "approve_btn", "send_chat_btn", "to_party_btn"};
 const char* kStream[] = {"stream_check_btn", "about_land_btn", "stream_report"};
 const char* kPhone[] = {"phone_intro", "shots_label", "shots_editor", "send_phone_btn", "pair_btn", "rsvp_btn",
-                        "unphone_btn", "phone_text"};
+                        "unphone_btn", "phone_text", "rsvp_link_btn", "rsvp_auto_check"};
+constexpr F32 kRsvpEvery = 120.f;
 
 void addRow(LLScrollListCtrl* list, const LLSD& value, std::initializer_list<std::pair<const char*, std::string>> cols)
 {
@@ -133,6 +135,7 @@ bool SW67FloaterEventControl::postBuild()
     bind("send_phone_btn", [this] { onSendToPhone(); });
     bind("pair_btn", [this] { onPairPhone(); });
     bind("rsvp_btn", [this] { onPhoneRsvps(); });
+    bind("rsvp_link_btn", [this] { onRsvpLink(); });
     bind("unphone_btn", [this] { onTakeOffPhone(); });
     return LLFloater::postBuild();
 }
@@ -156,6 +159,16 @@ void SW67FloaterEventControl::draw()
     {
         mTick.reset();
         refreshCountdown();
+    }
+    if (!getChild<LLUICtrl>("rsvp_auto_check")->getValue().asBoolean())
+    {
+        mRsvpTimer.reset();
+        mLastRsvpCount = -1;
+    }
+    else if (mRsvpTimer.getElapsedTimeF32() >= kRsvpEvery && !mRsvpBusy)
+    {
+        mRsvpTimer.reset();
+        onPhoneRsvps(true);
     }
     LLFloater::draw();
 }
@@ -191,6 +204,7 @@ void SW67FloaterEventControl::refreshEvents()
 
 void SW67FloaterEventControl::loadEvent()
 {
+    mLastRsvpCount = -1;
     const ScheduledEvent* e = current();
     const bool have = e != nullptr;
     for (const char* n : {"remove_btn", "guests_btn", "save_btn", "add_member_btn", "add_card_btn", "new_ann_btn"})
@@ -691,7 +705,7 @@ void SW67FloaterEventControl::onPairPhone()
     if (!started) showStatus(StatusRole::Warning, whyNot);
 }
 
-void SW67FloaterEventControl::onPhoneRsvps()
+void SW67FloaterEventControl::onPhoneRsvps(bool quiet)
 {
     const ScheduledEvent* e = current();
     if (!e) return;
@@ -699,13 +713,24 @@ void SW67FloaterEventControl::onPhoneRsvps()
     const std::string id = e->id;
     const std::string name = e->name;
     std::string whyNot;
+    mRsvpBusy = true;
     const bool started = kingjahmir::callGateway(
         "GET", phonePath(id, "/rsvps"), std::string(),
-        [handle, id, name](const kingjahmir::GatewayReply& r) {
+        [handle, id, name, quiet](const kingjahmir::GatewayReply& r) {
             auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
             if (!self) return;
+            self->mRsvpBusy = false;
             if (!r.ok)
             {
+                if (quiet)
+                {
+                    // One problem turns automatic checks off rather than repeating every two minutes.
+                    self->getChild<LLUICtrl>("rsvp_auto_check")->setValue(LLSD(false));
+                    self->showStatus(StatusRole::Warning, "Stopped bringing in RSVPs automatically: " +
+                                                              (r.status == 404 ? std::string("this event isn't on the phone.")
+                                                                               : r.error));
+                    return;
+                }
                 self->showStatus(StatusRole::Error, r.status == 404 ? std::string("This event isn't on the phone yet: press "
                                                                                  "Save and send to phone first.")
                                                                      : r.error);
@@ -731,10 +756,62 @@ void SW67FloaterEventControl::onPhoneRsvps()
                 (sw67::contacts::acceptRsvp(book, gl, rec, party::nowUtc()).ok ? accepted : skipped)++;
             }
             party::save();
+            if (quiet)
+            {
+                const int count = static_cast<int>((*root)["rsvps"].items().size());
+                if (count != self->mLastRsvpCount && self->mLastRsvpCount >= 0)
+                {
+                    self->showStatus(StatusRole::Success,
+                                     std::to_string(count) + " RSVP(s) on the guest list now (checked automatically). "
+                                                             "Guests typed these themselves; they aren't verified.");
+                }
+                self->mLastRsvpCount = count;
+                return;
+            }
             self->showStatus(StatusRole::Success,
                              std::to_string(accepted) + " RSVP(s) added to the guest list" +
                                  (skipped ? ", " + std::to_string(skipped) + " skipped" : std::string()) +
                                  ". Guests typed these themselves; they aren't verified. Nothing was sent to anyone.");
+        },
+        whyNot);
+    if (!started)
+    {
+        mRsvpBusy = false;
+        if (quiet) getChild<LLUICtrl>("rsvp_auto_check")->setValue(LLSD(false));
+        showStatus(StatusRole::Warning, whyNot);
+    }
+}
+
+void SW67FloaterEventControl::onRsvpLink()
+{
+    const ScheduledEvent* e = current();
+    if (!e) return;
+    const LLHandle<LLFloater> handle = getHandle();
+    std::string whyNot;
+    const bool started = kingjahmir::callGateway(
+        "POST", phonePath(e->id, "/rsvp_link"), "{\"open\":true}",
+        [handle](const kingjahmir::GatewayReply& r) {
+            auto* self = ALViewType::as<SW67FloaterEventControl>(handle.get());
+            if (!self) return;
+            if (!r.ok)
+            {
+                self->showStatus(StatusRole::Error, r.status == 404 ? std::string("This event isn't on the phone yet: press "
+                                                                                 "Save and send to phone first.")
+                                                                     : r.error);
+                return;
+            }
+            const auto j = sw67::io::parseJson(r.body);
+            const std::string url = j ? (*j)["url"].asString("") : std::string();
+            if (url.rfind("https://", 0) != 0 && url.rfind("http://", 0) != 0)
+            {
+                self->showStatus(StatusRole::Error, "The gateway sent an answer this viewer could not read.");
+                return;
+            }
+            LLClipboard::instance().copyToClipboard(url, 0, static_cast<S32>(url.size()));
+            self->phoneText("RSVP page: " + url);
+            self->showStatus(StatusRole::Success, "RSVPs are open and the link is copied. Share it where your guests "
+                                                  "will see it. Guests see the name, time, place and your name, not "
+                                                  "your notes.");
         },
         whyNot);
     if (!started) showStatus(StatusRole::Warning, whyNot);

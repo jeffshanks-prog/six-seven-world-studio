@@ -66,11 +66,15 @@ private:
     void onStreamCheck();
     void onSendToPhone();
     void onPairPhone();
-    void onPhoneRsvps();
+    void onPhoneRsvps(bool quiet = false);
+    void onRsvpLink();
     void onTakeOffPhone();
     void phoneText(const std::string& text);
     void showStatus(sw67::a11y::StatusRole role, const std::string& text);
 
     std::string mEventId;
     LLFrameTimer mTick;
+    LLFrameTimer mRsvpTimer;      ///< Automatic RSVP checks, every kRsvpEvery seconds.
+    bool mRsvpBusy = false;       ///< A check is on its way; don't start another.
+    int mLastRsvpCount = -1;      ///< What the last automatic check saw, so only changes are reported.
 };
